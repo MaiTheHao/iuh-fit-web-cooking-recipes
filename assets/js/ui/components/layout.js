@@ -1,0 +1,150 @@
+import { ROUTES } from '../../core/router/const.js';
+import Logger from '../../utils/logger.js';
+
+const MENU_ITEMS = Object.values(ROUTES);
+
+const SOCIAL_LINKS = [
+	{ icon: 'facebook', label: 'Facebook' },
+	{ icon: 'instagram', label: 'Instagram' },
+	{ icon: 'github', label: 'Github' },
+];
+
+const ASSETS = {
+	logo: '../assets/img/logo.svg',
+};
+
+const renderMenuItems = (className) =>
+	MENU_ITEMS.map((item) => `<li><a href="${item.redirectPath}" class="${className} ${item.redirectPath === '/pages' ? className + '--active' : ''}">${item.label}</a></li>`).join(
+		'',
+	);
+
+const renderSocialIcons = (isNav = false) =>
+	SOCIAL_LINKS.map(
+		(link) =>
+			`<${isNav ? 'a' : 'li'}${isNav ? ' href="#"' : ''} class="social-icon"${isNav ? '' : ''} aria-label="${link.label}">
+                <i data-lucide="${link.icon}"></i>
+            </${isNav ? 'a' : 'li'}>`,
+	).join('');
+
+const Header = () => `
+    <div class="header__overlay header__overlay--default"></div>
+    <header class="header">
+        <div class="header__container">
+            <a href="${MENU_ITEMS[0].path}" class="header__logo" title="Recipe4f Logo">
+                <img src="${ASSETS.logo}" alt="Logo" />
+            </a>
+            <nav class="header__nav">
+                <ul class="header__menu">
+                    ${renderMenuItems('header__link fw-light')}
+                </ul>
+            </nav>
+            <div class="header__actions">
+                ${renderSocialIcons(true)}
+                <button class="header__toggle" aria-label="Open Menu">
+                    <i data-lucide="menu"></i>
+                </button>
+            </div>
+            <aside class="header__drawer">
+                <div class="header__drawer-top">
+                    <h3 class="ff-serif"><span class="highlight-text">RECIPE4F</span> Menu</h3>
+                    <button class="header__close-btn" aria-label="Close Menu">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <ul class="header__drawer-menu">
+                    ${renderMenuItems('header__drawer-link fw-light')}
+                </ul>
+            </aside>
+        </div>
+    </header>
+`;
+
+const Footer = () => `
+    <footer id="app-footer">
+        <div class="footer__top">
+            <div class="footer__top__part footer__info">
+                <a href="${MENU_ITEMS[0].path}" class="footer__logo" title="Recipe4f Logo">
+                    <img src="${ASSETS.logo}" alt="Logo" />
+                </a>
+                <p class="footer__description ff-main fw-light">
+                    <strong class="highlight-text">Recipe4f</strong> is your ultimate destination for <strong>delicious recipes</strong>, cooking tips, and culinary inspiration. Join our community of <span class="fw-medium">food enthusiasts</span> and elevate your cooking skills today!
+                </p>
+            </div>
+            <nav class="footer__top__part footer__nav">
+                <ul>
+                    ${renderMenuItems('footer__link fw-light')}
+                </ul>
+                <ul>
+                    ${renderSocialIcons(false)}
+                </ul>
+            </nav>
+        </div>
+        <hr class="footer__divider" />
+        <div class="footer__bottom">
+            <p class="footer__copy">&copy; 2024 Recipe4f. All rights reserved.</p>
+        </div>
+    </footer>
+`;
+
+export class Layout {
+	constructor(root) {
+		if (!root || !(root instanceof HTMLElement)) throw new Error('Root element is required for Layout initialization.');
+		if (typeof window === 'undefined') throw new Error('Window object is not available.');
+		this.root = root;
+	}
+
+	init() {
+		this.#renderHeader();
+		this.#renderFooter();
+		this.#activeNavLink();
+		this.#bindEvents();
+		Logger.info('Layout rendered');
+	}
+
+	#renderHeader() {
+		this.root.insertAdjacentHTML('afterbegin', Header());
+	}
+
+	#renderFooter() {
+		this.root.insertAdjacentHTML('beforeend', Footer());
+	}
+
+	#activeNavLink() {
+		const currentPath = window.location.pathname;
+		const selectors = ['.header__link', '.header__drawer-link', '.footer__link'];
+
+		selectors.forEach((selector) => {
+			this.root.querySelectorAll(selector).forEach((link) => {
+				const isActive = link.getAttribute('href') === currentPath;
+				link.classList.toggle(`${selector.slice(1)}--active`, isActive);
+			});
+		});
+	}
+
+	#bindEvents() {
+		if (window.lucide) window.lucide.createIcons();
+
+		const toggleBtn = document.querySelector('.header__toggle');
+		const drawer = document.querySelector('.header__drawer');
+		const closeBtn = document.querySelector('.header__close-btn');
+		const overlay = document.querySelector('.header__overlay');
+
+		if (toggleBtn && drawer && closeBtn && overlay) {
+			const openDrawer = () => {
+				drawer.classList.add('header__drawer--open');
+				overlay.classList.add('header__overlay--visible');
+				overlay.classList.remove('header__overlay--hidden', 'header__overlay--default');
+			};
+
+			const closeDrawer = () => {
+				drawer.classList.remove('header__drawer--open');
+				overlay.classList.add('header__overlay--hidden');
+				overlay.classList.remove('header__overlay--visible');
+			};
+
+			toggleBtn.addEventListener('click', openDrawer);
+			closeBtn.addEventListener('click', closeDrawer);
+			overlay.addEventListener('click', closeDrawer);
+		}
+	}
+}

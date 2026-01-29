@@ -1,7 +1,22 @@
 export const ROUTES = {
-	HOME: ['/', '/home'],
-	RECIPES: '/recipes',
-	RECIPE_DETAIL: '/recipes/:id',
-	ABOUT: '/about',
-	CONTACT: '/contact',
+	HOME: {
+		label: 'Home',
+		redirectPath: '/pages',
+	},
+	RECIPES: {
+		label: 'Recipes',
+		redirectPath: '/pages/recipes',
+	},
+	BLOG: {
+		label: 'Blog',
+		redirectPath: '/pages/blog',
+	},
+	ABOUT: {
+		label: 'About',
+		redirectPath: '/pages/about',
+	},
+	CONTACT: {
+		label: 'Contact',
+		redirectPath: '/pages/contact',
+	},
 };
