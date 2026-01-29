@@ -2,11 +2,12 @@ import { ROUTES } from '../../core/router/const.js';
 import Logger from '../../utils/logger.js';
 
 const MENU_ITEMS = Object.values(ROUTES);
+const HOME_MENU_ITEM = MENU_ITEMS.find((item) => item.label.match(/^Home/i));
 
 const SOCIAL_LINKS = [
-	{ icon: 'facebook', label: 'Facebook' },
-	{ icon: 'instagram', label: 'Instagram' },
-	{ icon: 'github', label: 'Github' },
+	{ icon: 'facebook', label: 'Facebook', url: 'https://www.facebook.com' },
+	{ icon: 'instagram', label: 'Instagram', url: 'https://www.instagram.com' },
+	{ icon: 'github', label: 'Github', url: 'https://github.com/MaiTheHao/iuh-fit-web-cooking-recipes.git' },
 ];
 
 const ASSETS = {
@@ -21,16 +22,16 @@ const renderMenuItems = (className) =>
 const renderSocialIcons = (isNav = false) =>
 	SOCIAL_LINKS.map(
 		(link) =>
-			`<${isNav ? 'a' : 'li'}${isNav ? ' href="#"' : ''} class="social-icon"${isNav ? '' : ''} aria-label="${link.label}">
-                <i data-lucide="${link.icon}"></i>
-            </${isNav ? 'a' : 'li'}>`,
+			`<${isNav ? 'a' : 'li'}${isNav ? ` href="${link.url}" target="_blank" title="${link.label}"` : ''} class="social-icon" aria-label="${link.label}">
+				<i data-lucide="${link.icon}"></i>
+			</${isNav ? 'a' : 'li'}>`,
 	).join('');
 
 const Header = () => `
     <div class="header__overlay header__overlay--default"></div>
     <header class="header">
         <div class="header__container">
-            <a href="${MENU_ITEMS[0].path}" class="header__logo" title="Recipe4f Logo">
+            <a href="${HOME_MENU_ITEM.redirectPath}" class="header__logo" title="Recipe4f Logo">
                 <img src="${ASSETS.logo}" alt="Logo" />
             </a>
             <nav class="header__nav">
@@ -63,7 +64,7 @@ const Footer = () => `
     <footer id="app-footer">
         <div class="footer__top">
             <div class="footer__top__part footer__info">
-                <a href="${MENU_ITEMS[0].path}" class="footer__logo" title="Recipe4f Logo">
+                <a href="${HOME_MENU_ITEM.redirectPath}" class="footer__logo" title="Recipe4f Logo">
                     <img src="${ASSETS.logo}" alt="Logo" />
                 </a>
                 <p class="footer__description ff-main fw-light">
@@ -75,7 +76,7 @@ const Footer = () => `
                     ${renderMenuItems('footer__link fw-light')}
                 </ul>
                 <ul>
-                    ${renderSocialIcons(false)}
+                    ${renderSocialIcons(true)}
                 </ul>
             </nav>
         </div>
