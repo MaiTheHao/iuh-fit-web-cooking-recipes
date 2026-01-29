@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="./assets/css/style.css" />
+		<link rel="stylesheet" href="./assets/css/layout/header.css" />
+		<link rel="stylesheet" href="./assets/css/layout/footer.css" />
+		<title>Recipe4f</title>
+	</head>
+	<body>
+		<div id="root">
+			<div class="header__overlay header__overlay--default"></div>
+			<header class="header">
+				<div class="header__container">
+					<a href="/" class="header__logo" title="Recipe4f Logo">
+						<img src="./assets/img/logo.svg" alt="Logo" />
+					</a>
+
+					<nav class="header__nav">
+						<ul class="header__menu">
+							<li><a href="/" class="header__link fw-light header__link--active">Home</a></li>
+							<li><a href="/recipes" class="header__link fw-light">Recipes</a></li>
+							<li><a href="/blog" class="header__link fw-light">Blog</a></li>
+							<li><a href="/about" class="header__link fw-light">About</a></li>
+							<li><a href="/contact" class="header__link fw-light">Contact</a></li>
+						</ul>
+					</nav>
+
+					<div class="header__actions">
+						<a href="#" class="social-icon" aria-label="Facebook">
+							<i data-lucide="facebook"></i>
+						</a>
+						<a href="#" class="social-icon" aria-label="Instagram">
+							<i data-lucide="instagram"></i>
+						</a>
+						<a href="#" class="social-icon" aria-label="Github">
+							<i data-lucide="github"></i>
+						</a>
+
+						<button class="header__toggle" aria-label="Open Menu">
+							<i data-lucide="menu"></i>
+						</button>
+					</div>
+
+					<aside class="header__drawer">
+						<div class="header__drawer-top">
+							<h3 class="ff-serif"><span class="highlight-text">RECIPE4F</span> Menu</h3>
+							<button class="header__close-btn" aria-label="Close Menu">
+								<i data-lucide="x"></i>
+							</button>
+						</div>
+						<ul class="header__drawer-menu">
+							<li><a href="/" class="header__drawer-link fw-light header__drawer-link--active">Home</a></li>
+							<li><a href="/recipes" class="header__drawer-link fw-light">Recipes</a></li>
+							<li><a href="/blog" class="header__drawer-link fw-light">Blog</a></li>
+							<li><a href="/about" class="header__drawer-link fw-light">About</a></li>
+							<li><a href="/contact" class="header__drawer-link fw-light">Contact</a></li>
+						</ul>
+					</aside>
+				</div>
+			</header>
+
+			<main id="app-body"></main>
+
+			<footer id="app-footer">
+				<!-- TOP -->
+				<div class="footer__top">
+					<!-- LEFT -->
+					<div class="footer__top__part footer__info">
+						<a href="/" class="footer__logo" title="Recipe4f Logo">
+							<img src="./assets/img/logo.svg" alt="Logo" />
+						</a>
+						<p class="footer__description ff-main fw-light">
+							<strong class="highlight-text">Recipe4f</strong> is your ultimate destination for <strong>delicious recipes</strong>, cooking tips, and culinary
+							inspiration. Join our community of <span class="fw-medium">food enthusiasts</span> and elevate your cooking skills today!
+						</p>
+					</div>
+					<!-- RIGHT -->
+					<nav class="footer__top__part footer__nav">
+						<ul>
+							<li><a href="/" class="footer__link fw-light footer__link--active">Home</a></li>
+							<li><a href="/recipes" class="footer__link fw-light">Recipes</a></li>
+							<li><a href="/blog" class="footer__link fw-light">Blog</a></li>
+							<li><a href="/about" class="footer__link fw-light">About</a></li>
+							<li><a href="/contact" class="footer__link fw-light">Contact</a></li>
+						</ul>
+						<ul>
+							<li>
+								<a href="#" class="social-icon">
+									<i data-lucide="facebook"></i>
+								</a>
+							</li>
+							<li>
+								<a href="#" class="social-icon">
+									<i data-lucide="instagram"></i>
+								</a>
+							</li>
+							<li>
+								<a href="#" class="social-icon">
+									<i data-lucide="github"></i>
+								</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+
+				<hr class="footer__divider" />
+
+				<!-- BOTTOM -->
+				<div class="footer__bottom">
+					<p class="footer__copy">&copy; 2024 Recipe4f. All rights reserved.</p>
+				</div>
+			</footer>
+			<script src="https://unpkg.com/lucide@latest"></script>
+			<script>
+				lucide.createIcons();
+
+				const toggleBtn = document.querySelector('.header__toggle');
+				const drawer = document.querySelector('.header__drawer');
+				const closeBtn = document.querySelector('.header__close-btn');
+				const overlay = document.querySelector('.header__overlay');
+
+				toggleBtn.addEventListener('click', () => {
+					drawer.classList.add('header__drawer--open');
+					overlay.classList.remove('header__overlay--default');
+					overlay.classList.remove('header__overlay--hidden');
+					overlay.classList.add('header__overlay--visible');
+				});
+
+				closeBtn.addEventListener('click', () => {
+					drawer.classList.remove('header__drawer--open');
+					overlay.classList.remove('header__overlay--visible');
+					overlay.classList.add('header__overlay--hidden');
+				});
+			</script>
+		</div>
+	</body>
+</html>
