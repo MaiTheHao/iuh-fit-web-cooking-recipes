@@ -1,4 +1,4 @@
-import Validator from '../utils/validator.js';
+import Validator from '../../utils/validator.js';
 import Entity from './entity.js';
 
 class Role extends Entity {
