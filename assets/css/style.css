@@ -1,3 +1,4 @@
+@import './bootstrap5/bootstrap.min.css';
 @import './root.css';
 @import './animations.css';
 @import './typography.css';
@@ -36,6 +37,10 @@ body {
 
 #app-body {
 	margin-top: var(--header-height);
+	min-height: max-content;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 a {
@@ -64,6 +69,14 @@ img {
 
 ::-webkit-scrollbar-thumb:hover {
 	background-color: var(--color-primary);
+}
+
+.limited-width {
+	max-width: var(--max-width-container);
+}
+
+.container {
+	max-width: var(--max-width-container);
 }
 
 .social-icon {

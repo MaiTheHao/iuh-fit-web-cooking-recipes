@@ -71,15 +71,17 @@ const Validator = {
 
 	url: {
 		valid(url) {
+			let isValidUrl = false;
 			try {
 				new URL(url);
-				return [null, true];
+				isValidUrl = true;
 			} catch {
-				return ['Invalid URL format', false];
+			} finally {
+				return { isValid: isValidUrl, errors: { format: isValidUrl ? null : 'Invalid URL format' } };
 			}
 		},
 		isValid(url) {
-			return Validator.url.valid(url)[1];
+			return Validator.url.valid(url).isValid;
 		},
 	},
 
@@ -88,10 +90,10 @@ const Validator = {
 			if (!imagePath) return ['Image path is required', false];
 			const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg)$/i;
 			const isValid = imageExtensions.test(imagePath);
-			return [isValid ? null : 'Invalid image format', isValid];
+			return { isValid: isValid, errors: { format: isValid ? null : 'Invalid image format' } };
 		},
 		isValid(imagePath) {
-			return Validator.image.valid(imagePath)[1];
+			return Validator.image.valid(imagePath).isValid;
 		},
 	},
 
@@ -111,41 +113,41 @@ const Validator = {
 		valid(dateString) {
 			const date = new Date(dateString);
 			const isValid = !isNaN(date.getTime());
-			return [isValid ? null : 'Invalid date format', isValid];
+			return { isValid: isValid, errors: { format: isValid ? null : 'Invalid date format' } };
 		},
 		isValid(dateString) {
-			return Validator.date.valid(dateString)[1];
+			return Validator.date.valid(dateString).isValid;
 		},
 	},
 
 	categoryCode: {
 		valid(code) {
 			const isValid = /^CATE_[A-Z0-9_]+$/.test(code);
-			return [isValid ? null : 'Invalid category code format', isValid];
+			return { isValid: isValid, errors: { format: isValid ? null : 'Invalid category code format' } };
 		},
 		isValid(code) {
-			return Validator.categoryCode.valid(code)[1];
+			return Validator.categoryCode.valid(code).isValid;
 		},
 	},
 
 	recipeCode: {
 		valid(code) {
 			const isValid = /^REC_[A-Z0-9_]+$/.test(code);
-			return [isValid ? null : 'Invalid recipe code format', isValid];
+			return { isValid: isValid, errors: { format: isValid ? null : 'Invalid recipe code format' } };
 		},
 		isValid(code) {
-			return Validator.recipeCode.valid(code)[1];
+			return Validator.recipeCode.valid(code).isValid;
 		},
 	},
 
 	id: {
 		valid(id) {
-			if (!id) return ['ID is required', false];
+			if (!id) return { isValid: false, errors: { required: 'ID is required' } };
 			const isValid = typeof id === 'string' && id.trim().length > 0;
-			return [isValid ? null : 'ID must be a non-empty string', isValid];
+			return { isValid: isValid, errors: { format: isValid ? null : 'ID must be a non-empty string' } };
 		},
 		isValid(id) {
-			return Validator.id.valid(id)[1];
+			return Validator.id.valid(id).isValid;
 		},
 	},
 
@@ -167,30 +169,30 @@ const Validator = {
 	positiveInteger: {
 		valid(num) {
 			const isValid = Number.isInteger(num) && num > 0;
-			return [isValid ? null : 'Must be a positive integer', isValid];
+			return { isValid: isValid, errors: { format: isValid ? null : 'Must be a positive integer' } };
 		},
 		isValid(num) {
-			return Validator.positiveInteger.valid(num)[1];
+			return Validator.positiveInteger.valid(num).isValid;
 		},
 	},
 
 	nonNegativeInteger: {
 		valid(num) {
 			const isValid = Number.isInteger(num) && num >= 0;
-			return [isValid ? null : 'Must be a non-negative integer', isValid];
+			return { isValid: isValid, errors: { format: isValid ? null : 'Must be a non-negative integer' } };
 		},
 		isValid(num) {
-			return Validator.nonNegativeInteger.valid(num)[1];
+			return Validator.nonNegativeInteger.valid(num).isValid;
 		},
 	},
 
 	roleCode: {
 		valid(code) {
 			const isValid = /^ROLE_[A-Z_]+$/.test(code);
-			return [isValid ? null : 'Invalid role code format, must be ROLE_*', isValid];
+			return { isValid: isValid, errors: { format: isValid ? null : 'Invalid role code format, must be ROLE_*' } };
 		},
 		isValid(code) {
-			return Validator.roleCode.valid(code)[1];
+			return Validator.roleCode.valid(code).isValid;
 		},
 	},
 
@@ -198,20 +200,20 @@ const Validator = {
 		valid(dateString) {
 			const date = new Date(dateString);
 			const isValid = !isNaN(date.getTime());
-			return [isValid ? null : 'Invalid date format', isValid];
+			return { isValid: isValid, errors: { format: isValid ? null : 'Invalid date format' } };
 		},
 		isValid(dateString) {
-			return Validator.dateString.valid(dateString)[1];
+			return Validator.dateString.valid(dateString).isValid;
 		},
 	},
 
 	dateObject: {
 		valid(dateObj) {
 			const isValid = dateObj instanceof Date && !isNaN(dateObj.getTime());
-			return [isValid ? null : 'Invalid Date object', isValid];
+			return { isValid: isValid, errors: { format: isValid ? null : 'Invalid Date object' } };
 		},
 		isValid(dateObj) {
-			return Validator.dateObject.valid(dateObj)[1];
+			return Validator.dateObject.valid(dateObj).isValid;
 		},
 	},
 

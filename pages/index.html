@@ -10,10 +10,29 @@
 	</head>
 	<body>
 		<div id="root">
-			<main id="app-body"></main>
+			<main id="app-body">
+				<div class="container">
+					<div id="carouselId" class="carousel slide" data-bs-ride="carousel">
+						<ol class="carousel-indicators">
+							<li data-bs-target="#carouselId" data-bs-slide-to="0" class="active" aria-current="true" aria-label="First slide"></li>
+						</ol>
+						<div class="carousel-inner" role="listbox">
+							<div class="carousel-item active">Hello</div>
+						</div>
+						<button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
+							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Previous</span>
+						</button>
+						<button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
+							<span class="carousel-control-next-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Next</span>
+						</button>
+					</div>
+				</div>
+			</main>
 		</div>
 
-		<script src="https://unpkg.com/lucide@latest"></script>
 		<script type="module" src="../assets/js/main.js"></script>
+		<script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
 	</body>
 </html>
