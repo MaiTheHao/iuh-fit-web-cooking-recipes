@@ -42,6 +42,7 @@
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
+	margin-bottom: 0;
 }
 
 .header__link {
@@ -52,12 +53,12 @@
 
 .header__link:hover {
 	background-color: var(--color-primary);
-	color: var(--color-text-inverse);
+	color: var(--color-white);
 }
 
 .header__link.active {
 	background-color: var(--color-primary);
-	color: var(--color-text-inverse);
+	color: var(--color-white);
 	cursor: default;
 }
 
@@ -84,7 +85,7 @@
 
 .header__toggle:hover {
 	background-color: var(--color-primary);
-	color: var(--color-text-inverse);
+	color: var(--color-white);
 }
 
 .header__drawer {
@@ -136,7 +137,7 @@
 
 .header__close-btn:hover {
 	background-color: var(--color-primary);
-	color: var(--color-text-inverse);
+	color: var(--color-white);
 }
 
 .header__drawer-menu {
@@ -152,12 +153,12 @@
 }
 
 .header__drawer-link:not(.header__drawer-link--active):hover {
-	background-color: var(--color-bg-light);
+	background-color: var(--color-bg-alt);
 }
 
 .header__drawer-link--active {
 	background-color: var(--color-primary);
-	color: var(--color-text-inverse);
+	color: var(--color-white);
 	cursor: default;
 }
 

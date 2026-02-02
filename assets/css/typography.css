@@ -21,5 +21,6 @@
 	text-align: justify;
 }
 .highlight-text {
-	color: var(--color-accent--orange);
+	color: var(--color-accent);
+	font-weight: 600;
 }

@@ -4,35 +4,42 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="../assets/css/style.css" />
-		<link rel="stylesheet" href="../assets/css/layout/header.css" />
-		<link rel="stylesheet" href="../assets/css/layout/footer.css" />
+		<link rel="stylesheet" href="../assets/css/pages/home.css" />
 		<title>Recipe4f</title>
 	</head>
 	<body>
 		<div id="root">
 			<main id="app-body">
-				<div class="container">
+				<div class="container p-0">
 					<div id="carouselId" class="carousel slide" data-bs-ride="carousel">
-						<ol class="carousel-indicators">
-							<li data-bs-target="#carouselId" data-bs-slide-to="0" class="active" aria-current="true" aria-label="First slide"></li>
-						</ol>
-						<div class="carousel-inner" role="listbox">
-							<div class="carousel-item active">Hello</div>
-						</div>
+						<div class="carousel-indicators"></div>
+						<div class="carousel-inner" role="listbox"></div>
+
 						<button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
-							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+							<i data-lucide="chevron-left"></i>
 							<span class="visually-hidden">Previous</span>
 						</button>
 						<button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
-							<span class="carousel-control-next-icon" aria-hidden="true"></span>
+							<i data-lucide="chevron-right"></i>
 							<span class="visually-hidden">Next</span>
 						</button>
+					</div>
+				</div>
+				<hr class="mt-5 bg-secondary" />
+				<div class="container mt-4">
+					<div class="container__header">
+						<h2 class="container__header__title">Simple & Tasty Recipes</h2>
+						<p class="container__header__desc">Discover a variety of easy-to-make and delicious recipes that will satisfy your taste buds and make cooking a joy.</p>
+					</div>
+					<div id="recipe-grid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-2">
+						<!-- Recipes will be loaded here dynamically -->
 					</div>
 				</div>
 			</main>
 		</div>
 
-		<script type="module" src="../assets/js/main.js"></script>
+		<script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
 		<script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+		<script type="module" src="../assets/js/main.js"></script>
 	</body>
 </html>

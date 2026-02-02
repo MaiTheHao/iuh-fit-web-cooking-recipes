@@ -2,6 +2,8 @@
 @import './root.css';
 @import './animations.css';
 @import './typography.css';
+@import './layout/header.css';
+@import './layout/footer.css';
 
 * {
 	border: 0;
@@ -16,7 +18,7 @@
 
 html {
 	-webkit-font-smoothing: antialiased;
-	color: var(--color-text-body);
+	color: var(--color-text);
 	font-family: var(--font-main);
 	font-size: 16px;
 	line-height: 1.6;
@@ -24,7 +26,7 @@ html {
 }
 
 body {
-	background-color: var(--color-bg-body);
+	background-color: var(--color-bg);
 	overflow-x: hidden;
 }
 
@@ -77,6 +79,39 @@ img {
 
 .container {
 	max-width: var(--max-width-container);
+	padding: 1rem;
+
+	@media (max-width: 768px) {
+		padding: 0.5rem;
+	}
+}
+
+.container__header {
+	margin: 0 auto;
+}
+
+.container__header__title {
+	font-size: 2rem;
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+	text-align: center;
+	font-family: var(--font-serif);
+
+	@media (max-width: 480px) {
+		font-size: 1.75rem;
+	}
+}
+
+.container__header__desc {
+	color: var(--color-text-muted);
+	font-size: 1rem;
+	text-align: center;
+	max-width: 600px;
+	margin: 0 auto;
+
+	@media (max-width: 480px) {
+		font-size: 0.85rem;
+	}
 }
 
 .social-icon {
@@ -95,9 +130,143 @@ img {
 
 .social-icon:hover {
 	background-color: var(--color-primary);
-	color: var(--color-text-inverse);
+	color: var(--color-white);
 }
 
 .social-icon:active {
 	transform: scale(0.95);
+}
+
+.badge {
+	padding: 0.75em 1.25em;
+	border-radius: 2em;
+	line-height: 1;
+	height: max-content;
+}
+
+.bg-primary {
+	background-color: var(--color-primary) !important;
+	color: var(--color-white) !important;
+}
+
+.bg-secondary {
+	background-color: var(--color-secondary) !important;
+	color: var(--color-white) !important;
+}
+
+.bg-success {
+	background-color: var(--color-success) !important;
+	color: var(--color-white) !important;
+}
+
+.bg-danger {
+	background-color: var(--color-error) !important;
+	color: var(--color-white) !important;
+}
+
+.bg-warning {
+	background-color: var(--color-warn) !important;
+	color: var(--color-white) !important;
+}
+
+.bg-info {
+	background-color: var(--color-info) !important;
+	color: var(--color-white) !important;
+}
+
+.bg-light {
+	background-color: var(--color-bg-alt) !important;
+	color: var(--color-text) !important;
+}
+
+.bg-dark {
+	background-color: var(--color-primary) !important;
+	color: var(--color-white) !important;
+}
+
+.bg-accent {
+	background-color: var(--color-accent) !important;
+	color: var(--color-white) !important;
+}
+
+.btn {
+	border-radius: 0.5em;
+	font-weight: 500;
+	padding: 0.5em 1.25em;
+	transition: all 0.2s ease;
+	border: 1px solid transparent;
+}
+
+.btn:active {
+	transform: scale(0.98);
+}
+
+.btn-primary {
+	background-color: var(--color-primary);
+	border-color: var(--color-primary);
+	color: var(--color-white);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+	background-color: var(--color-primary-dark);
+	border-color: var(--color-primary-dark);
+	color: var(--color-white);
+}
+
+.btn-secondary {
+	background-color: var(--color-bg-alt);
+	border-color: var(--color-border);
+	color: var(--color-text);
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+	background-color: var(--color-border);
+	border-color: var(--color-border);
+	color: var(--color-primary);
+}
+
+.btn-success {
+	background-color: var(--color-success);
+	border-color: var(--color-success);
+	color: var(--color-white);
+}
+
+.btn-success:hover {
+	opacity: 0.9;
+}
+
+.btn-danger {
+	background-color: var(--color-error);
+	border-color: var(--color-error);
+	color: var(--color-white);
+}
+
+.btn-danger:hover {
+	opacity: 0.9;
+}
+
+.btn-outline-primary {
+	background-color: transparent;
+	border-color: var(--color-primary);
+	color: var(--color-primary);
+}
+
+.btn-outline-primary:hover {
+	background-color: var(--color-primary);
+	color: var(--color-white);
+}
+
+.btn-link {
+	color: var(--color-primary);
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.btn-link:hover {
+	color: var(--color-text);
+	text-decoration: underline;
 }

@@ -57,13 +57,16 @@ class Recipe extends Entity {
 		cholesterol: null,
 	};
 
+	/** @type {number} Star rating */
+	#stars;
+
 	/** @type {IngredientSection[]} Ingredient sections */
 	#ingredients = [];
 
 	/** @type {string} Cooking directions */
 	#directions;
 
-	constructor({ id, code, name, description, image, prepTime, cookTime, categoryId, authorId, nutrition, ingredients, directions }) {
+	constructor({ id, code, name, description, image, prepTime, cookTime, categoryId, authorId, nutrition, ingredients, directions, stars }) {
 		super(id);
 		this.code = code;
 		this.name = name;
@@ -76,6 +79,7 @@ class Recipe extends Entity {
 		this.nutrition = nutrition;
 		this.ingredients = ingredients;
 		this.directions = directions;
+		this.stars = stars;
 	}
 
 	get code() {
@@ -217,6 +221,19 @@ class Recipe extends Entity {
 		this.#directions = directions.trim();
 	}
 
+	get stars() {
+		return this.#stars;
+	}
+
+	set stars(stars) {
+		const validation = Validator.ratingStars.valid(stars);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Stars: ${errors}`);
+		}
+		this.#stars = stars;
+	}
+
 	getTotalTime() {
 		return this.#prepTime + this.#cookTime;
 	}
@@ -253,6 +270,7 @@ class Recipe extends Entity {
 			nutrition: data.nutrition || {},
 			ingredients: data.ingredients || [],
 			directions: data.directions,
+			stars: data.stars || 0,
 		});
 	}
 }

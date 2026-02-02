@@ -1,7 +1,7 @@
 import { ROUTES } from '../../core/router/const.js';
 import Logger from '../../utils/logger.js';
 
-const MENU_ITEMS = Object.values(ROUTES);
+const MENU_ITEMS = Object.values(ROUTES).filter((route) => ['Home', 'Recipes', 'Blog', 'About', 'Contact'].includes(route.label));
 const HOME_MENU_ITEM = MENU_ITEMS.find((item) => item.label.match(/^Home/i));
 
 const SOCIAL_LINKS = [
@@ -85,7 +85,8 @@ const Footer = () => `
 `;
 
 export class Layout {
-	constructor(root) {
+	constructor() {
+		const root = document.getElementById('root');
 		if (!root || !(root instanceof HTMLElement)) throw new Error('Root element is required for Layout initialization.');
 		if (typeof window === 'undefined') throw new Error('Window object is not available.');
 		this.root = root;

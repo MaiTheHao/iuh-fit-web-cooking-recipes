@@ -70,7 +70,7 @@ const initData = () => {
 			id: 'r1',
 			code: 'REC_PHO_BO',
 			name: 'Phở Bò Truyền Thống',
-			description: '**Món ăn quốc hồn quốc túy** của Việt Nam. Nước dùng _thơm phức_ mùi quế hồi, hòa quyện cùng bánh phở mềm và thịt bò ngọt lịm.',
+			description: 'Món ăn quốc hồn quốc túy của Việt Nam. Nước dùng thơm phức mùi quế hồi, hòa quyện cùng bánh phở mềm và thịt bò ngọt lịm.',
 			ingredients: [
 				{
 					section: 'Nguyên liệu chính',
@@ -101,13 +101,14 @@ const initData = () => {
 				carbs: 58,
 				cholesterol: 65,
 			},
+			stars: 5,
 		}),
 
 		new Recipe({
 			id: 'r2',
 			code: 'REC_SALAD_BO',
 			name: 'Salad Bơ Trứng',
-			description: 'Món khai vị **healthy**, giàu chất béo tốt. _Phù hợp cho người ăn kiêng_ và giảm cân.',
+			description: 'Món khai vị healthy, giàu chất béo tốt. Phù hợp cho người ăn kiêng và giảm cân.',
 			ingredients: [
 				{
 					section: 'Thành phần',
@@ -132,13 +133,14 @@ const initData = () => {
 				carbs: 12,
 				cholesterol: 185,
 			},
+			stars: 4,
 		}),
 
 		new Recipe({
 			id: 'r3',
 			code: 'REC_BANH_FLAN',
 			name: 'Bánh Flan Caramen',
-			description: 'Béo ngậy vị **trứng sữa**, thơm lừng mùi _caramen đắng nhẹ_. Món tráng miệng hoàn hảo.',
+			description: 'Béo ngậy vị trứng sữa, thơm lừng mùi caramen đắng nhẹ. Món tráng miệng hoàn hảo.',
 			ingredients: [
 				{
 					section: 'Hỗn hợp trứng',
@@ -169,13 +171,14 @@ const initData = () => {
 				carbs: 24,
 				cholesterol: 120,
 			},
+			stars: 5,
 		}),
 
 		new Recipe({
 			id: 'r4',
 			code: 'REC_SUON_XAO_CHUA_NGOT',
 			name: 'Sườn Xào Chua Ngọt',
-			description: 'Sườn non mềm thấm đẫm sốt **chua ngọt đậm đà**. Món mặn _cực kỳ đưa cơm_.',
+			description: 'Sườn non mềm thấm đẫm sốt chua ngọt đậm đà. Món mặn cực kỳ đưa cơm.',
 			ingredients: [
 				{
 					section: 'Chính',
@@ -202,13 +205,14 @@ const initData = () => {
 				carbs: 15,
 				cholesterol: 80,
 			},
+			stars: 5,
 		}),
 
 		new Recipe({
 			id: 'r5',
 			code: 'REC_SINH_TO_XOAI',
 			name: 'Sinh Tố Xoài Chuối',
-			description: 'Giải nhiệt mùa hè với vị ngọt **tự nhiên** từ trái cây tươi. _Thơm ngon và mát lạnh_.',
+			description: 'Giải nhiệt mùa hè với vị ngọt tự nhiên từ trái cây tươi. Thơm ngon và mát lạnh.',
 			ingredients: [
 				{
 					section: 'Hoa quả',
@@ -238,13 +242,14 @@ const initData = () => {
 				carbs: 35,
 				cholesterol: 5,
 			},
+			stars: 3,
 		}),
 
 		new Recipe({
 			id: 'r6',
 			code: 'REC_BANH_MI',
 			name: 'Bánh Mì Thập Cẩm',
-			description: 'Bữa sáng **nhanh gọn**, đầy đủ dinh dưỡng với vỏ bánh _giòn rụm_.',
+			description: 'Bữa sáng nhanh gọn, đầy đủ dinh dưỡng với vỏ bánh giòn rụm.',
 			ingredients: [
 				{
 					section: 'Thành phần',
@@ -269,13 +274,14 @@ const initData = () => {
 				carbs: 48,
 				cholesterol: 40,
 			},
+			stars: 4,
 		}),
 
 		new Recipe({
 			id: 'r7',
 			code: 'REC_CANH_CHUA_CA_LOC',
 			name: 'Canh Chua Cá Lóc',
-			description: 'Hương vị **miền Tây** dân dã. Vị _chua thanh_ của me hòa quyện với thịt cá ngọt mềm.',
+			description: 'Hương vị miền Tây dân dã. Vị chua thanh của me hòa quyện với thịt cá ngọt mềm.',
 			ingredients: [
 				{
 					section: 'Cá',
@@ -303,12 +309,13 @@ const initData = () => {
 				carbs: 10,
 				cholesterol: 45,
 			},
+			stars: 3,
 		}),
 		new Recipe({
 			id: 'r8',
 			code: 'REC_BUN_CHA',
 			name: 'Bún Chả Hà Nội',
-			description: 'Tinh hoa ẩm thực **Hà Thành**. Chả nướng than hoa _thơm lừng_ ăn kèm nước chấm chua ngọt và rau sống.',
+			description: 'Tinh hoa ẩm thực Hà Thành. Chả nướng than hoa thơm lừng ăn kèm nước chấm chua ngọt và rau sống.',
 			ingredients: [
 				{
 					section: 'Thịt & Chả',
@@ -332,7 +339,7 @@ const initData = () => {
 			cookTime: 20,
 			categoryId: 'c2',
 			authorId: 'u1',
-			image: 'https://cdn.tgdd.vn/Files/2017/04/06/969188/cach-lam-bun-cha-ha-noi-truyen-thong-ngon-tai-nha-202201241101416803.jpg',
+			image: 'https://sunhouse.com.vn/pic/news/images/image-20211229181528-1.jpeg',
 			nutrition: {
 				calories: 550,
 				protein: 28,
@@ -340,13 +347,14 @@ const initData = () => {
 				carbs: 60,
 				cholesterol: 70,
 			},
+			stars: 5,
 		}),
 
 		new Recipe({
 			id: 'r9',
 			code: 'REC_DAU_HU_SOT_CA',
 			name: 'Đậu Hũ Sốt Cà Chua',
-			description: 'Món chay **quốc dân** đơn giản mà đưa cơm. Đậu hũ chiên vàng thấm đẫm sốt cà chua _đậm đà_.',
+			description: 'Món chay quốc dân đơn giản mà đưa cơm. Đậu hũ chiên vàng thấm đẫm sốt cà chua đậm đà.',
 			ingredients: [
 				{
 					section: 'Chính',
@@ -368,7 +376,7 @@ const initData = () => {
 			cookTime: 15,
 			categoryId: 'c1',
 			authorId: 'u2',
-			image: 'https://cdn.tgdd.vn/Files/2019/07/04/1177439/cach-lam-dau-hu-sot-ca-chua-ngon-ngat-ngay-202201080949511195.jpg',
+			image: 'https://www.thatlangon.com/wp-content/uploads/2021/06/cong-thuc-cach-lam-dau-sot-ca-chua.jpg',
 			nutrition: {
 				calories: 200,
 				protein: 12,
@@ -376,13 +384,14 @@ const initData = () => {
 				carbs: 15,
 				cholesterol: 0,
 			},
+			stars: 3,
 		}),
 
 		new Recipe({
 			id: 'r10',
 			code: 'REC_TRA_DAO_CAM_SA',
 			name: 'Trà Đào Cam Sả',
-			description: 'Thức uống **giải nhiệt** sành điệu. Vị chát nhẹ của trà kết hợp vị _ngọt thanh_ của đào và hương sả nồng nàn.',
+			description: 'Thức uống giải nhiệt sành điệu. Vị chát nhẹ của trà kết hợp vị ngọt thanh của đào và hương sả nồng nàn.',
 			ingredients: [
 				{
 					section: 'Pha chế',
@@ -399,7 +408,7 @@ const initData = () => {
 			cookTime: 5,
 			categoryId: 'c4',
 			authorId: 'u3',
-			image: 'https://cdn.tgdd.vn/Files/2019/06/18/1173954/cach-lam-tra-dao-cam-sa-don-gian-tai-nha-giai-nhiet-mua-he-202112311456208940.jpg',
+			image: 'https://th.bing.com/th/id/OIP.nUDz8X3RAO7t8EPkvOvHUAHaE8?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
 			nutrition: {
 				calories: 120,
 				protein: 0,
@@ -407,13 +416,14 @@ const initData = () => {
 				carbs: 30,
 				cholesterol: 0,
 			},
+			stars: 4,
 		}),
 
 		new Recipe({
 			id: 'r11',
 			code: 'REC_CHE_KHUC_BACH',
 			name: 'Chè Khúc Bạch',
-			description: 'Món tráng miệng **thanh mát**. Viên khúc bạch _béo ngậy_ tan trong miệng cùng hạnh nhân lát giòn tan.',
+			description: 'Món tráng miệng thanh mát. Viên khúc bạch béo ngậy tan trong miệng cùng hạnh nhân lát giòn tan.',
 			ingredients: [
 				{
 					section: 'Thạch',
@@ -437,7 +447,7 @@ const initData = () => {
 			cookTime: 240,
 			categoryId: 'c3',
 			authorId: 'u2',
-			image: 'https://cdn.tgdd.vn/Files/2021/04/24/1345869/cach-lam-che-khuc-bach-pho-mai-mem-tan-giai-nhiet-cho-ngay-he-202104242250009653.jpg',
+			image: 'https://tse1.mm.bing.net/th/id/OIP.F7-D-Pw-p74UZOnk58y5hwHaEK?rs=1&pid=ImgDetMain&o=7&rm=3',
 			nutrition: {
 				calories: 300,
 				protein: 5,
@@ -445,13 +455,14 @@ const initData = () => {
 				carbs: 35,
 				cholesterol: 40,
 			},
+			stars: 3,
 		}),
 
 		new Recipe({
 			id: 'r12',
 			code: 'REC_XOI_GAC',
 			name: 'Xôi Gấc Đậu Xanh',
-			description: 'Món ăn sáng **may mắn** với màu đỏ tự nhiên. Hạt nếp _dẻo thơm_ quyện vị bùi của đậu xanh.',
+			description: 'Món ăn sáng may mắn với màu đỏ tự nhiên. Hạt nếp dẻo thơm quyện vị bùi của đậu xanh.',
 			ingredients: [
 				{
 					section: 'Nguyên liệu',
@@ -468,7 +479,7 @@ const initData = () => {
 			cookTime: 40,
 			categoryId: 'c5',
 			authorId: 'u1',
-			image: 'https://cdn.tgdd.vn/Files/2017/02/20/951806/cach-nau-xoi-gac-dau-xanh-deo-ngon-dep-mat-don-tet-202201191409278912.jpg',
+			image: 'https://file.hstatic.net/200000624211/file/10_82c93d5d5dba4eb8a045194429cebfda_grande.jpg',
 			nutrition: {
 				calories: 400,
 				protein: 10,
@@ -476,13 +487,14 @@ const initData = () => {
 				carbs: 70,
 				cholesterol: 0,
 			},
+			stars: 5,
 		}),
 
 		new Recipe({
 			id: 'r13',
 			code: 'REC_GA_CHIEN_MAM',
 			name: 'Cánh Gà Chiên Nước Mắm',
-			description: 'Lớp da **giòn rụm**, thịt bên trong mềm ẩm. Vị mặn ngọt _kích thích vị giác_ cực độ.',
+			description: 'Lớp da giòn rụm, thịt bên trong mềm ẩm. Vị mặn ngọt kích thích vị giác cực độ.',
 			ingredients: [
 				{
 					section: 'Thịt',
@@ -502,7 +514,7 @@ const initData = () => {
 			cookTime: 20,
 			categoryId: 'c2',
 			authorId: 'u3',
-			image: 'https://cdn.tgdd.vn/Files/2017/03/24/964493/bi-quyet-lam-canh-ga-chien-nuoc-mam-vang-ngon-dam-da-202201051052166683.jpg',
+			image: 'https://tse1.mm.bing.net/th/id/OIP.S-fsSeT9Pnxh31AExwPE-wHaE8?rs=1&pid=ImgDetMain&o=7&rm=3',
 			nutrition: {
 				calories: 450,
 				protein: 30,
@@ -510,13 +522,14 @@ const initData = () => {
 				carbs: 10,
 				cholesterol: 90,
 			},
+			stars: 5,
 		}),
 
 		new Recipe({
 			id: 'r14',
 			code: 'REC_NAM_KHO_TIEU',
 			name: 'Nấm Rơm Kho Tiêu',
-			description: 'Món chay **đậm đà** hương vị đồng quê. Nước kho _sánh quyện_ chấm rau luộc cực ngon.',
+			description: 'Món chay đậm đà hương vị đồng quê. Nước kho sánh quyện chấm rau luộc cực ngon.',
 			ingredients: [
 				{
 					section: 'Chính',
@@ -535,7 +548,7 @@ const initData = () => {
 			cookTime: 20,
 			categoryId: 'c1',
 			authorId: 'u2',
-			image: 'https://cdn.tgdd.vn/Files/2021/08/17/1375936/cach-lam-nam-rom-kho-tieu-cay-nong-bat-com-vo-cung-202108172230325902.jpg',
+			image: 'https://yummyday.vn/uploads/images/nam-rom-kho-tieu-5.jpg',
 			nutrition: {
 				calories: 80,
 				protein: 4,
@@ -543,13 +556,14 @@ const initData = () => {
 				carbs: 10,
 				cholesterol: 0,
 			},
+			stars: 3,
 		}),
 
 		new Recipe({
 			id: 'r15',
 			code: 'REC_SUA_DAU_NANH',
 			name: 'Sữa Đậu Nành Lá Dứa',
-			description: 'Thức uống **dinh dưỡng** cho mọi lứa tuổi. Hương lá dứa _thơm nhẹ_ giúp thư giãn tinh thần.',
+			description: 'Thức uống dinh dưỡng cho mọi lứa tuổi. Hương lá dứa thơm nhẹ giúp thư giãn tinh thần.',
 			ingredients: [
 				{
 					section: 'Nguyên liệu',
@@ -565,7 +579,7 @@ const initData = () => {
 			cookTime: 30,
 			categoryId: 'c4',
 			authorId: 'u1',
-			image: 'https://cdn.tgdd.vn/Files/2020/05/21/1257124/bi-quyet-nau-sua-dau-nanh-thom-ngon-bang-may-lam-sua-hat-202005211041075727.jpg',
+			image: 'https://tse2.mm.bing.net/th/id/OIP.PpalqPFz2vu58hl91VdheAHaFj?rs=1&pid=ImgDetMain&o=7&rm=3',
 			nutrition: {
 				calories: 100,
 				protein: 8,
@@ -573,13 +587,14 @@ const initData = () => {
 				carbs: 12,
 				cholesterol: 0,
 			},
+			stars: 3,
 		}),
 
 		new Recipe({
 			id: 'r16',
 			code: 'REC_SUA_CHUA_NEP_CAM',
 			name: 'Sữa Chua Nếp Cẩm',
-			description: 'Sự kết hợp hoàn hảo giữa sữa chua **lên men** và nếp cẩm _dẻo bùi_. Tốt cho tiêu hóa.',
+			description: 'Sự kết hợp hoàn hảo giữa sữa chua lên men và nếp cẩm dẻo bùi. Tốt cho tiêu hóa.',
 			ingredients: [
 				{
 					section: 'Nếp cẩm',
@@ -599,7 +614,7 @@ const initData = () => {
 			cookTime: 40,
 			categoryId: 'c3',
 			authorId: 'u3',
-			image: 'https://cdn.tgdd.vn/Files/2019/09/22/1200926/cach-lam-sua-chua-nep-cam-ngon-dung-dieu-de-an-hoac-kinh-doanh-202201201552579172.jpg',
+			image: 'https://befresh.vn/wp-content/uploads/2023/04/s-a-chua-n-p-c-m-1.jpg',
 			nutrition: {
 				calories: 250,
 				protein: 6,
@@ -607,13 +622,14 @@ const initData = () => {
 				carbs: 45,
 				cholesterol: 10,
 			},
+			stars: 3,
 		}),
 
 		new Recipe({
 			id: 'r17',
 			code: 'REC_BANH_CUON',
 			name: 'Bánh Cuốn Nóng',
-			description: 'Bữa sáng **nhẹ bụng**. Vỏ bánh tráng mỏng _trong veo_, nhân thịt mộc nhĩ giòn sần sật.',
+			description: 'Bữa sáng nhẹ bụng. Vỏ bánh tráng mỏng trong veo, nhân thịt mộc nhĩ giòn sần sật.',
 			ingredients: [
 				{
 					section: 'Vỏ bánh',
@@ -636,7 +652,7 @@ const initData = () => {
 			cookTime: 30,
 			categoryId: 'c5',
 			authorId: 'u2',
-			image: 'https://cdn.tgdd.vn/Files/2018/06/15/1095594/cach-lam-banh-cuon-bang-chao-chong-dinh-vo-cung-don-gian-202206031358249826.jpg',
+			image: 'https://cdn.eva.vn/upload/4-2023/images/2023-11-09/cach-lam-banh-cuon-bang-chao-chong-dinh-tai-nha-ngon-nhuc-nhoi-banh-cuon-eva-002-1699523484-381-width780height440.jpg',
 			nutrition: {
 				calories: 320,
 				protein: 12,
@@ -644,6 +660,7 @@ const initData = () => {
 				carbs: 45,
 				cholesterol: 30,
 			},
+			stars: 4,
 		}),
 	];
 
@@ -759,7 +776,7 @@ Hãy đi chợ sớm để chọn được những miếng thịt ngon nhất nh
 
 	blogPostRepo.saveBatch(blogPosts);
 
-	localStorage.setItem(INIT_KEY, 'true');
+	// localStorage.setItem(INIT_KEY, 'true');
 	Logger.info('--- MOCK DATA INITIALIZED SUCCESSFULLY ---');
 };
 

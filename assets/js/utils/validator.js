@@ -22,6 +22,16 @@ const Validator = {
 		},
 	},
 
+	ratingStars: {
+		valid(stars) {
+			const isValid = Number.isInteger(stars) && stars >= 0 && stars <= 5;
+			return { isValid: isValid, errors: { format: isValid ? null : 'Stars must be an integer between 0 and 5' } };
+		},
+		isValid(stars) {
+			return Validator.ratingStars.valid(stars).isValid;
+		},
+	},
+
 	fullName: {
 		validLength(fullName) {
 			const trimmed = fullName.trim();
