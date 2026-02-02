@@ -1,8 +1,10 @@
 import Logger from '../../utils/logger.js';
+import { LOCAL_STORAGE_CONFIG } from '../config/localstorage.js';
+import Entity from '../entities/entity.js';
 
 class BaseRepository {
 	#collectionName;
-	#prefix = 'RECIPE4F_';
+	#prefix = LOCAL_STORAGE_CONFIG.prefix;
 
 	constructor(collectionName) {
 		if (!collectionName) throw new Error('Collection name is required');
@@ -33,6 +35,10 @@ class BaseRepository {
 	/** @returns {boolean} */
 	save(entity) {
 		try {
+			if (!entity || !(entity instanceof Entity)) {
+				Logger.error(`Invalid entity provided to save in ${this.#collectionName}`);
+				return false;
+			}
 			const items = this.findAllRaw();
 			const plainData = entity.toJSON();
 
@@ -50,6 +56,24 @@ class BaseRepository {
 			Logger.error(`Error saving to ${this.#collectionName}`, error);
 			return false;
 		}
+	}
+
+	/** @return { {total: number, success: number, failed: number, percent: number} } */
+	saveBatch(entities) {
+		if (!Array.isArray(entities)) throw new Error('Entities must be an array');
+		let total = entities.length;
+		let successCount = 0;
+
+		entities.forEach((entity) => {
+			if (this.save(entity)) successCount++;
+		});
+
+		return {
+			total: total,
+			success: successCount,
+			failed: total - successCount,
+			percent: total === 0 ? 0 : Math.round((successCount / total) * 100),
+		};
 	}
 
 	/** @returns {boolean} */

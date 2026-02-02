@@ -8,8 +8,8 @@ class BlogPostRepository extends BaseRepository {
 		if (BlogPostRepository.#instance) {
 			return BlogPostRepository.#instance;
 		}
-		BlogPostRepository.#instance = this;
 		super('BLOG_POSTS');
+		BlogPostRepository.#instance = this;
 	}
 
 	/** @returns {BlogPostRepository} */

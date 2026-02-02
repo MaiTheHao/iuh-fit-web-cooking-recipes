@@ -76,6 +76,8 @@ const Validator = {
 				new URL(url);
 				isValidUrl = true;
 			} catch {
+				isValidUrl = false;
+				return { isValid: false, errors: { format: 'Invalid URL format' } };
 			} finally {
 				return { isValid: isValidUrl, errors: { format: isValidUrl ? null : 'Invalid URL format' } };
 			}
@@ -87,21 +89,28 @@ const Validator = {
 
 	image: {
 		valid(imagePath) {
-			if (!imagePath) return ['Image path is required', false];
-			const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg)$/i;
-			const isValid = imageExtensions.test(imagePath);
-			return { isValid: isValid, errors: { format: isValid ? null : 'Invalid image format' } };
+			if (!imagePath) return { isValid: false, errors: { format: 'Image path is required' } };
+
+			const commonExtensions = /\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i;
+			const bingPattern = /\/th\/id\/OIP\.[\w-]+/i;
+			const isValid = commonExtensions.test(imagePath) || bingPattern.test(imagePath);
+
+			return {
+				isValid,
+				errors: { format: isValid ? null : 'Invalid image format' },
+			};
 		},
+
 		isValid(imagePath) {
-			return Validator.image.valid(imagePath).isValid;
+			return this.valid(imagePath).isValid;
 		},
 	},
 
 	imageUrl: {
 		valid(imageUrl) {
-			const [urlErr, urlOk] = Validator.url.valid(imageUrl);
-			const [imgErr, imgOk] = Validator.image.valid(imageUrl);
-			return { isValid: urlOk && imgOk, errors: { url: urlErr, image: imgErr } };
+			const { errors: urlErr, isValid: urlOk } = Validator.url.valid(imageUrl);
+			const { errors: imgErr, isValid: imgOk } = Validator.image.valid(imageUrl);
+			return { isValid: urlOk && imgOk, errors: { urlFormat: urlErr.format, imageFormat: imgErr.format } };
 		},
 		isValid(imageUrl) {
 			if (!Validator.url.isValid(imageUrl)) return false;
@@ -137,6 +146,76 @@ const Validator = {
 		},
 		isValid(code) {
 			return Validator.recipeCode.valid(code).isValid;
+		},
+	},
+
+	recipeNutrition: {
+		valid(nutrition) {
+			if (typeof nutrition !== 'object' || nutrition === null) {
+				return { isValid: false, errors: { type: 'Nutrition must be an object' } };
+			}
+			const errors = {};
+			let isValid = true;
+
+			if (nutrition.calories !== undefined && nutrition.calories !== null) {
+				if (typeof nutrition.calories !== 'number' || nutrition.calories < 0 || nutrition.calories > 10000) {
+					isValid = false;
+					errors.calories = 'calories must be a number between 0 and 10000';
+				} else {
+					errors.calories = null;
+				}
+			} else {
+				errors.calories = null;
+			}
+
+			if (nutrition.protein !== undefined && nutrition.protein !== null) {
+				if (typeof nutrition.protein !== 'number' || nutrition.protein < 0 || nutrition.protein > 1000) {
+					isValid = false;
+					errors.protein = 'protein must be a number between 0 and 1000';
+				} else {
+					errors.protein = null;
+				}
+			} else {
+				errors.protein = null;
+			}
+
+			if (nutrition.fat !== undefined && nutrition.fat !== null) {
+				if (typeof nutrition.fat !== 'number' || nutrition.fat < 0 || nutrition.fat > 1000) {
+					isValid = false;
+					errors.fat = 'fat must be a number between 0 and 1000';
+				} else {
+					errors.fat = null;
+				}
+			} else {
+				errors.fat = null;
+			}
+
+			if (nutrition.carbs !== undefined && nutrition.carbs !== null) {
+				if (typeof nutrition.carbs !== 'number' || nutrition.carbs < 0 || nutrition.carbs > 1000) {
+					isValid = false;
+					errors.carbs = 'carbs must be a number between 0 and 1000';
+				} else {
+					errors.carbs = null;
+				}
+			} else {
+				errors.carbs = null;
+			}
+
+			if (nutrition.cholesterol !== undefined && nutrition.cholesterol !== null) {
+				if (typeof nutrition.cholesterol !== 'number' || nutrition.cholesterol < 0 || nutrition.cholesterol > 5000) {
+					isValid = false;
+					errors.cholesterol = 'cholesterol must be a number between 0 and 5000';
+				} else {
+					errors.cholesterol = null;
+				}
+			} else {
+				errors.cholesterol = null;
+			}
+
+			return { isValid, errors };
+		},
+		isValid(nutrition) {
+			return Validator.recipeNutrition.valid(nutrition).isValid;
 		},
 	},
 

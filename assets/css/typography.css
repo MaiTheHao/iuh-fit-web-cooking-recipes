@@ -1,23 +1,14 @@
-Font Weights .fw-thin {
-	font-weight: 100;
-}
-.fw-extralight {
-	font-weight: 200;
-}
-.fw-light {
-	font-weight: 300;
-}
-.fw-normal {
-	font-weight: 400;
-}
 .fw-medium {
 	font-weight: 500;
 }
 .fw-semibold {
 	font-weight: 600;
 }
-.fw-bold {
-	font-weight: 700;
+.fw-thin {
+	font-weight: 100;
+}
+.fw-extralight {
+	font-weight: 200;
 }
 .fw-extrabold {
 	font-weight: 800;
@@ -26,62 +17,9 @@ Font Weights .fw-thin {
 	font-weight: 900;
 }
 
-/* Font Styles */
-.fst-italic {
-	font-style: italic;
-}
-.fst-normal {
-	font-style: normal;
-}
-
-/* Text Transformations */
-.text-uppercase {
-	text-transform: uppercase;
-}
-.text-lowercase {
-	text-transform: lowercase;
-}
-.text-capitalize {
-	text-transform: capitalize;
-}
-
-/* Text Alignments */
-.text-start {
-	text-align: left;
-}
-.text-center {
-	text-align: center;
-}
-.text-end {
-	text-align: right;
-}
 .text-justify {
 	text-align: justify;
 }
 .highlight-text {
 	color: var(--color-accent--orange);
-}
-.ff-main {
-	font-family: var(--font-main);
-}
-.ff-serif {
-	font-family: var(--font-serif);
-}
-em {
-	font-style: italic;
-}
-strong {
-	font-weight: 700;
-}
-.text-decoration-none {
-	text-decoration: none;
-}
-.text-underline {
-	text-decoration: underline;
-}
-.text-line-through {
-	text-decoration: line-through;
-}
-.text-muted {
-	opacity: 0.6;
 }

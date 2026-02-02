@@ -8,7 +8,10 @@ class Entity {
 		if (new.target === Entity) throw new Error('Cannot instantiate abstract class Entity directly');
 
 		const validation = Validator.id.valid(id);
-		if (!validation[1]) throw new Error(`Entity ID: ${validation[0]}`);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Entity ID: ${errors}`);
+		}
 		this.#id = id.trim();
 	}
 

@@ -34,7 +34,7 @@ class BlogPost extends Entity {
 	/** @type {string[]} Tags array */
 	#tags = [];
 
-	constructor(id, title, excerpt, content, image, authorId, publishedAt = new Date().toISOString(), tags = []) {
+	constructor({ id, title, excerpt, content, image, authorId, publishedAt = new Date().toISOString(), tags = [] }) {
 		super(id);
 		this.title = title;
 		this.excerpt = excerpt;
@@ -51,7 +51,10 @@ class BlogPost extends Entity {
 
 	set title(title) {
 		const validation = Validator.string.valid(title, 10, 150);
-		if (!validation.isValid) throw new Error(`Blog title: ${validation.errors.length}`);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Blog title: ${errors}`);
+		}
 		this.#title = title.trim();
 	}
 
@@ -61,7 +64,10 @@ class BlogPost extends Entity {
 
 	set excerpt(excerpt) {
 		const validation = Validator.string.valid(excerpt, 50, 300);
-		if (!validation.isValid) throw new Error(`Blog excerpt: ${validation.errors.length}`);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Blog excerpt: ${errors}`);
+		}
 		this.#excerpt = excerpt.trim();
 	}
 
@@ -71,7 +77,10 @@ class BlogPost extends Entity {
 
 	set content(content) {
 		const validation = Validator.string.valid(content, 100);
-		if (!validation.isValid) throw new Error(`Blog content: ${validation.errors.length}`);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Blog content: ${errors}`);
+		}
 		this.#content = content;
 	}
 
@@ -93,8 +102,11 @@ class BlogPost extends Entity {
 	}
 
 	set authorId(authorId) {
-		const [err, isValid] = Validator.id.valid(authorId);
-		if (!isValid) throw new Error(`Blog author ID: ${err}`);
+		const validation = Validator.id.valid(authorId);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Blog author ID: ${errors}`);
+		}
 		this.#authorId = authorId.trim();
 	}
 
@@ -103,8 +115,11 @@ class BlogPost extends Entity {
 	}
 
 	set publishedAt(publishedAt) {
-		const [err, isValid] = Validator.dateString.valid(publishedAt);
-		if (!isValid) throw new Error(`Blog publishedAt: ${err}`);
+		const validation = Validator.dateString.valid(publishedAt);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Blog publishedAt: ${errors}`);
+		}
 		this.#publishedAt = publishedAt;
 	}
 
@@ -114,7 +129,10 @@ class BlogPost extends Entity {
 
 	set tags(tags) {
 		const validation = Validator.tags.valid(tags);
-		if (!validation.isValid) throw new Error(`Blog tags: ${validation.errors.length}`);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Blog tags: ${errors}`);
+		}
 		this.#tags = tags;
 	}
 
@@ -132,7 +150,16 @@ class BlogPost extends Entity {
 	}
 
 	static fromJSON(data) {
-		return new BlogPost(data.id, data.title, data.excerpt, data.content, data.image, data.authorId, data.publishedAt, data.tags || []);
+		return new BlogPost({
+			id: data.id,
+			title: data.title,
+			excerpt: data.excerpt,
+			content: data.content,
+			image: data.image,
+			authorId: data.authorId,
+			publishedAt: data.publishedAt,
+			tags: data.tags || [],
+		});
 	}
 }
 

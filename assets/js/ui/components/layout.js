@@ -14,10 +14,7 @@ const ASSETS = {
 	logo: '../assets/img/logo.svg',
 };
 
-const renderMenuItems = (className) =>
-	MENU_ITEMS.map((item) => `<li><a href="${item.redirectPath}" class="${className} ${item.redirectPath === '/pages' ? className + '--active' : ''}">${item.label}</a></li>`).join(
-		'',
-	);
+const renderMenuItems = (className) => MENU_ITEMS.map((item) => `<li><a href="${item.redirectPath}" class="${className}">${item.label}</a></li>`).join('');
 
 const renderSocialIcons = (isNav = false) =>
 	SOCIAL_LINKS.map(
@@ -68,7 +65,7 @@ const Footer = () => `
                     <img src="${ASSETS.logo}" alt="Logo" />
                 </a>
                 <p class="footer__description ff-main fw-light">
-                    <strong class="highlight-text">Recipe4f</strong> is your ultimate destination for <strong>delicious recipes</strong>, cooking tips, and culinary inspiration. Join our community of <span class="fw-medium">food enthusiasts</span> and elevate your cooking skills today!
+                    <strong class="highlight-text">Recipe4f</strong> is your ultimate destination for <strong class="fw-bold">delicious recipes</strong>, cooking tips, and culinary inspiration. Join our community of <span class="fw-medium">food enthusiasts</span> and elevate your cooking skills today!
                 </p>
             </div>
             <nav class="footer__top__part footer__nav">
@@ -117,7 +114,7 @@ export class Layout {
 		selectors.forEach((selector) => {
 			this.root.querySelectorAll(selector).forEach((link) => {
 				const isActive = link.getAttribute('href') === currentPath;
-				link.classList.toggle(`${selector.slice(1)}--active`, isActive);
+				link.classList.toggle('active', isActive);
 			});
 		});
 	}

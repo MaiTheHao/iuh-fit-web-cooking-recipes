@@ -55,7 +55,7 @@
 	color: var(--color-text-inverse);
 }
 
-.header__link--active {
+.header__link.active {
 	background-color: var(--color-primary);
 	color: var(--color-text-inverse);
 	cursor: default;

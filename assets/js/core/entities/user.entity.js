@@ -14,13 +14,13 @@ class User extends Entity {
 	/** @type {string} User avatar URL */
 	#avatar;
 
-	/** @type {string} User role ID */
-	#roleId;
+	/** @type {string} User role*/
+	#role;
 
 	/** @type {string[]} Favorite recipe IDs */
 	#favoriteRecipes = [];
 
-	constructor(id, email, fullName, password, avatar, roleId, favoriteRecipes = []) {
+	constructor({ id, email, fullName, password, avatar, roleId, favoriteRecipes = [] }) {
 		super(id);
 		this.email = email;
 		this.fullName = fullName;
@@ -82,14 +82,14 @@ class User extends Entity {
 		this.#avatar = avatar;
 	}
 
-	get roleId() {
-		return this.#roleId;
+	get role() {
+		return this.#role;
 	}
 
-	set roleId(roleId) {
-		const [err, isValid] = Validator.id.valid(roleId);
+	set role(role) {
+		const [err, isValid] = Validator.id.valid(role);
 		if (!isValid) throw new Error(`Role ID: ${err}`);
-		this.#roleId = roleId.trim();
+		this.#role = role.trim();
 	}
 
 	get favoriteRecipes() {
@@ -108,13 +108,21 @@ class User extends Entity {
 			fullName: this.#fullName,
 			password: this.#password,
 			avatar: this.#avatar,
-			roleId: this.#roleId,
+			role: this.#role,
 			favoriteRecipes: structuredClone(this.#favoriteRecipes),
 		};
 	}
 
 	static fromJSON(data) {
-		return new User(data.id, data.email, data.fullName, data.password, data.avatar, data.roleId, data.favoriteRecipes || []);
+		return new User({
+			id: data.id,
+			email: data.email,
+			fullName: data.fullName,
+			password: data.password,
+			avatar: data.avatar,
+			roleId: data.roleId,
+			favoriteRecipes: data.favoriteRecipes || [],
+		});
 	}
 }
 

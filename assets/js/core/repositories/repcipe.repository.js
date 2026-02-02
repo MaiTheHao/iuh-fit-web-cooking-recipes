@@ -8,8 +8,8 @@ class RecipeRepository extends BaseRepository {
 		if (RecipeRepository.#instance) {
 			return RecipeRepository.#instance;
 		}
-		RecipeRepository.#instance = this;
 		super('RECIPES');
+		RecipeRepository.#instance = this;
 	}
 
 	/** @returns {RecipeRepository} */

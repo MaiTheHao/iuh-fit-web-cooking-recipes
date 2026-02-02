@@ -8,8 +8,8 @@ class CategoryRepository extends BaseRepository {
 		if (CategoryRepository.#instance) {
 			return CategoryRepository.#instance;
 		}
-		CategoryRepository.#instance = this;
 		super('CATEGORIES');
+		CategoryRepository.#instance = this;
 	}
 
 	/** @returns {CategoryRepository} */

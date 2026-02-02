@@ -11,7 +11,7 @@ class Category extends Entity {
 	/** @type {string} Category description */
 	#description;
 
-	constructor(id, code, name, description) {
+	constructor({ id, code, name, description }) {
 		super(id);
 		this.code = code;
 		this.name = name;
@@ -23,9 +23,12 @@ class Category extends Entity {
 	}
 
 	set code(code) {
-		const [err, isValid] = Validator.categoryCode.valid(code);
-		if (!isValid) throw new Error(`Category code: ${err}`);
-		this.#code = code;
+		const validation = Validator.categoryCode.valid(code);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Category code: ${errors}`);
+		}
+		this.#code = code.trim();
 	}
 
 	get name() {
@@ -35,7 +38,8 @@ class Category extends Entity {
 	set name(name) {
 		const validation = Validator.string.valid(name, 3, 30);
 		if (!validation.isValid) {
-			throw new Error(`Category name: ${validation.errors.length}`);
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Category name: ${errors}`);
 		}
 		this.#name = name.trim();
 	}
@@ -62,7 +66,12 @@ class Category extends Entity {
 	}
 
 	static fromJSON(data) {
-		return new Category(data.id, data.code, data.name, data.description);
+		return new Category({
+			id: data.id,
+			code: data.code,
+			name: data.name,
+			description: data.description,
+		});
 	}
 }
 

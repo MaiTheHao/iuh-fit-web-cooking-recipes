@@ -63,7 +63,7 @@ class Recipe extends Entity {
 	/** @type {string} Cooking directions */
 	#directions;
 
-	constructor(id, code, name, description, image, prepTime, cookTime, categoryId, authorId, nutrition, ingredients, directions) {
+	constructor({ id, code, name, description, image, prepTime, cookTime, categoryId, authorId, nutrition, ingredients, directions }) {
 		super(id);
 		this.code = code;
 		this.name = name;
@@ -83,8 +83,11 @@ class Recipe extends Entity {
 	}
 
 	set code(code) {
-		const [err, isValid] = Validator.recipeCode.valid(code);
-		if (!isValid) throw new Error(`Recipe code: ${err}`);
+		const validation = Validator.recipeCode.valid(code);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Recipe code: ${errors}`);
+		}
 		this.#code = code;
 	}
 
@@ -94,7 +97,10 @@ class Recipe extends Entity {
 
 	set name(name) {
 		const validation = Validator.string.valid(name, 3, 100);
-		if (!validation.isValid) throw new Error(`Recipe name: ${validation.errors.length}`);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Recipe name: ${errors}`);
+		}
 		this.#name = name.trim();
 	}
 
@@ -104,7 +110,10 @@ class Recipe extends Entity {
 
 	set description(description) {
 		const validation = Validator.string.valid(description, 10, 500);
-		if (!validation.isValid) throw new Error(`Recipe description: ${validation.errors.length}`);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Recipe description: ${errors}`);
+		}
 		this.#description = description.trim();
 	}
 
@@ -126,8 +135,11 @@ class Recipe extends Entity {
 	}
 
 	set prepTime(prepTime) {
-		const [err, isValid] = Validator.positiveInteger.valid(prepTime);
-		if (!isValid) throw new Error(`Prep time: ${err}`);
+		const validation = Validator.positiveInteger.valid(prepTime);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Prep time: ${errors}`);
+		}
 		this.#prepTime = prepTime;
 	}
 
@@ -136,8 +148,11 @@ class Recipe extends Entity {
 	}
 
 	set cookTime(cookTime) {
-		const [err, isValid] = Validator.positiveInteger.valid(cookTime);
-		if (!isValid) throw new Error(`Cook time: ${err}`);
+		const validation = Validator.positiveInteger.valid(cookTime);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Cook time: ${errors}`);
+		}
 		this.#cookTime = cookTime;
 	}
 
@@ -147,7 +162,10 @@ class Recipe extends Entity {
 
 	set categoryId(categoryId) {
 		const validation = Validator.id.valid(categoryId);
-		if (!validation[1]) throw new Error(`Category ID: ${validation[0]}`);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Category ID: ${errors}`);
+		}
 		this.#categoryId = categoryId.trim();
 	}
 
@@ -156,8 +174,11 @@ class Recipe extends Entity {
 	}
 
 	set authorId(authorId) {
-		const [err, isValid] = Validator.id.valid(authorId);
-		if (!isValid) throw new Error(`Author ID: ${err}`);
+		const validation = Validator.id.valid(authorId);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Author ID: ${errors}`);
+		}
 		this.#authorId = authorId.trim();
 	}
 
@@ -166,8 +187,10 @@ class Recipe extends Entity {
 	}
 
 	set nutrition(nutrition) {
-		if (typeof nutrition !== 'object' || nutrition === null) {
-			throw new Error('Nutrition must be an object');
+		const validation = Validator.recipeNutrition.valid(nutrition);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Nutrition: ${errors}`);
 		}
 		this.#nutrition = { ...this.#nutrition, ...nutrition };
 	}
@@ -187,7 +210,10 @@ class Recipe extends Entity {
 
 	set directions(directions) {
 		const validation = Validator.string.valid(directions, 10);
-		if (!validation.isValid) throw new Error(`Directions: ${validation.errors.length}`);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Directions: ${errors}`);
+		}
 		this.#directions = directions.trim();
 	}
 
@@ -214,20 +240,20 @@ class Recipe extends Entity {
 	}
 
 	static fromJSON(data) {
-		return new Recipe(
-			data.id,
-			data.code,
-			data.name,
-			data.description,
-			data.image,
-			data.prepTime,
-			data.cookTime,
-			data.categoryId,
-			data.authorId,
-			data.nutrition || {},
-			data.ingredients || [],
-			data.directions,
-		);
+		return new Recipe({
+			id: data.id,
+			code: data.code,
+			name: data.name,
+			description: data.description,
+			image: data.image,
+			prepTime: data.prepTime,
+			cookTime: data.cookTime,
+			categoryId: data.categoryId,
+			authorId: data.authorId,
+			nutrition: data.nutrition || {},
+			ingredients: data.ingredients || [],
+			directions: data.directions,
+		});
 	}
 }
 
