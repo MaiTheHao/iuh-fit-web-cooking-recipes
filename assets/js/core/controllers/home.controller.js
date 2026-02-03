@@ -28,7 +28,10 @@ class HomeController {
 	}
 
 	initCarousel() {
-		const recipes = this.#recipeService.getHighestRated(10);
+		const recipes = this.#recipeService.getWithCriteria({
+			categories: ['c1', 'c5'],
+			limit: 10,
+		});
 
 		if (recipes.length === 0) {
 			Logger.warn('No recipes found to populate carousel');
@@ -39,7 +42,7 @@ class HomeController {
 		const indicators = carousel.querySelector('.carousel-indicators');
 		const carouselInner = carousel.querySelector('.carousel-inner');
 
-		recipes.slice(0, 10).forEach((recipe, index) => {
+		recipes.forEach((recipe, index) => {
 			const indicator = document.createElement('button');
 			indicator.setAttribute('type', 'button');
 			indicator.setAttribute('data-bs-target', '#carouselId');
@@ -82,7 +85,13 @@ class HomeController {
 	}
 
 	initRecipeList() {
-		const recipes = this.#recipeService.getList();
+		const recipes = this.#recipeService.getWithCriteria({
+			limit: 6,
+			stars: {
+				min: 5,
+				max: 5,
+			},
+		});
 		const recipeList = new RecipeList('recipe-grid');
 
 		recipeList.render(recipes);
