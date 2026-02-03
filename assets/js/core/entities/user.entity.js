@@ -20,14 +20,15 @@ class User extends Entity {
 	/** @type {string[]} Favorite recipe IDs */
 	#favoriteRecipes = [];
 
-	constructor({ id, email, fullName, password, avatar, roleId, favoriteRecipes = [] }) {
+	constructor({ id, email, fullName, password, avatar, role, favoriteRecipes = [] }) {
 		super(id);
 		this.email = email;
 		this.fullName = fullName;
 		this.password = password;
-		this.avatar = avatar;
-		this.roleId = roleId;
+		this.role = role;
 		this.favoriteRecipes = favoriteRecipes;
+
+		if (avatar) this.avatar = avatar;
 	}
 
 	get email() {
@@ -41,6 +42,7 @@ class User extends Entity {
 			throw new Error(`Email: ${errors}`);
 		}
 		this.#email = email;
+		return this;
 	}
 
 	get fullName() {
@@ -54,6 +56,7 @@ class User extends Entity {
 			throw new Error(`Full name: ${errors}`);
 		}
 		this.#fullName = fullName.trim();
+		return this;
 	}
 
 	get password() {
@@ -67,6 +70,7 @@ class User extends Entity {
 			throw new Error(`Password: ${errors}`);
 		}
 		this.#password = password;
+		return this;
 	}
 
 	get avatar() {
@@ -74,12 +78,13 @@ class User extends Entity {
 	}
 
 	set avatar(avatar) {
-		const validation = Validator.imageUrl.valid(avatar);
+		const validation = Validator.url.valid(avatar);
 		if (!validation.isValid) {
 			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
 			throw new Error(`Avatar URL: ${errors}`);
 		}
 		this.#avatar = avatar;
+		return this;
 	}
 
 	get role() {
@@ -87,9 +92,13 @@ class User extends Entity {
 	}
 
 	set role(role) {
-		const [err, isValid] = Validator.id.valid(role);
-		if (!isValid) throw new Error(`Role ID: ${err}`);
+		const validation = Validator.string.valid(role, 2, 255);
+		if (!validation.isValid) {
+			const errors = Object.values(validation.errors).filter(Boolean).join(', ');
+			throw new Error(`Role ID: ${errors}`);
+		}
 		this.#role = role.trim();
+		return this;
 	}
 
 	get favoriteRecipes() {
@@ -99,6 +108,7 @@ class User extends Entity {
 	set favoriteRecipes(recipes) {
 		if (!Array.isArray(recipes)) throw new Error('Favorite recipes must be an array');
 		this.#favoriteRecipes = recipes;
+		return this;
 	}
 
 	toJSON() {
@@ -120,7 +130,7 @@ class User extends Entity {
 			fullName: data.fullName,
 			password: data.password,
 			avatar: data.avatar,
-			roleId: data.roleId,
+			role: data.role,
 			favoriteRecipes: data.favoriteRecipes || [],
 		});
 	}

@@ -29,6 +29,7 @@ class Category extends Entity {
 			throw new Error(`Category code: ${errors}`);
 		}
 		this.#code = code.trim();
+		return this;
 	}
 
 	get name() {
@@ -42,6 +43,7 @@ class Category extends Entity {
 			throw new Error(`Category name: ${errors}`);
 		}
 		this.#name = name.trim();
+		return this;
 	}
 
 	get description() {
@@ -54,6 +56,7 @@ class Category extends Entity {
 			throw new Error(`Category description: ${validation.errors.length}`);
 		}
 		this.#description = description.trim();
+		return this;
 	}
 
 	toJSON() {

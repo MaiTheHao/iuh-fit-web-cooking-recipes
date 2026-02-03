@@ -93,6 +93,7 @@ class Recipe extends Entity {
 			throw new Error(`Recipe code: ${errors}`);
 		}
 		this.#code = code;
+		return this;
 	}
 
 	get name() {
@@ -106,6 +107,7 @@ class Recipe extends Entity {
 			throw new Error(`Recipe name: ${errors}`);
 		}
 		this.#name = name.trim();
+		return this;
 	}
 
 	get description() {
@@ -119,6 +121,7 @@ class Recipe extends Entity {
 			throw new Error(`Recipe description: ${errors}`);
 		}
 		this.#description = description.trim();
+		return this;
 	}
 
 	get image() {
@@ -132,6 +135,7 @@ class Recipe extends Entity {
 			throw new Error(`Recipe image: ${errors}`);
 		}
 		this.#image = image;
+		return this;
 	}
 
 	get prepTime() {
@@ -145,6 +149,7 @@ class Recipe extends Entity {
 			throw new Error(`Prep time: ${errors}`);
 		}
 		this.#prepTime = prepTime;
+		return this;
 	}
 
 	get cookTime() {
@@ -158,6 +163,7 @@ class Recipe extends Entity {
 			throw new Error(`Cook time: ${errors}`);
 		}
 		this.#cookTime = cookTime;
+		return this;
 	}
 
 	get categoryId() {
@@ -171,6 +177,7 @@ class Recipe extends Entity {
 			throw new Error(`Category ID: ${errors}`);
 		}
 		this.#categoryId = categoryId.trim();
+		return this;
 	}
 
 	get authorId() {
@@ -184,12 +191,17 @@ class Recipe extends Entity {
 			throw new Error(`Author ID: ${errors}`);
 		}
 		this.#authorId = authorId.trim();
+		return this;
 	}
 
 	get nutrition() {
 		return structuredClone(this.#nutrition);
 	}
 
+	/**
+	 * @param {NutritionInfo} nutrition
+	 * @returns {Recipe}
+	 */
 	set nutrition(nutrition) {
 		const validation = Validator.recipeNutrition.valid(nutrition);
 		if (!validation.isValid) {
@@ -197,6 +209,7 @@ class Recipe extends Entity {
 			throw new Error(`Nutrition: ${errors}`);
 		}
 		this.#nutrition = { ...this.#nutrition, ...nutrition };
+		return this;
 	}
 
 	get ingredients() {
@@ -206,6 +219,7 @@ class Recipe extends Entity {
 	set ingredients(ingredients) {
 		if (!Array.isArray(ingredients)) throw new Error('Ingredients must be an array');
 		this.#ingredients = ingredients;
+		return this;
 	}
 
 	get directions() {
@@ -219,6 +233,7 @@ class Recipe extends Entity {
 			throw new Error(`Directions: ${errors}`);
 		}
 		this.#directions = directions.trim();
+		return this;
 	}
 
 	get stars() {
@@ -232,6 +247,7 @@ class Recipe extends Entity {
 			throw new Error(`Stars: ${errors}`);
 		}
 		this.#stars = stars;
+		return this;
 	}
 
 	getTotalTime() {
@@ -253,6 +269,7 @@ class Recipe extends Entity {
 			nutrition: structuredClone(this.#nutrition),
 			ingredients: structuredClone(this.#ingredients),
 			directions: this.#directions,
+			stars: this.#stars,
 		};
 	}
 

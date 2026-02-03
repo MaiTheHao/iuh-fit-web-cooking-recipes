@@ -1,5 +1,5 @@
 import BaseRepository from './repository.js';
-import Recipe from '../entities/repcipe.entity.js';
+import Recipe from '../entities/recipe.entity.js';
 
 class RecipeRepository extends BaseRepository {
 	static #instance = null;
@@ -74,12 +74,6 @@ class RecipeRepository extends BaseRepository {
 		const recipes = this.findAll();
 		const term = searchTerm.toLowerCase();
 		return recipes.filter((r) => r.description.toLowerCase().includes(term));
-	}
-
-	/** @returns {Recipe[]} */
-	findAllSorted() {
-		const recipes = this.findAll();
-		return recipes.sort((a, b) => a.name.localeCompare(b.name));
 	}
 
 	/** @returns {number} */

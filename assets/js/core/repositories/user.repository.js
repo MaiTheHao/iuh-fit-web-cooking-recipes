@@ -27,9 +27,9 @@ class UserRepository extends BaseRepository {
 	}
 
 	/** @returns {User[]} */
-	findByRole(roleId) {
+	findByRole(role) {
 		const users = this.findAll();
-		return users.filter((u) => u.roleId === roleId);
+		return users.filter((u) => u.role === role);
 	}
 
 	/** @returns {User|null} */
@@ -50,8 +50,8 @@ class UserRepository extends BaseRepository {
 	}
 
 	/** @returns {number} */
-	countByRole(roleId) {
-		return this.findByRole(roleId).length;
+	countByRole(role) {
+		return this.findByRole(role).length;
 	}
 
 	/** @returns {User[]} */
