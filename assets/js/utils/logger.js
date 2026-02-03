@@ -20,6 +20,10 @@ const Logger = {
 		console.log(`%cSUCCESS%c ${message}`, this.styles.success, this.styles.reset, data || '');
 	},
 
+	warn(message, data = null) {
+		this.warning(message, data);
+	},
+
 	warning(message, data = null) {
 		console.warn(`%cWARNING%c ${message}`, this.styles.warning, this.styles.reset, data || '');
 	},

@@ -1,5 +1,5 @@
 import Logger from '../../utils/logger.js';
-import { ROUTES } from './const.js';
+import { ROUTES_ENTRIES } from './const.js';
 
 class Router {
 	static #instance = null;
@@ -20,8 +20,7 @@ class Router {
 	}
 
 	get #currentRoute() {
-		const routeEntries = Object.entries(ROUTES);
-		for (const [key, route] of routeEntries) {
+		for (const [key, route] of ROUTES_ENTRIES) {
 			if (route.redirectPath.match(new RegExp(`^${this.#currentPath}$`, 'i'))) {
 				return { key, ...route };
 			}

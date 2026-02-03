@@ -1,17 +1,18 @@
 import UserRepository from './repositories/user.repository.js';
-import RecipeRepository from './repositories/repcipe.repository.js';
+import RecipeRepository from './repositories/recipe.repository.js';
 import CategoryRepository from './repositories/category.repository.js';
 import BlogPostRepository from './repositories/blog-post.repository.js';
 import User from './entities/user.entity.js';
-import Recipe from './entities/repcipe.entity.js';
+import Recipe from './entities/recipe.entity.js';
 import Category from './entities/category.entity.js';
 import BlogPost from './entities/blog-post.entity.js';
 import Logger from '../utils/logger.js';
 
 const INIT_KEY = 'APP_INITIALIZED';
+const VERSION = '03-02-2026-11:17';
 
 const initData = () => {
-	if (localStorage.getItem(INIT_KEY) === 'true') {
+	if (localStorage.getItem(INIT_KEY) === VERSION && VERSION !== null) {
 		Logger.info('--- MOCK DATA ALREADY INITIALIZED ---');
 		return;
 	}
@@ -32,7 +33,7 @@ const initData = () => {
 			fullName: 'Mai Thế Hào',
 			email: 'hao.mai@example.com',
 			password: 'abc123456',
-			roleId: 'admin',
+			role: 'admin',
 			avatar: 'https://static.vecteezy.com/system/resources/previews/025/738/217/original/anime-black-and-white-isolated-icon-illustration-vector.jpg',
 		}),
 		new User({
@@ -40,7 +41,7 @@ const initData = () => {
 			fullName: 'Phạm Quý Hương',
 			email: 'huong.pham@example.com',
 			password: 'abc123456',
-			roleId: 'user',
+			role: 'user',
 			avatar: 'https://freestylized.com/wp-content/uploads/2024/11/sky_26-768x768.webp',
 		}),
 		new User({
@@ -48,7 +49,7 @@ const initData = () => {
 			fullName: 'Trần Văn Nam',
 			email: 'nam.tran@example.com',
 			password: 'abc123456',
-			roleId: 'user',
+			role: 'user',
 			avatar: 'https://tse1.mm.bing.net/th/id/OIP.hp-Tsbnv6yy2RrcWRo9mVgHaE8?rs=1&pid=ImgDetMain&o=7&rm=3',
 		}),
 	];
@@ -776,7 +777,7 @@ Hãy đi chợ sớm để chọn được những miếng thịt ngon nhất nh
 
 	blogPostRepo.saveBatch(blogPosts);
 
-	// localStorage.setItem(INIT_KEY, 'true');
+	localStorage.setItem(INIT_KEY, VERSION);
 	Logger.info('--- MOCK DATA INITIALIZED SUCCESSFULLY ---');
 };
 

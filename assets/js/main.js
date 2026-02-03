@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	new Layout().init();
 	new Router().init();
 
-	// Re-initialize lucide icons for new content
 	if (window.lucide) {
 		window.lucide.createIcons();
 	}

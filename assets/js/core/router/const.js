@@ -32,3 +32,5 @@ export const ROUTES = {
 		redirectPath: '/pages/contact',
 	},
 };
+
+export const ROUTES_ENTRIES = Object.entries(ROUTES);

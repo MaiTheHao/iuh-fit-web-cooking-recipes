@@ -242,7 +242,7 @@ const Validator = {
 
 	string: {
 		validLength(str, minLength = 1, maxLength = Infinity) {
-			const trimmed = str.trim();
+			const trimmed = typeof str === 'string' ? str.trim() : '';
 			const isValid = trimmed.length >= minLength && trimmed.length <= maxLength;
 			return [isValid ? null : `String length must be between ${minLength} and ${maxLength} characters`, isValid];
 		},
