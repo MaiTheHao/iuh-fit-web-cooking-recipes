@@ -1,6 +1,17 @@
 import BaseRepository from './repository.js';
 import Recipe from '../entities/recipe.entity.js';
 
+/**
+ * @typedef {Object} RecipeFilterCriteria
+ * @property {{min: number, max: number}|null} stars
+ * @property {{min: number, max: number}|null} cookTime
+ * @property {string[]|null} categories
+ * @property {string[]|null} authorIds
+ * @property {string|null} text
+ * @property {number} skip
+ * @property {number} limit
+ */
+
 class RecipeRepository extends BaseRepository {
 	static #instance = null;
 
@@ -84,6 +95,43 @@ class RecipeRepository extends BaseRepository {
 	/** @returns {number} */
 	countByAuthor(authorId) {
 		return this.findByAuthor(authorId).length;
+	}
+
+	/**
+	 * @param {RecipeFilterCriteria} criteria
+	 * @returns {Recipe[]}
+	 */
+	findWithCriteria(criteria = {}) {
+		let recipes = this.findAll();
+
+		if (criteria.stars && typeof criteria.stars === 'object') {
+			const min = typeof criteria.stars.min === 'number' ? criteria.stars.min : 0;
+			const max = typeof criteria.stars.max === 'number' ? criteria.stars.max : 5;
+			recipes = recipes.filter((r) => r.stars >= min && r.stars <= max);
+		}
+
+		if (criteria.cookTime && typeof criteria.cookTime === 'object') {
+			const min = typeof criteria.cookTime.min === 'number' ? criteria.cookTime.min : 0;
+			const max = typeof criteria.cookTime.max === 'number' ? criteria.cookTime.max : Number.MAX_SAFE_INTEGER;
+			recipes = recipes.filter((r) => r.cookTime >= min && r.cookTime <= max);
+		}
+
+		if (Array.isArray(criteria.categories) && criteria.categories.length > 0) {
+			recipes = recipes.filter((r) => criteria.categories.includes(r.categoryId));
+		}
+
+		if (Array.isArray(criteria.authorIds) && criteria.authorIds.length > 0) {
+			recipes = recipes.filter((r) => criteria.authorIds.includes(r.authorId));
+		}
+
+		if (criteria.text && typeof criteria.text === 'string') {
+			const searchText = criteria.text.toLowerCase();
+			recipes = recipes.filter((r) => (r.name && r.name.toLowerCase().includes(searchText)) || (r.description && r.description.toLowerCase().includes(searchText)));
+		}
+
+		const skip = Number(criteria.skip) || 0;
+		const limit = Number(criteria.limit) || 6;
+		return recipes.slice(skip, skip + limit);
 	}
 }
 

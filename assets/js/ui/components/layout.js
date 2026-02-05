@@ -1,28 +1,77 @@
 import { ROUTES } from '../../core/router/const.js';
 import Logger from '../../utils/logger.js';
+import AuthService from '../../core/services/auth.service.js';
 
-const MENU_ITEMS = Object.values(ROUTES).filter((route) => ['Home', 'Recipes', 'Blog', 'About', 'Contact'].includes(route.label));
+const MENU_ITEMS = Object.values(ROUTES).filter((route) =>
+  ['Home', 'Recipes', 'Blog', 'About', 'Contact'].includes(route.label),
+);
 const HOME_MENU_ITEM = MENU_ITEMS.find((item) => item.label.match(/^Home/i));
 
 const SOCIAL_LINKS = [
-	{ icon: 'facebook', label: 'Facebook', url: 'https://www.facebook.com' },
-	{ icon: 'instagram', label: 'Instagram', url: 'https://www.instagram.com' },
-	{ icon: 'github', label: 'Github', url: 'https://github.com/MaiTheHao/iuh-fit-web-cooking-recipes.git' },
+  { icon: 'facebook', label: 'Facebook', url: 'https://www.facebook.com' },
+  { icon: 'instagram', label: 'Instagram', url: 'https://www.instagram.com' },
+  {
+    icon: 'github',
+    label: 'Github',
+    url: 'https://github.com/MaiTheHao/iuh-fit-web-cooking-recipes.git',
+  },
 ];
 
 const ASSETS = {
-	logo: '../assets/img/logo.svg',
+  logo: '../assets/img/logo.svg',
 };
 
-const renderMenuItems = (className) => MENU_ITEMS.map((item) => `<li><a href="${item.redirectPath}" class="${className}">${item.label}</a></li>`).join('');
+const renderMenuItems = (className) =>
+  MENU_ITEMS.map(
+    (item) => `<li><a href="${item.redirectPath}" class="${className}">${item.label}</a></li>`,
+  ).join('');
 
 const renderSocialIcons = (isNav = false) =>
-	SOCIAL_LINKS.map(
-		(link) =>
-			`<${isNav ? 'a' : 'li'}${isNav ? ` href="${link.url}" target="_blank" title="${link.label}"` : ''} class="social-icon" aria-label="${link.label}">
+  SOCIAL_LINKS.map(
+    (link) =>
+      `<${isNav ? 'a' : 'li'}${isNav ? ` href="${link.url}" target="_blank" title="${link.label}"` : ''} class="social-icon" aria-label="${link.label}">
 				<i data-lucide="${link.icon}"></i>
 			</${isNav ? 'a' : 'li'}>`,
-	).join('');
+  ).join('');
+
+const renderAuthSection = () => {
+  const user = AuthService.getInstance().getCurrentUser();
+
+  if (user) {
+    return `
+        <div class="header__user-wrapper">
+          <div class="header__user header__user--desktop" role="button">
+            <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" />
+            <span class="header__user-name fw-medium">${user.fullName}</span>
+          </div>
+          <ul class="header__user-menu">
+            <li>
+              <a href="../pages/profile.html" class="header__user-menu-item">
+                <i data-lucide="user" style="width: 1em; height: 1em;"></i>
+                <span>Profile</span>
+              </a>
+            </li>
+            <li>
+              <button class="header__user-menu-item logout-btn">
+                <i data-lucide="log-out" style="width: 1em; height: 1em;"></i>
+                <span>Logout</span>
+              </button>
+            </li>
+          </ul>
+          <a href="../pages/profile.html" class="header__user header__user--mobile" role="button">
+            <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" />
+            <span class="header__user-name fw-medium">${user.fullName}</span>
+          </a>
+        </div>
+      `;
+  }
+
+  return `
+        <a href="../pages/login.html" class="btn btn-primary header__auth-btn d-flex align-items-center gap-2">
+            <i data-lucide="log-in" style="width: 1em; height: 1em;"></i> <span>Sign In</span>
+        </a>
+    `;
+};
 
 const Header = () => `
     <div class="header__overlay header__overlay--default"></div>
@@ -37,7 +86,7 @@ const Header = () => `
                 </ul>
             </nav>
             <div class="header__actions">
-                ${renderSocialIcons(true)}
+                ${renderAuthSection()}
                 <button class="header__toggle" aria-label="Open Menu">
                     <i data-lucide="menu"></i>
                 </button>
@@ -85,65 +134,73 @@ const Footer = () => `
 `;
 
 export class Layout {
-	constructor() {
-		const root = document.getElementById('root');
-		if (!root || !(root instanceof HTMLElement)) throw new Error('Root element is required for Layout initialization.');
-		if (typeof window === 'undefined') throw new Error('Window object is not available.');
-		this.root = root;
-	}
+  constructor() {
+    const root = document.getElementById('root');
+    if (!root || !(root instanceof HTMLElement))
+      throw new Error('Root element is required for Layout initialization.');
+    if (typeof window === 'undefined') throw new Error('Window object is not available.');
+    this.root = root;
+  }
 
-	init() {
-		this.#renderHeader();
-		this.#renderFooter();
-		this.#activeNavLink();
-		this.#bindEvents();
-		Logger.info('Layout rendered');
-	}
+  init() {
+    this.#renderHeader();
+    this.#renderFooter();
+    this.#activeNavLink();
+    this.#bindEvents();
+    Logger.info('Layout rendered');
+  }
 
-	#renderHeader() {
-		this.root.insertAdjacentHTML('afterbegin', Header());
-	}
+  #renderHeader() {
+    this.root.insertAdjacentHTML('afterbegin', Header());
+  }
 
-	#renderFooter() {
-		this.root.insertAdjacentHTML('beforeend', Footer());
-	}
+  #renderFooter() {
+    this.root.insertAdjacentHTML('beforeend', Footer());
+  }
 
-	#activeNavLink() {
-		const currentPath = window.location.pathname;
-		const selectors = ['.header__link', '.header__drawer-link', '.footer__link'];
+  #activeNavLink() {
+    const currentPath = window.location.pathname;
+    const selectors = ['.header__link', '.header__drawer-link', '.footer__link'];
 
-		selectors.forEach((selector) => {
-			this.root.querySelectorAll(selector).forEach((link) => {
-				const isActive = link.getAttribute('href') === currentPath;
-				link.classList.toggle('active', isActive);
-			});
-		});
-	}
+    selectors.forEach((selector) => {
+      this.root.querySelectorAll(selector).forEach((link) => {
+        const isActive = link.getAttribute('href') === currentPath;
+        link.classList.toggle('active', isActive);
+      });
+    });
+  }
 
-	#bindEvents() {
-		if (window.lucide) window.lucide.createIcons();
+  #bindEvents() {
+    if (window.lucide) window.lucide.createIcons();
 
-		const toggleBtn = document.querySelector('.header__toggle');
-		const drawer = document.querySelector('.header__drawer');
-		const closeBtn = document.querySelector('.header__close-btn');
-		const overlay = document.querySelector('.header__overlay');
+    const toggleBtn = document.querySelector('.header__toggle');
+    const drawer = document.querySelector('.header__drawer');
+    const closeBtn = document.querySelector('.header__close-btn');
+    const overlay = document.querySelector('.header__overlay');
 
-		if (toggleBtn && drawer && closeBtn && overlay) {
-			const openDrawer = () => {
-				drawer.classList.add('header__drawer--open');
-				overlay.classList.add('header__overlay--visible');
-				overlay.classList.remove('header__overlay--hidden', 'header__overlay--default');
-			};
+    if (toggleBtn && drawer && closeBtn && overlay) {
+      const openDrawer = () => {
+        drawer.classList.add('header__drawer--open');
+        overlay.classList.add('header__overlay--visible');
+        overlay.classList.remove('header__overlay--hidden', 'header__overlay--default');
+      };
 
-			const closeDrawer = () => {
-				drawer.classList.remove('header__drawer--open');
-				overlay.classList.add('header__overlay--hidden');
-				overlay.classList.remove('header__overlay--visible');
-			};
+      const closeDrawer = () => {
+        drawer.classList.remove('header__drawer--open');
+        overlay.classList.add('header__overlay--hidden');
+        overlay.classList.remove('header__overlay--visible');
+      };
 
-			toggleBtn.addEventListener('click', openDrawer);
-			closeBtn.addEventListener('click', closeDrawer);
-			overlay.addEventListener('click', closeDrawer);
-		}
-	}
+      toggleBtn.addEventListener('click', openDrawer);
+      closeBtn.addEventListener('click', closeDrawer);
+      overlay.addEventListener('click', closeDrawer);
+    }
+
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        AuthService.getInstance().signout();
+      });
+    }
+  }
 }

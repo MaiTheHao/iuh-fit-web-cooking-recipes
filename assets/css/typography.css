@@ -1,26 +1,29 @@
 .fw-medium {
-	font-weight: 500;
+  font-weight: 500;
 }
 .fw-semibold {
-	font-weight: 600;
+  font-weight: 600;
 }
 .fw-thin {
-	font-weight: 100;
+  font-weight: 100;
 }
 .fw-extralight {
-	font-weight: 200;
+  font-weight: 200;
 }
 .fw-extrabold {
-	font-weight: 800;
+  font-weight: 800;
 }
 .fw-black {
-	font-weight: 900;
+  font-weight: 900;
 }
 
 .text-justify {
-	text-align: justify;
+  text-align: justify;
 }
 .highlight-text {
-	color: var(--color-accent);
-	font-weight: 600;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+.ff-serif {
+  font-family: var(--font-serif);
 }
