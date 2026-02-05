@@ -1,19 +1,95 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="../assets/css/style.css" />
-		<link rel="stylesheet" href="../assets/css/layout/header.css" />
-		<link rel="stylesheet" href="../assets/css/layout/footer.css" />
-		<title>Recipe4f</title>
-	</head>
-	<body>
-		<div id="root">
-			<main id="app-body"></main>
-		</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/pages/recipes.css" />
+    <link rel="stylesheet" href="../assets/css/layout/header.css" />
+    <link rel="stylesheet" href="../assets/css/layout/footer.css" />
+    <title>Recipe4f - All Recipes</title>
+  </head>
+  <body>
+    <div id="root">
+      <main id="app-body">
+        <div class="recipe-page-header text-center">
+          <div class="container">
+            <h1 class="display-4 fw-bold font-serif mb-3">Explore Recipes</h1>
+            <p class="lead" style="max-width: 600px">
+              Find the perfect recipe for any occasion. Filter by category, cooking time, or rating
+              to discover your next favorite meal.
+            </p>
+          </div>
+        </div>
 
-		<script type="module" src="../assets/js/main.js"></script>
-		<script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-	</body>
+        <div class="container" id="recipe-list-container">
+          <div
+            class="d-flex flex-column flex-lg-row gap-4 mb-4 align-items-lg-center justify-content-between"
+          >
+            <button
+              class="btn btn-outline-primary d-lg-none w-100 mb-3 mb-lg-0"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#filterOffcanvas"
+            >
+              <i data-lucide="filter" class="me-2"></i> Filters
+            </button>
+
+            <div class="search-container">
+              <i data-lucide="search" class="search-icon"></i>
+              <input
+                type="text"
+                class="form-control search-input"
+                id="searchInput"
+                placeholder="Search recipes..."
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <aside class="col-lg-3 d-none d-lg-block">
+              <div class="filter-sidebar" id="desktopFilterContainer"></div>
+            </aside>
+
+            <div class="col-lg-9">
+              <div id="recipe-list" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4"></div>
+
+              <nav class="mt-5" aria-label="Recipe pagination">
+                <ul class="pagination justify-content-center" id="pagination"></ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Mobile Filter Offcanvas -->
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="filterOffcanvas"
+      aria-labelledby="filterOffcanvasLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="filterOffcanvasLabel">Filters</h5>
+        <button
+          type="button"
+          class="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body" id="mobileFilterContainer">
+        <!-- Filters will be cloned here on mobile -->
+      </div>
+      <div class="offcanvas-footer p-3 border-top">
+        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="offcanvas">
+          Apply Filters
+        </button>
+      </div>
+    </div>
+
+    <script type="module" src="../assets/js/main.js"></script>
+    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+  </body>
 </html>

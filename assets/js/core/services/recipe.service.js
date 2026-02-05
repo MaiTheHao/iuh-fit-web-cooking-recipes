@@ -4,6 +4,7 @@ import RecipeRepository from '../repositories/recipe.repository.js';
  * @typedef {Object} RecipeFilterCriteria
  * @property {{min: number, max: number}|null} stars
  * @property {{min: number, max: number}|null} cookTime
+ * @property {{min: number, max: number}|null} prepTime
  * @property {string[]|null} categories
  * @property {string[]|null} authorIds
  * @property {string|null} text
@@ -54,12 +55,13 @@ class RecipeService {
 
   /**
    * @param {RecipeFilterCriteria} criteria
-   * @returns {Recipe[]}
+   * @returns {{items: Recipe[], total: number}}
    */
   getWithCriteria(criteria = {}) {
     const finalCriteria = {
       stars: criteria.stars || null,
       cookTime: criteria.cookTime || null,
+      prepTime: criteria.prepTime || null,
       categories: criteria.categories || null,
       authorIds: criteria.authorIds || null,
       text: criteria.text || null,

@@ -8,6 +8,7 @@
   --color-bg: #ffffff;
   --color-bg-alt: #f2f2f2;
   --color-text: #171717;
+  --color-text-secondary: #404040;
   --color-text-muted: #9d9d9d;
   --color-border: #eaeaea;
   --color-white: #ffffff;
@@ -41,6 +42,6 @@
   --max-width-container: 1200px;
   --header-height: 4.5rem;
 
-  --bs-font-sans-serif: var(--font-main);
+  --bs-font-sans-serif: var(--font-serif);
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, monospace;
 }
