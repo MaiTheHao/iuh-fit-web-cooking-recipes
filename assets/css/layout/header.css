@@ -251,6 +251,7 @@
 }
 
 .header__auth-btn {
+  white-space: nowrap;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
 }

@@ -1,119 +1,198 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="../assets/css/style.css" />
-		<link rel="stylesheet" href="../assets/css/pages/home.css" />
-		<title>Recipe4f</title>
-	</head>
-	<body>
-		<div id="root">
-			<main id="app-body">
-				<div class="container p-0">
-					<div id="carouselId" class="carousel slide" data-bs-ride="carousel">
-						<div class="carousel-indicators"></div>
-						<div class="carousel-inner" role="listbox"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/pages/home.css" />
+    <title>Recipe4f</title>
+  </head>
+  <body>
+    <div id="root">
+      <main id="app-body">
+        <div class="container p-0">
+          <div id="carouselId" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators"></div>
+            <div class="carousel-inner" role="listbox"></div>
 
-						<button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
-							<i data-lucide="chevron-left"></i>
-							<span class="visually-hidden">Previous</span>
-						</button>
-						<button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
-							<i data-lucide="chevron-right"></i>
-							<span class="visually-hidden">Next</span>
-						</button>
-					</div>
-				</div>
-				<div class="container mt-4">
-					<div class="container__header">
-						<h2 class="container__header__title">Simple & Tasty Recipes</h2>
-						<p class="container__header__desc">Discover a variety of easy-to-make and delicious recipes that will satisfy your taste buds and make cooking a joy.</p>
-					</div>
-					<div id="recipe-grid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-2"></div>
-				</div>
-				<section class="container">
-					<div class="showcase-card row align-items-center g-0 overflow-hidden">
-						<div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center">
-							<h2 class="showcase-title display-6 fw-bold mb-3">Everyone can be a<br />chef in their own kitchen</h2>
-							<p class="showcase-desc text-muted mb-4">
-								Mastering the art of cooking has never been easier. Explore diverse cuisines, learn professional techniques, and transform fresh ingredients into
-								masterpieces right in your kitchen.
-							</p>
-							<a class="btn btn-primary w-max-content" href="/pages/recipes">To Recipes &rarr;</a>
-						</div>
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#carouselId"
+              data-bs-slide="prev"
+            >
+              <i data-lucide="chevron-left"></i>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#carouselId"
+              data-bs-slide="next"
+            >
+              <i data-lucide="chevron-right"></i>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+        <div class="container">
+          <div class="container__header">
+            <h2 class="container__header__title">Simple & Tasty Recipes</h2>
+            <p class="container__header__desc">
+              Discover a variety of easy-to-make and delicious recipes that will satisfy your taste
+              buds and make cooking a joy.
+            </p>
+          </div>
+          <div id="recipe-grid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+        </div>
+        <section class="container">
+          <div class="showcase-card row align-items-center g-0 overflow-hidden">
+            <div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center">
+              <h2 class="showcase-title display-6 fw-bold mb-3">
+                Everyone can be a<br />chef in their own kitchen
+              </h2>
+              <p class="showcase-desc text-muted mb-4">
+                Mastering the art of cooking has never been easier. Explore diverse cuisines, learn
+                professional techniques, and transform fresh ingredients into masterpieces right in
+                your kitchen.
+              </p>
+              <a class="btn btn-primary w-max-content" href="/pages/recipes">To Recipes &rarr;</a>
+            </div>
 
-						<div class="col-lg-6 showcase-visual position-relative d-flex justify-content-center align-items-end">
-							<img src="../assets/img/meal-category.svg" alt="Meat" class="floating-icon icon-meat" />
-							<img src="../assets/img/vegan-category.svg" alt="Vegetable" class="floating-icon icon-veg" />
-							<img src="../assets/img/tomato.svg" alt="Tomato" class="floating-icon icon-tomato" />
-							<img src="../assets/img/happy-male-chef.png" alt="Happy Chef" class="chef-img position-relative z-1" />
-						</div>
-					</div>
-				</section>
+            <div
+              class="col-lg-6 showcase-visual position-relative d-flex justify-content-center align-items-end"
+            >
+              <img
+                src="../assets/img/meal-category.svg"
+                alt="Meat"
+                class="floating-icon icon-meat"
+              />
+              <img
+                src="../assets/img/vegan-category.svg"
+                alt="Vegetable"
+                class="floating-icon icon-veg"
+              />
+              <img src="../assets/img/tomato.svg" alt="Tomato" class="floating-icon icon-tomato" />
+              <img
+                src="../assets/img/happy-male-chef.webp"
+                alt="Happy Chef"
+                class="chef-img position-relative z-1"
+              />
+            </div>
+          </div>
+        </section>
 
-				<section class="container">
-					<div class="row justify-content-center">
-						<div class="col-lg-8">
-							<div class="container__header mb-5">
-								<h2 class="container__header__title">Join Our Culinary Community</h2>
-								<p class="container__header__desc">
-									Unlock exclusive features! Create an account to save your favorite recipes, create your own collections, and connect with other food
-									enthusiasts.
-								</p>
-							</div>
+        <section class="container">
+          <div class="container__header">
+            <h2 class="container__header__title">Join Our Culinary Community</h2>
+            <p class="container__header__desc">
+              Unlock exclusive features! Create an account to save your favorite recipes, create
+              your own collections, and connect with other food enthusiasts.
+            </p>
+          </div>
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <form id="register-form" class="row g-4">
+                <div class="col-md-6">
+                  <label for="fullName" class="form-label fw-medium small text-uppercase text-muted"
+                    >Full Name</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control form-control-auth"
+                    id="fullName"
+                    placeholder="e.g. Gordon Ramsay"
+                    required
+                  />
+                </div>
 
-							<form id="register-form" class="row g-4">
-								<div class="col-md-6">
-									<label for="fullName" class="form-label fw-medium small text-uppercase text-muted">Full Name</label>
-									<input type="text" class="form-control form-control-auth" id="fullName" placeholder="e.g. Gordon Ramsay" required />
-								</div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label fw-medium small text-uppercase text-muted"
+                    >Email Address</label
+                  >
+                  <input
+                    type="email"
+                    class="form-control form-control-auth"
+                    id="email"
+                    placeholder="name@example.com"
+                    required
+                  />
+                </div>
 
-								<div class="col-md-6">
-									<label for="email" class="form-label fw-medium small text-uppercase text-muted">Email Address</label>
-									<input type="email" class="form-control form-control-auth" id="email" placeholder="name@example.com" required />
-								</div>
+                <div class="col-md-6">
+                  <label for="password" class="form-label fw-medium small text-uppercase text-muted"
+                    >Password</label
+                  >
+                  <input
+                    type="password"
+                    class="form-control form-control-auth"
+                    id="password"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
 
-								<div class="col-md-6">
-									<label for="password" class="form-label fw-medium small text-uppercase text-muted">Password</label>
-									<input type="password" class="form-control form-control-auth" id="password" placeholder="••••••••" required />
-								</div>
+                <div class="col-md-6">
+                  <label
+                    for="confirmPassword"
+                    class="form-label fw-medium small text-uppercase text-muted"
+                    >Confirm Password</label
+                  >
+                  <input
+                    type="password"
+                    class="form-control form-control-auth"
+                    id="confirmPassword"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
 
-								<div class="col-md-6">
-									<label for="confirmPassword" class="form-label fw-medium small text-uppercase text-muted">Confirm Password</label>
-									<input type="password" class="form-control form-control-auth" id="confirmPassword" placeholder="••••••••" required />
-								</div>
+                <div class="col-12 mt-5 text-center">
+                  <button type="submit" class="btn btn-primary px-5 py-3 rounded-pill fw-semibold">
+                    Register Account
+                  </button>
+                  <p class="text-muted small mt-3 mb-0">
+                    Already have an account?
+                    <a href="/pages/login" class="text-decoration-underline text-dark">Sign in</a>
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
 
-								<div class="col-12 mt-5 text-center">
-									<button type="submit" class="btn btn-primary px-5 py-3 rounded-pill fw-semibold">Register Account</button>
-									<p class="text-muted small mt-3 mb-0">Already have an account? <a href="#" class="text-decoration-underline text-dark">Sign in</a></p>
-								</div>
-							</form>
-						</div>
-					</div>
-				</section>
-			</main>
-		</div>
+    <div
+      class="modal fade"
+      id="noti-modal"
+      tabindex="-1"
+      aria-labelledby="noti-modal__label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body py-4">
+            <p class="modal-message mb-0"></p>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-		<div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header border-0">
-						<h5 class="modal-title" id="noti-modal__label">Notification</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body py-4">
-						<p class="modal-message mb-0"></p>
-					</div>
-					<div class="modal-footer border-0">
-						<button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-		<script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-		<script type="module" src="../assets/js/main.js"></script>
-	</body>
+    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
+  </body>
 </html>

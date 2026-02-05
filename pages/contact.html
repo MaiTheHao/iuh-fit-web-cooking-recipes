@@ -1,19 +1,209 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="../assets/css/style.css" />
-		<link rel="stylesheet" href="../assets/css/layout/header.css" />
-		<link rel="stylesheet" href="../assets/css/layout/footer.css" />
-		<title>Recipe4f</title>
-	</head>
-	<body>
-		<div id="root">
-			<main id="app-body"></main>
-		</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/pages/contact.css" />
+    <title>Contact Us - Recipe4f</title>
+  </head>
+  <body>
+    <div id="root">
+      <main id="app-body">
+        <section class="container">
+          <div class="container__header">
+            <h2 class="container__header__title">Get in Touch</h2>
+            <p class="container__header__desc">
+              Have a question, suggestion, or just want to say hi? We'd love to hear from you.
+            </p>
+          </div>
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <div class="contact-card p-4 p-md-5 mb-5">
+                <h3 class="fw-bold mb-4 text-primary text-center">Send us a Message</h3>
+                <form id="contact-form">
+                  <div class="row g-4">
+                    <div class="col-md-6">
+                      <label
+                        for="name"
+                        class="form-label fw-medium text-secondary small text-uppercase"
+                        >Full Name</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control form-control-auth"
+                        id="name"
+                        placeholder="John Doe"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label
+                        for="email"
+                        class="form-label fw-medium text-secondary small text-uppercase"
+                        >Email Address</label
+                      >
+                      <input
+                        type="email"
+                        class="form-control form-control-auth"
+                        id="email"
+                        placeholder="john@example.com"
+                        required
+                      />
+                    </div>
+                    <div class="col-12">
+                      <label
+                        for="subject"
+                        class="form-label fw-medium text-secondary small text-uppercase"
+                        >Subject</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control form-control-auth"
+                        id="subject"
+                        placeholder="How can we help?"
+                        required
+                      />
+                    </div>
+                    <div class="col-12">
+                      <label
+                        for="message"
+                        class="form-label fw-medium text-secondary small text-uppercase"
+                        >Message</label
+                      >
+                      <textarea
+                        class="form-control form-control-auth"
+                        id="message"
+                        rows="4"
+                        placeholder="Write your message here..."
+                        required
+                      ></textarea>
+                    </div>
+                    <div class="col-12 mt-4">
+                      <button
+                        type="submit"
+                        class="btn btn-primary w-100 py-3 rounded-pill fw-semibold"
+                      >
+                        Send Message
+                        <i
+                          data-lucide="send"
+                          class="ms-2"
+                          style="width: 1.1em; height: 1.1em; vertical-align: text-bottom"
+                        ></i>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
 
-		<script type="module" src="../assets/js/main.js"></script>
-		<script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-	</body>
+              <div class="contact-info-card p-4">
+                <div class="row g-4 justify-content-center">
+                  <div class="col-md-4 d-flex flex-column align-items-center text-center">
+                    <div class="contact-icon-small mb-3">
+                      <i data-lucide="map-pin"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Our Location</h6>
+                    <p class="text-muted mb-0 small">
+                      12 Nguyen Van Bao, Ward 4,<br />
+                      Go Vap District, Ho Chi Minh City
+                    </p>
+                  </div>
+
+                  <div
+                    class="col-md-4 d-flex flex-column align-items-center text-center border-start-md"
+                  >
+                    <div class="contact-icon-small mb-3">
+                      <i data-lucide="mail"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Email Us</h6>
+                    <div class="d-flex flex-column text-muted small">
+                      <a
+                        href="mailto:info@recipe4f.com"
+                        class="text-muted text-decoration-none hover-primary"
+                        >info@recipe4f.com</a
+                      >
+                      <a
+                        href="mailto:support@recipe4f.com"
+                        class="text-muted text-decoration-none hover-primary"
+                        >support@recipe4f.com</a
+                      >
+                    </div>
+                  </div>
+
+                  <div
+                    class="col-md-4 d-flex flex-column align-items-center text-center border-start-md"
+                  >
+                    <div class="contact-icon-small mb-3">
+                      <i data-lucide="phone"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Call Us</h6>
+                    <p class="text-muted mb-0 small">
+                      <a
+                        href="tel:+84123456789"
+                        class="text-muted text-decoration-none hover-primary"
+                        >+84 123 456 789</a
+                      >
+                      <br />
+                      <span class="opacity-75">Mon - Fri, 9am - 6pm</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="container">
+          <div class="container__header">
+            <h3 class="container__header__title">Find Us on the Map</h3>
+            <p class="container__header__desc">
+              Visit our office or find the quickest route to reach us in person.
+            </p>
+          </div>
+          <div class="map-container">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.85816909104!2d106.68427547596062!3d10.822165158349457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528e54969507f%3A0xfa60665c574032d1!2zMTIgTmd1eeG7hW4gVbbiuINuIELhuqNvLCBQaMaw4budbmcgNCwgR8OyIFbhuqVwLCBI4buTIENow60gTWluaCA3MDAwMDAsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1707123456789!5m2!1sen!2s"
+              class="map-iframe"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            >
+            </iframe>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div
+      class="modal fade"
+      id="noti-modal"
+      tabindex="-1"
+      aria-labelledby="noti-modal__label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body py-4">
+            <p class="modal-message mb-0"></p>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
+    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+  </body>
 </html>

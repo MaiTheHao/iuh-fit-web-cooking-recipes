@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/pages/auth-page.css" />
+    <title>Join Us - Recipe4f</title>
+  </head>
+  <body>
+    <div id="root">
+      <main id="app-body">
+        <section class="auth-container">
+          <div class="auth-card">
+            <div class="auth-header">
+              <h1 class="auth-title">Create Account</h1>
+              <p class="auth-subtitle">
+                Join our community of food enthusiasts and start saving your favorite recipes today.
+              </p>
+            </div>
+
+            <form id="register-form" class="row g-3">
+              <div class="col-12">
+                <label for="fullName" class="form-label fw-medium small text-uppercase text-muted"
+                  >Full Name</label
+                >
+                <input
+                  type="text"
+                  class="form-control form-control-auth"
+                  id="fullName"
+                  placeholder="e.g. Gordon Ramsay"
+                  required
+                />
+              </div>
+
+              <div class="col-12">
+                <label for="email" class="form-label fw-medium small text-uppercase text-muted"
+                  >Email Address</label
+                >
+                <input
+                  type="email"
+                  class="form-control form-control-auth"
+                  id="email"
+                  placeholder="name@example.com"
+                  required
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label for="password" class="form-label fw-medium small text-uppercase text-muted"
+                  >Password</label
+                >
+                <input
+                  type="password"
+                  class="form-control form-control-auth"
+                  id="password"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label
+                  for="confirmPassword"
+                  class="form-label fw-medium small text-uppercase text-muted"
+                  >Confirm</label
+                >
+                <input
+                  type="password"
+                  class="form-control form-control-auth"
+                  id="confirmPassword"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+
+              <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-primary w-100 py-2 fs-6">Sign Up</button>
+              </div>
+            </form>
+
+            <div class="auth-footer">
+              Already have an account?
+              <a href="login.html">Sign In</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div
+      class="modal fade"
+      id="noti-modal"
+      tabindex="-1"
+      aria-labelledby="noti-modal__label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body py-4">
+            <p class="modal-message mb-0"></p>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
+  </body>
+</html>

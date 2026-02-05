@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/pages/recipe-detail.css" />
+    <link rel="stylesheet" href="../assets/css/layout/header.css" />
+    <link rel="stylesheet" href="../assets/css/layout/footer.css" />
+    <title>Recipe Detail - Recipe4f</title>
+  </head>
+  <body>
+    <div id="root">
+      <main id="app-body">
+        <section class="container mt-4 mb-5">
+          <div class="recipe-detail-card p-0 overflow-hidden">
+            <div class="row g-0">
+              <div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                  <span
+                    id="recipe-category"
+                    class="badge bg-accent bg-opacity-10 text-accent"
+                  ></span>
+                  <div id="recipe-stars" class="d-flex gap-1 text-warning small"></div>
+                </div>
+
+                <h1 id="recipe-title" class="display-5 fw-bold ff-serif mb-3 text-primary"></h1>
+                <p id="recipe-description" class="text-secondary mb-4"></p>
+
+                <div
+                  class="recipe-meta-bar d-flex flex-wrap align-items-center gap-4 py-3 border-top w-100"
+                >
+                  <div id="recipe-author" class="d-flex align-items-center gap-2"></div>
+
+                  <div class="vr mx-2 text-muted d-none d-md-block opacity-25"></div>
+
+                  <div id="recipe-meta-data" class="d-flex gap-4 text-secondary"></div>
+                </div>
+              </div>
+
+              <div class="col-lg-6 bg-light d-flex align-items-stretch">
+                <img
+                  id="recipe-image"
+                  src=""
+                  alt="Recipe Cover"
+                  class="w-100 h-100 object-fit-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="container pb-5">
+          <div class="row g-4">
+            <div class="col-lg-4 order-2 order-lg-1">
+              <div class="sidebar-sticky d-flex flex-column gap-4">
+                <div class="recipe-detail-card p-4">
+                  <h3 class="ff-serif mb-4 d-flex align-items-center gap-2 text-primary h4">
+                    <i data-lucide="shopping-basket" class="text-accent"></i>
+                    Ingredients
+                  </h3>
+                  <div id="recipe-ingredients" class="ingredients-list"></div>
+                </div>
+
+                <div class="recipe-detail-card p-4">
+                  <h3 class="ff-serif mb-4 d-flex align-items-center gap-2 text-primary h4">
+                    <i data-lucide="activity" class="text-accent"></i>
+                    Nutrition
+                  </h3>
+                  <div id="recipe-nutrition" class="nutrition-list"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-8 order-1 order-lg-2">
+              <div class="recipe-detail-card p-4 p-md-5">
+                <div class="d-flex align-items-center gap-2 mb-5 pb-3 border-bottom">
+                  <span class="step-number-icon"><i data-lucide="chef-hat"></i></span>
+                  <h2 class="ff-serif m-0 text-primary">Instructions</h2>
+                </div>
+
+                <div id="recipe-directions" class="timeline-steps"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="container pb-5">
+          <div class="container">
+            <h3 class="ff-serif text-center mb-4">You Might Also Like</h3>
+            <div id="related-recipes" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
+  </body>
+</html>

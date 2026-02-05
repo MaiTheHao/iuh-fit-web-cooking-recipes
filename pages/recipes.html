@@ -25,10 +25,10 @@
 
         <div class="container" id="recipe-list-container">
           <div
-            class="d-flex flex-column flex-lg-row gap-4 mb-4 align-items-lg-center justify-content-between"
+            class="d-flex flex-column flex-lg-row gap-3 mb-4 align-items-lg-center justify-content-between"
           >
             <button
-              class="btn btn-outline-primary d-lg-none w-100 mb-3 mb-lg-0"
+              class="btn btn-outline-primary d-lg-none w-100"
               type="button"
               data-bs-toggle="offcanvas"
               data-bs-target="#filterOffcanvas"
@@ -36,14 +36,28 @@
               <i data-lucide="filter" class="me-2"></i> Filters
             </button>
 
-            <div class="search-container">
-              <i data-lucide="search" class="search-icon"></i>
-              <input
-                type="text"
-                class="form-control search-input"
-                id="searchInput"
-                placeholder="Search recipes..."
-              />
+            <div class="d-flex gap-2 align-items-center grow recipe-search-sort-container">
+              <select
+                class="form-select recipe-sort-select"
+                id="sortSelect"
+                style="width: auto; min-width: 180px"
+              >
+                <option value="name_asc">Name (A-Z)</option>
+                <option value="name_desc">Name (Z-A)</option>
+                <option value="stars_desc">Rating (High to Low)</option>
+                <option value="stars_asc">Rating (Low to High)</option>
+                <option value="cookTime_asc">Cook Time (Short to Long)</option>
+                <option value="cookTime_desc">Cook Time (Long to Short)</option>
+              </select>
+              <div class="search-container grow">
+                <i data-lucide="search" class="search-icon"></i>
+                <input
+                  type="text"
+                  class="form-control search-input"
+                  id="searchInput"
+                  placeholder="Search recipes..."
+                />
+              </div>
             </div>
           </div>
 
@@ -64,7 +78,6 @@
       </main>
     </div>
 
-    <!-- Mobile Filter Offcanvas -->
     <div
       class="offcanvas offcanvas-start"
       tabindex="-1"
@@ -80,9 +93,7 @@
           aria-label="Close"
         ></button>
       </div>
-      <div class="offcanvas-body" id="mobileFilterContainer">
-        <!-- Filters will be cloned here on mobile -->
-      </div>
+      <div class="offcanvas-body" id="mobileFilterContainer"></div>
       <div class="offcanvas-footer p-3 border-top">
         <button type="button" class="btn btn-primary w-100" data-bs-dismiss="offcanvas">
           Apply Filters

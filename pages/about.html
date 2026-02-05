@@ -1,19 +1,182 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="../assets/css/style.css" />
-		<link rel="stylesheet" href="../assets/css/layout/header.css" />
-		<link rel="stylesheet" href="../assets/css/layout/footer.css" />
-		<title>Recipe4f</title>
-	</head>
-	<body>
-		<div id="root">
-			<main id="app-body"></main>
-		</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/pages/about.css" />
+    <link rel="stylesheet" href="../assets/css/layout/header.css" />
+    <link rel="stylesheet" href="../assets/css/layout/footer.css" />
+    <title>About Us - Recipe4f</title>
+  </head>
+  <body>
+    <div id="root">
+      <main id="app-body">
+        <div class="about-page-header text-center">
+          <div class="container">
+            <h1 class="display-4 fw-bold font-serif mb-3">About Recipe4f</h1>
+            <p class="lead mx-auto" style="max-width: 600px">
+              Sharing passion for delicious, simple, and healthy recipes from around the world.
+            </p>
+          </div>
+        </div>
 
-		<script type="module" src="../assets/js/main.js"></script>
-		<script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-	</body>
+        <section class="container">
+          <div class="container__header">
+            <h2 class="container__header__title">Our Story</h2>
+            <p class="container__header__desc">From a small kitchen to a global community.</p>
+          </div>
+          <div class="row align-items-center g-4 g-lg-5">
+            <div class="col-lg-6">
+              <img
+                src="../assets/img/cooking-together.png"
+                alt="Cooking Together"
+                class="about-story-img mb-4 mb-lg-0"
+              />
+            </div>
+            <div class="col-lg-6">
+              <h2 class="display-6 fw-bold mb-3 ff-serif">Making Cooking Accessible</h2>
+              <p class="text-secondary mb-3">
+                Started in 2024, Recipe4f believes good food shouldn't be complicated. We empower
+                home cooks of all levels.
+              </p>
+              <p class="text-secondary mb-4">
+                Our experts curate approachable, delicious recipes. We believe the best memories are
+                made around the table.
+              </p>
+
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="feature-icon-box bg-primary text-white flex-shrink-0">
+                      <i data-lucide="chef-hat"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-bold mb-0">Expert Chefs</h6>
+                      <p class="small text-muted m-0">Professional curation</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="feature-icon-box bg-accent text-white flex-shrink-0">
+                      <i data-lucide="users"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-bold mb-0">Community</h6>
+                      <p class="small text-muted m-0">10k+ foodies joined</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="bg-light py-5">
+          <div class="container">
+            <div class="row g-4 justify-content-center">
+              <div class="col-md-4">
+                <div class="stat-card">
+                  <div class="stat-number">10k+</div>
+                  <p class="text-muted fw-medium mb-0">Active Users</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stat-card">
+                  <div class="stat-number">500+</div>
+                  <p class="text-muted fw-medium mb-0">Premium Recipes</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stat-card">
+                  <div class="stat-number">1M+</div>
+                  <p class="text-muted fw-medium mb-0">Monthly Views</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="container my-5">
+          <div class="container__header">
+            <h2 class="container__header__title">Meet Our Team</h2>
+            <p class="container__header__desc">
+              The passionate people behind your favorite recipes.
+            </p>
+          </div>
+
+          <div class="row g-4 justify-content-center">
+            <div class="col-md-6 col-lg-4">
+              <div class="team-card">
+                <img
+                  src="https://tse1.explicit.bing.net/th/id/OIP.xSytpxu8ZLcNP0VmBboDiwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
+                  alt="Gordon Ramsay"
+                  class="team-img"
+                />
+                <div class="team-info">
+                  <h3 class="team-name">Gordon Ramsay</h3>
+                  <p class="team-role mb-3">Head Chef</p>
+                  <div class="d-flex justify-content-center gap-2">
+                    <a href="#" class="btn btn-sm btn-outline-primary rounded-circle p-2 lh-1">
+                      <i data-lucide="twitter" style="width: 16px; height: 16px"></i>
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-primary rounded-circle p-2 lh-1">
+                      <i data-lucide="instagram" style="width: 16px; height: 16px"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="team-card">
+                <img
+                  src="https://tse4.mm.bing.net/th/id/OIP.9OhfByyC_04WVz5foQUhgAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
+                  alt="Julia Child"
+                  class="team-img"
+                />
+                <div class="team-info">
+                  <h3 class="team-name">Julia Child</h3>
+                  <p class="team-role mb-3">Culinary Director</p>
+                  <div class="d-flex justify-content-center gap-2">
+                    <a href="#" class="btn btn-sm btn-outline-primary rounded-circle p-2 lh-1">
+                      <i data-lucide="twitter" style="width: 16px; height: 16px"></i>
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-primary rounded-circle p-2 lh-1">
+                      <i data-lucide="instagram" style="width: 16px; height: 16px"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="team-card">
+                <img
+                  src="https://th.bing.com/th/id/R.d0f8ac5a94ce5bc1296b03654deb99c8?rik=F%2fRQu91qf0kemg&pid=ImgRaw&r=0"
+                  alt="Marcus Samuelsson"
+                  class="team-img"
+                />
+                <div class="team-info">
+                  <h3 class="team-name">Marcus Samuelsson</h3>
+                  <p class="team-role mb-3">Pastry Chef</p>
+                  <div class="d-flex justify-content-center gap-2">
+                    <a href="#" class="btn btn-sm btn-outline-primary rounded-circle p-2 lh-1">
+                      <i data-lucide="twitter" style="width: 16px; height: 16px"></i>
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-primary rounded-circle p-2 lh-1">
+                      <i data-lucide="instagram" style="width: 16px; height: 16px"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="../assets/js/main.js"></script>
+    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

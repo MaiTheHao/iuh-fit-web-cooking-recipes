@@ -43,6 +43,11 @@ class CategoryService {
     return this.categoryRepository.findByCode(code);
   }
 
+  /** @returns {Category|null} */
+  getById(id) {
+    return this.categoryRepository.findById(id);
+  }
+
   /**
    * @param {CategoryFilterCriteria} criteria
    * @returns {{items: Category[], total: number}}
