@@ -41,18 +41,12 @@ const Validator = {
       const isValid = trimmed.length >= 3 && trimmed.length <= 100;
       return [isValid ? null : 'Full name length must be between 3 and 100 characters', isValid];
     },
-    validChars(fullName) {
-      const isValid = /^[\p{L}\s'-]+$/u.test(fullName.trim());
-      return [isValid ? null : 'Full name contains invalid characters', isValid];
-    },
     valid(fullName) {
       const [lenErr, lenOk] = Validator.fullName.validLength(fullName);
-      const [chrErr, chrOk] = Validator.fullName.validChars(fullName);
-      return { isValid: lenOk && chrOk, errors: { length: lenErr, chars: chrErr } };
+      return { isValid: lenOk, errors: { length: lenErr } };
     },
     isValid(fullName) {
-      if (!Validator.fullName.validLength(fullName)[1]) return false;
-      return Validator.fullName.validChars(fullName)[1];
+      return Validator.fullName.validLength(fullName)[1];
     },
   },
 
