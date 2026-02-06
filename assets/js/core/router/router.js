@@ -30,7 +30,7 @@ class Router {
         route.path || (typeof route.redirectPath === 'string' ? route.redirectPath : null);
 
       if (!pattern) continue;
-      const regex = new RegExp(`^${pattern.replace(/:[^\s/]+/g, '([^/]+)')}(?:\\.html)?$`, 'i');
+      const regex = new RegExp(`^${pattern.replace(/:[^\s/]+/g, '([^/]+)')}(?:\\.html)?/?$`, 'i');
       const match = this.#currentPath.match(regex);
 
       if (match) {

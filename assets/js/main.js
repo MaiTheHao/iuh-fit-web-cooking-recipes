@@ -5,11 +5,6 @@ import Router from './core/router/router.js';
 import { marked } from './libs/marked/marked.esm.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  marked.setOptions({
-    async: false,
-    silent: true,
-  });
-
   initData();
   new Layout().init();
   new Router().init();

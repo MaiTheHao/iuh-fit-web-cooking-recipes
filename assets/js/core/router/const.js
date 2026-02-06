@@ -13,6 +13,12 @@ export const ROUTES = {
     redirectPath: '/pages',
     controllers: [HomeController],
   },
+  INDEX: {
+    label: 'Home',
+    path: '/pages/index.html',
+    redirectPath: '/pages/index.html',
+    controllers: [HomeController],
+  },
   RECIPES: {
     label: 'Recipes',
     path: '/pages/recipes',
