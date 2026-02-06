@@ -13,21 +13,15 @@ export const ROUTES = {
     redirectPath: '/pages',
     controllers: [HomeController],
   },
-  INDEX: {
-    label: 'Home',
-    path: '/pages/index.html',
-    redirectPath: '/pages/index.html',
-    controllers: [HomeController],
-  },
   RECIPES: {
     label: 'Recipes',
     path: '/pages/recipes',
-    redirectPath: '/pages/recipes',
+    redirectPath: '/pages/recipes.html',
     controllers: [RecipeController],
   },
   RECIPES_DETAIL: {
     label: 'Recipe Detail',
-    path: '/pages/recipe-detail',
+    path: '/pages/recipe-detail.html',
     redirectPath(id) {
       return `/pages/recipe-detail?id=${id}`;
     },
@@ -36,29 +30,29 @@ export const ROUTES = {
   BLOG: {
     label: 'Blog',
     path: '/pages/blog',
-    redirectPath: '/pages/blog',
+    redirectPath: '/pages/blog.html',
   },
   ABOUT: {
     label: 'About',
     path: '/pages/about',
-    redirectPath: '/pages/about',
+    redirectPath: '/pages/about.html',
     controllers: [AboutController],
   },
   CONTACT: {
     label: 'Contact',
     path: '/pages/contact',
-    redirectPath: '/pages/contact',
+    redirectPath: '/pages/contact.html',
     controllers: [ContactController],
   },
   LOGIN: {
     label: 'Login',
     path: '/pages/login',
-    redirectPath: '/pages/login',
+    redirectPath: '/pages/login.html',
     controllers: [LoginController],
   },
   REGISTER: {
     label: 'Register',
-    redirectPath: '/pages/register',
+    redirectPath: '/pages/register.html',
     path: '/pages/register',
     controllers: [RegisterController],
   },
