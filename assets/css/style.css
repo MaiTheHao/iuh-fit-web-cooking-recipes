@@ -5,6 +5,7 @@
 @import './layout/header.css';
 @import './layout/footer.css';
 @import './component.css';
+@import './pages/notfound.css';
 
 * {
   border: 0;

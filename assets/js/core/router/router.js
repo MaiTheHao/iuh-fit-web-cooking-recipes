@@ -1,4 +1,5 @@
 import Logger from '../../utils/logger.js';
+import NotFoundController from '../controllers/notfound.controller.js';
 import { ROUTES_ENTRIES } from './const.js';
 
 class Router {
@@ -40,7 +41,7 @@ class Router {
   }
 
   handleRouting() {
-    const controllers = this.#currentRoute?.controllers || [];
+    const controllers = this.#currentRoute?.controllers || [NotFoundController];
     controllers.forEach((ControllerClass) => {
       Logger.info(`Applying controller: ${ControllerClass.name}`);
       const controller = new ControllerClass();
