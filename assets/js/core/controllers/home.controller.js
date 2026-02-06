@@ -100,6 +100,15 @@ class HomeController {
   }
 
   initRegisterForm() {
+    const joinSection = document.getElementById('join-our-culinary');
+
+    if (this.#authService.isAuthenticated()) {
+      if (joinSection) {
+        joinSection.style.display = 'none';
+      }
+      return;
+    }
+
     const registerForm = document.getElementById('register-form');
     if (!registerForm) return;
 
