@@ -21,9 +21,9 @@ export const ROUTES = {
   },
   RECIPES_DETAIL: {
     label: 'Recipe Detail',
-    path: '/pages/recipe-detail.html',
+    path: '/pages/recipe-detail',
     redirectPath(id) {
-      return `/pages/recipe-detail?id=${id}`;
+      return `/pages/recipe-detail.html?id=${id}`;
     },
     controllers: [RecipeDetailController],
   },
