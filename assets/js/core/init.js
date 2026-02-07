@@ -9,7 +9,7 @@ import BlogPost from './entities/blog-post.entity.js';
 import Logger from '../utils/logger.js';
 
 const INIT_KEY = 'APP_INITIALIZED';
-const VERSION = '05-02-2026-18:04';
+const VERSION = '08-02-2026-1:01';
 
 const initData = () => {
   if (localStorage.getItem(INIT_KEY) === VERSION && VERSION !== null) {
@@ -1081,7 +1081,7 @@ const initData = () => {
         'https://cdn.tgdd.vn/Files/2020/09/09/1288677/nhung-tac-dung-cua-da-lanh-ma-ban-khong-ngo-toi.jpg',
       authorId: 'u1',
       publishedAt: new Date('2023-10-01').toISOString(),
-      tags: ['Tips', 'Rau củ', 'Kỹ năng'],
+      tags: ['Tips'],
       content: `
 Để rau luộc luôn xanh mướt và giữ được độ giòn, bạn hãy thử áp dụng những mẹo nhỏ sau đây:
 
@@ -1106,15 +1106,14 @@ Khi nước bắt đầu sôi, hãy cho một thìa muối nhỏ vào. Muối gi
         'https://bizweb.dktcdn.net/100/509/197/files/y-nghia-that-su-cua-viec-an-chay-trong-phat-giao-1.jpg?v=1747909095640',
       authorId: 'u2',
       publishedAt: new Date('2023-10-05').toISOString(),
-      tags: ['Sức khỏe', 'Vegan', 'Lifestyle'],
+      tags: ['Health', 'Lifestyle'],
       content: `
 Ăn chay không chỉ là một trào lưu nhất thời mà là một lối sống mang lại nhiều lợi ích to lớn:
 
 ### Cải thiện sức khỏe tim mạch
 Chế độ ăn nhiều rau củ, ngũ cốc và ít chất béo bão hòa giúp giảm cholesterol xấu, từ đó giảm nguy cơ mắc bệnh tim mạch 
 
-[Image of healthy heart diagram]
-.
+![Ảnh ăn chay](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwaDllN3PBD4h0f10bbRfmrzH5_AiaMcwSmA&s)
 
 ### Hỗ trợ giảm cân tự nhiên
 Thực phẩm thực vật thường giàu chất xơ nhưng ít calo, giúp bạn cảm thấy no lâu hơn mà không nạp quá nhiều năng lượng dư thừa.
@@ -1134,19 +1133,22 @@ Hãy bắt đầu bằng việc ăn chay 1-2 ngày trong tuần (Meatless Monday
         'https://cdn-media.sforum.vn/storage/app/media/wp-content/uploads/2024/04/noi-chien-khong-dau-mini-1.jpg',
       authorId: 'u3',
       publishedAt: new Date('2023-10-10').toISOString(),
-      tags: ['Review', 'Dụng cụ', 'Bếp núc'],
+      tags: ['Review'],
       content: `
 Nồi chiên không dầu (Air Fryer) đã trở thành thiết bị không thể thiếu. Dưới đây là so sánh nhanh 3 dòng phổ biến:
 
 ### 1. Philips Airfryer XXL 
+![Ảnh Philips Airfryer](https://images.philips.com/is/image/philipsconsumer/vrs_1b9b5d3e438b43b1eaf7c979d123ed9e0ce90dcd?$pnglarge$&wid=1250)
 * **Ưu điểm:** Công nghệ Twin TurboStar giảm 90% chất béo, chín đều không cần lật.
 * **Nhược điểm:** Giá thành cao, hơi ồn.
 
 ### 2. Lock&Lock 5.2L
+![Ảnh Lock&Lock Airfryer](https://cdn.tgdd.vn/Products/Images/9418/288389/locknlock-ejf357blk-0-600x600.jpg)
 * **Ưu điểm:** Dung tích lớn, giá cả phải chăng, dễ vệ sinh.
 * **Nhược điểm:** Lớp chống dính có thể bong nếu không bảo quản kỹ.
 
 ### 3. Xiaomi Smart Air Fryer
+![Ảnh Xiaomi Airfryer](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOpbXNV-TS3pL6-YipI_9AHySAZ-Zru-Y3Bg&s)
 * **Ưu điểm:** Kết nối App điện thoại, thiết kế đẹp, giá rẻ.
 * **Nhược điểm:** Dung tích hơi nhỏ (3.5L), phù hợp người độc thân hoặc gia đình nhỏ.
 
@@ -1162,7 +1164,7 @@ Nồi chiên không dầu (Air Fryer) đã trở thành thiết bị không th�
         'https://dienmaynewsun.com/wp-content/uploads/2021/07/chon-thit-bo-ngon-de-nau-pho-1.jpg',
       authorId: 'u1',
       publishedAt: new Date('2023-10-15').toISOString(),
-      tags: ['Nguyên liệu', 'Món Việt', 'Tips'],
+      tags: ['Ingredients'],
       content: `
 Thịt bò là linh hồn của món phở. Để bát phở ngon, bạn cần biết cách chọn thịt đúng chuẩn:
 
@@ -1173,7 +1175,7 @@ Thịt bò là linh hồn của món phở. Để bát phở ngon, bạn cần b
 
 ### Cách nhìn thịt tươi 
 
-[Image of fresh raw beef cuts]
+![Ảnh thịt bò](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyB57-HU4teKJu2bDTUYII6xvYWJRA6Wo50g&sv)
 
 * **Màu sắc:** Thịt bò tươi phải có màu đỏ tươi (không phải đỏ sẫm), mỡ màu vàng nhạt.
 * **Độ đàn hồi:** Ấn ngón tay vào thịt, nếu thịt đàn hồi lại ngay và không dính tay là thịt mới.

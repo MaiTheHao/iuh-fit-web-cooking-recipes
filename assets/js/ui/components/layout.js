@@ -41,12 +41,12 @@ const renderAuthSection = () => {
     return `
         <div class="header__user-wrapper">
           <div class="header__user header__user--desktop" role="button">
-            <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" />
+            <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s'/>
             <span class="header__user-name fw-medium">${user.fullName}</span>
           </div>
           <ul class="header__user-menu">
             <li>
-              <a href="../pages/profile.html" class="header__user-menu-item">
+              <a href=${ROUTES.PROFILE.redirectPath} class="header__user-menu-item">
                 <i data-lucide="user" style="width: 1em; height: 1em;"></i>
                 <span>Profile</span>
               </a>
@@ -58,8 +58,8 @@ const renderAuthSection = () => {
               </button>
             </li>
           </ul>
-          <a href="../pages/profile.html" class="header__user header__user--mobile" role="button">
-            <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" />
+          <a href=${ROUTES.PROFILE.redirectPath} class="header__user header__user--mobile" role="button">
+            <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s'/>
             <span class="header__user-name fw-medium">${user.fullName}</span>
           </a>
         </div>

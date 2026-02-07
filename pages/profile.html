@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/pages/profile.css" />
+    <title>Recipe4f - Profile</title>
+  </head>
+  <body>
+    <div id="root">
+      <main id="app-body">
+        <div class="container limited-width">
+          <div class="profile-header text-center">
+            <h1 class="font-serif mb-2">Account Settings</h1>
+            <p class="text-muted">Manage your profile information and account preferences</p>
+          </div>
+
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <form id="profile-form" class="card-profile mb-4">
+                <div class="profile-avatar-container">
+                  <img
+                    id="avatar-preview"
+                    src="https://via.placeholder.com/150"
+                    alt="Profile Avatar"
+                    class="profile-avatar"
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email Address</label>
+                  <input
+                    type="email"
+                    class="form-control form-control-auth"
+                    id="email"
+                    name="email"
+                    readonly
+                    disabled
+                  />
+                  <div class="form-text">Email cannot be changed.</div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="fullName" class="form-label">Full Name</label>
+                  <input
+                    type="text"
+                    class="form-control form-control-auth"
+                    id="fullName"
+                    name="fullName"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="avatar" class="form-label">Avatar URL</label>
+                  <input
+                    type="url"
+                    class="form-control form-control-auth"
+                    id="avatar"
+                    name="avatar"
+                    placeholder="https://example.com/avatar.jpg"
+                  />
+                </div>
+
+                <div class="mb-4">
+                  <label for="password" class="form-label">New Password</label>
+                  <input
+                    type="password"
+                    class="form-control form-control-auth"
+                    id="password"
+                    name="password"
+                    placeholder="Leave blank to keep current password"
+                    autocomplete="new-password"
+                  />
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                  <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
+                    <i data-lucide="save" style="width: 1em; height: 1em"></i> Save Changes
+                  </button>
+                </div>
+              </form>
+
+              <div class="danger-zone">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                  <div>
+                    <h4 class="mb-2">Delete Account</h4>
+                    <p class="mb-0">
+                      Once you delete your account, there is no going back. Please be certain.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn btn-danger d-flex align-items-center gap-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirm-delete-modal"
+                  >
+                    <i data-lucide="trash-2" style="width: 1em; height: 1em"></i> Delete Account
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="confirm-delete-modal"
+      tabindex="-1"
+      aria-labelledby="confirmDeleteLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <h5
+              class="modal-title text-danger d-flex align-items-center gap-2"
+              id="confirmDeleteLabel"
+            >
+              <i data-lucide="alert-triangle"></i> Confirm Deletion
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body py-4">
+            <p class="mb-0">
+              Are you sure you want to delete your account? This action cannot be undone.
+            </p>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" id="btn-confirm-delete">
+              Yes, Delete My Account
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Modal (Reused) -->
+    <div
+      class="modal fade"
+      id="noti-modal"
+      tabindex="-1"
+      aria-labelledby="noti-modal__label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body py-4">
+            <p class="modal-message mb-0"></p>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
+  </body>
+</html>

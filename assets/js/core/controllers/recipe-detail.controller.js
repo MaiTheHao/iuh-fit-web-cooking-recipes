@@ -2,7 +2,7 @@ import Logger from '../../utils/logger.js';
 import RecipeService from '../services/recipe.service.js';
 import CategoryService from '../services/category.service.js';
 import UserRepository from '../repositories/user.repository.js';
-import { RecipeCard, RecipeList } from '../../ui/components/recipe-card.js';
+import { RecipeList } from '../../ui/components/recipe-card.js';
 import { marked } from '../../libs/marked/marked.esm.js';
 
 class RecipeDetailController {
@@ -50,14 +50,11 @@ class RecipeDetailController {
     this.#renderDirections();
     this.#renderNutrition();
     this.#renderRelatedRecipes();
-
-    if (window.lucide) window.lucide.createIcons();
-
     this.#bindEvents();
   }
 
   #renderHero() {
-    document.title = `${this.recipe.name} - Recipe4f`;
+    document.title = `${this.recipe.name}`;
     document.getElementById('recipe-title').textContent = this.recipe.name;
     document.getElementById('recipe-description').textContent = this.recipe.description;
 

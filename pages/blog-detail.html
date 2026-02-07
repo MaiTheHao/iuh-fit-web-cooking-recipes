@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/pages/blogs.css" />
+    <link rel="stylesheet" href="../assets/css/layout/header.css" />
+    <link rel="stylesheet" href="../assets/css/layout/footer.css" />
+    <title>Recipe4f - Blog Detail</title>
+  </head>
+  <body>
+    <div id="root">
+      <main id="app-body">
+        <section class="container mt-4 mb-5">
+          <div class="blog-detail-card p-0 overflow-hidden">
+            <div class="row g-0">
+              <div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                  <span class="badge bg-accent bg-opacity-10 text-accent">Story</span>
+                  <div id="blog-read-time" class="d-flex gap-1 text-muted small"></div>
+                </div>
+
+                <h1 id="blog-title" class="display-5 fw-bold ff-serif mb-3 text-primary"></h1>
+                <p id="blog-excerpt" class="text-secondary mb-4"></p>
+
+                <div
+                  class="blog-meta-bar d-flex flex-wrap align-items-center gap-4 py-3 border-top w-100"
+                  style="border-color: var(--color-border) !important"
+                >
+                  <div id="blog-author" class="d-flex align-items-center gap-2"></div>
+
+                  <div class="vr mx-2 text-muted d-none d-md-block opacity-25"></div>
+
+                  <div id="blog-meta-data" class="d-flex gap-4 text-secondary"></div>
+                </div>
+              </div>
+
+              <div class="col-lg-6 bg-light d-flex align-items-stretch">
+                <img id="blog-image" src="" alt="Blog Cover" class="w-100 h-100 object-fit-cover" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="container pb-5">
+          <div class="row g-4">
+            <div class="col-lg-8 order-1">
+              <div class="blog-detail-card p-4 p-md-5">
+                <article id="blog-content" class="blog-content markdown-content"></article>
+              </div>
+            </div>
+
+            <div class="col-lg-4 order-2">
+              <div class="sidebar-sticky d-flex flex-column gap-4">
+                <div class="blog-detail-card p-4">
+                  <h3 class="ff-serif mb-4 d-flex align-items-center gap-2 text-primary h4">
+                    <i data-lucide="tag" class="text-accent"></i>
+                    Tags
+                  </h3>
+                  <div id="blog-tags" class="d-flex flex-wrap gap-2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="container pb-5">
+          <div class="container">
+            <h3 class="ff-serif text-center mb-4">You Might Also Like</h3>
+            <div id="related-blogs" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="../assets/js/main.js"></script>
+    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

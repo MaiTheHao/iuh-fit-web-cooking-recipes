@@ -1,62 +1,78 @@
 import UserRepository from '../../core/repositories/user.repository.js';
 import { ROUTES } from '../../core/router/const.js';
+import InfoCard from './info-card.js';
 
 export class RecipeCard {
   constructor(recipe) {
     this.recipe = recipe;
   }
 
-  render() {
-    const author = UserRepository.getInstance().findById(this.recipe.authorId);
-    const authorName = author ? author.fullName : 'Unknown Author';
-    const authorAvatar = author
-      ? author.avatar
-      : 'https://static.vecteezy.com/system/resources/previews/025/738/217/original/anime-black-and-white-isolated-icon-illustration-vector.jpg';
+  #createAuthorHtml(avatarUrl, name) {
+    const fallbackAvatar =
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s';
+    const avatar = avatarUrl || fallbackAvatar;
 
     return `
-                <a href="${ROUTES.RECIPES_DETAIL.redirectPath(this.recipe.code)}" class="d-block h-100 text-decoration-none">
-                    <div class="card h-100 border-0 shadow-sm recipe-card">
-                        <div class="position-relative">
-                            <img
-                                src="${this.recipe.image}"
-                                class="card-img-top"
-                                alt="${this.recipe.name}"
-                            />
-                            <div class="badge bg-accent position-absolute top-0 end-0 m-3 bg-white recipe-card__time">
-                                <i data-lucide="clock"></i> <span>${this.recipe.cookTime} min</span>
-                            </div>
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title mb-2 fw-bold text-dark recipe-card__title">${this.recipe.name}</h5>
-                            <p class="card-text text-muted mb-3 grow recipe-card__desc">
-                                ${this.recipe.description}
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <div class="d-flex align-items-center gap-2">
-                                    <img
-                                        src="${authorAvatar}"
-                                        alt="${authorName}"
-                                        class="rounded-circle recipe-card__author-img"
-                                    />
-                                    <span class="text-muted small">${authorName}</span>
-                                </div>
-                                <div class="d-flex text-warning small">
-                                    ${this.#renderStars(this.recipe.stars || 0)}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            `;
+      <div class="d-flex align-items-center gap-2">
+        <img
+          src="${avatar}"
+          alt="${name}"
+          class="rounded-circle info-card__author-img"
+          onerror="this.onerror=null; this.src='${fallbackAvatar}';"
+        />
+        <span class="text-muted small">${name}</span>
+      </div>
+    `;
   }
 
-  #renderStars(rating) {
+  #createStarsHtml(rating = 0) {
     let starsHtml = '';
     for (let i = 1; i <= 5; i++) {
       const color = i <= rating ? 'var(--color-accent)' : 'var(--color-bg-alt)';
       starsHtml += `<i data-lucide="star" class="fill-current" style="width: 1rem; color: ${color}"></i>`;
     }
-    return starsHtml;
+    return `<div class="d-flex text-warning small">${starsHtml}</div>`;
+  }
+
+  #createBadgeHtml(icon, text, customClass = '') {
+    return `
+      <div class="badge bg-accent bg-white shadow-sm ${customClass}" style="display: flex; align-items: center; gap: 0.5ch; font-size: 0.75rem; padding: 0.5em 1em;">
+        <i data-lucide="${icon}" style="width: 1rem; height: 1rem;"></i>
+        <span>${text}</span>
+      </div>
+    `;
+  }
+
+  render() {
+    const author = UserRepository.getInstance().findById(this.recipe.authorId);
+    const authorName = author ? author.fullName : 'Unknown Author';
+    const authorAvatar = author?.avatar;
+
+    const badgeHtml = this.#createBadgeHtml(
+      'clock',
+      `${this.recipe.cookTime} min`,
+      'recipe-card__time',
+    );
+
+    const footerHtml = `
+      <div class="d-flex justify-content-between align-items-center">
+        ${this.#createAuthorHtml(authorAvatar, authorName)}
+        ${this.#createStarsHtml(this.recipe.stars || 0)}
+      </div>
+    `;
+
+    const card = new InfoCard({
+      image: this.recipe.image,
+      title: this.recipe.name,
+      description: this.recipe.description,
+      href: ROUTES.RECIPES_DETAIL.redirectPath(this.recipe.code),
+      badgeHtml,
+      footerHtml,
+      imageAlt: this.recipe.name,
+      cardClass: 'recipe-card',
+    });
+
+    return card.render();
   }
 }
 
@@ -78,9 +94,6 @@ export class RecipeList {
 					<p class="text-muted small">Try adjusting your filters or search criteria.</p>
 				</div>
 			`;
-      if (window.lucide) {
-        window.lucide.createIcons();
-      }
       return;
     }
 
@@ -90,9 +103,5 @@ export class RecipeList {
         return `<div class="col">${card.render()}</div>`;
       })
       .join('');
-
-    if (window.lucide) {
-      window.lucide.createIcons();
-    }
   }
 }

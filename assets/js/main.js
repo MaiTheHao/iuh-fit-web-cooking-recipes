@@ -6,6 +6,7 @@ import { marked } from './libs/marked/marked.esm.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initData();
+
   new Layout().init();
   new Router().init();
 
