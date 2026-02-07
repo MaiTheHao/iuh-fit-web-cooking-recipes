@@ -42,7 +42,7 @@
   --max-width-container: 1200px;
   --header-height: 4.5rem;
 
-  --bs-font-sans-serif: var(--font-serif);
-  --bs-font-serif: var(--font-main);
+  --bs-font-sans-serif: var(--font-main);
+  --bs-font-serif: var(--font-serif);
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, monospace;
 }
