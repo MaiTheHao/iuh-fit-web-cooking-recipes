@@ -7,37 +7,12 @@ export class BlogCard {
     this.blog = blog;
   }
 
-  #createAuthorHtml(avatarUrl, name) {
-    const fallbackAvatar =
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s';
-    const avatar = avatarUrl || fallbackAvatar;
-
-    return `
-      <div class="d-flex align-items-center gap-2">
-        <img
-          src="${avatar}"
-          alt="${name}"
-          class="rounded-circle info-card__author-img"
-          onerror="this.onerror=null; this.src='${fallbackAvatar}';"
-        />
-        <span class="text-muted small">${name}</span>
-      </div>
-    `;
-  }
-
-  #createBadgeHtml(icon, text, customClass = '') {
-    return `
-      <div class="badge bg-accent bg-white shadow-sm ${customClass}" style="display: flex; align-items: center; gap: 0.5ch; font-size: 0.75rem; padding: 0.5em 1em;">
-        <i data-lucide="${icon}" style="width: 1rem; height: 1rem;"></i>
-        <span>${text}</span>
-      </div>
-    `;
-  }
-
   render() {
     const author = UserRepository.getInstance().findById(this.blog.authorId);
     const authorName = author ? author.fullName : 'Unknown Author';
-    const authorAvatar = author?.avatar;
+    const fallbackAvatar =
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s';
+    const authorAvatar = author?.avatar || fallbackAvatar;
 
     const publishDate = new Date(this.blog.publishedAt).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -45,21 +20,31 @@ export class BlogCard {
       day: 'numeric',
     });
 
-    const badgeHtml = this.#createBadgeHtml('calendar', publishDate, 'blog-card__date');
-    const footerHtml = this.#createAuthorHtml(authorAvatar, authorName);
-
-    const card = new InfoCard({
+    return new InfoCard({
       image: this.blog.image,
       title: this.blog.title,
       description: this.blog.excerpt,
       href: ROUTES.BLOG_DETAIL.redirectPath(this.blog.id),
-      badgeHtml,
-      footerHtml,
       imageAlt: this.blog.title,
       cardClass: 'blog-card',
-    });
-
-    return card.render();
+      badgeHtml: `
+        <div class="badge bg-accent bg-white shadow-sm blog-card__date" style="display: flex; align-items: center; gap: 0.5ch; font-size: 0.75rem; padding: 0.5em 1em;">
+          <i data-lucide="calendar" style="width: 1rem; height: 1rem;"></i>
+          <span>${publishDate}</span>
+        </div>
+      `,
+      footerHtml: `
+        <div class="d-flex align-items-center gap-2">
+          <img
+            src="${authorAvatar}"
+            alt="${authorName}"
+            class="rounded-circle info-card__author-img"
+            onerror="this.onerror=null; this.src='${fallbackAvatar}';"
+          />
+          <span class="text-muted small">${authorName}</span>
+        </div>
+      `,
+    }).render();
   }
 }
 

@@ -2,11 +2,11 @@ import Logger from '../../utils/logger.js';
 import Validator from '../../utils/validator.js';
 import UserRepository from '../repositories/user.repository.js';
 import User from '../entities/user.entity.js';
+import { ROUTES } from '../router/const.js';
 
 class AuthService {
   static #instance = null;
   #userRepository;
-  #currentUser = null;
 
   constructor() {
     if (AuthService.#instance) {
@@ -28,8 +28,9 @@ class AuthService {
   #loadCurrentUser() {
     const currentUserId = localStorage.getItem('CURRENT_USER_ID');
     if (currentUserId) {
-      this.#currentUser = this.#userRepository.findById(currentUserId);
+      return this.#userRepository.findById(currentUserId);
     }
+    return null;
   }
 
   /** @returns {{success: boolean, message?: string, errors?: Object, user?: User}} */
@@ -153,7 +154,6 @@ class AuthService {
         };
       }
 
-      this.#currentUser = user;
       localStorage.setItem('CURRENT_USER_ID', user.id);
 
       Logger.info(`User signed in: ${email}`);
@@ -193,20 +193,20 @@ class AuthService {
   }
 
   signout() {
-    this.#currentUser = null;
     localStorage.removeItem('CURRENT_USER_ID');
     window.location.reload();
+    window.location.href = ROUTES.HOME.redirectPath;
     Logger.info('User signed out');
   }
 
   /** @returns {User|null} */
   getCurrentUser() {
-    return this.#currentUser;
+    return this.#loadCurrentUser();
   }
 
   /** @returns {boolean} */
   isAuthenticated() {
-    return this.#currentUser !== null;
+    return this.#loadCurrentUser() !== null;
   }
 
   /** @returns {string} */

@@ -21,59 +21,12 @@ const ASSETS = {
   logo: '../assets/img/logo.svg',
 };
 
-const renderMenuItems = (className) =>
-  MENU_ITEMS.map(
-    (item) => `<li><a href="${item.redirectPath}" class="${className}">${item.label}</a></li>`,
-  ).join('');
-
-const renderSocialIcons = (isNav = false) =>
-  SOCIAL_LINKS.map(
-    (link) =>
-      `<${isNav ? 'a' : 'li'}${isNav ? ` href="${link.url}" target="_blank" title="${link.label}"` : ''} class="social-icon" aria-label="${link.label}">
-				<i data-lucide="${link.icon}"></i>
-			</${isNav ? 'a' : 'li'}>`,
-  ).join('');
-
-const renderAuthSection = () => {
+const Header = () => {
   const user = AuthService.getInstance().getCurrentUser();
-
-  if (user) {
-    return `
-        <div class="header__user-wrapper">
-          <div class="header__user header__user--desktop" role="button">
-            <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s'/>
-            <span class="header__user-name fw-medium">${user.fullName}</span>
-          </div>
-          <ul class="header__user-menu">
-            <li>
-              <a href=${ROUTES.PROFILE.redirectPath} class="header__user-menu-item">
-                <i data-lucide="user" style="width: 1em; height: 1em;"></i>
-                <span>Profile</span>
-              </a>
-            </li>
-            <li>
-              <button class="header__user-menu-item logout-btn">
-                <i data-lucide="log-out" style="width: 1em; height: 1em;"></i>
-                <span>Logout</span>
-              </button>
-            </li>
-          </ul>
-          <a href=${ROUTES.PROFILE.redirectPath} class="header__user header__user--mobile" role="button">
-            <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s'/>
-            <span class="header__user-name fw-medium">${user.fullName}</span>
-          </a>
-        </div>
-      `;
-  }
+  const fallbackAvatar =
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s';
 
   return `
-        <a href="../pages/login.html" class="btn btn-primary header__auth-btn d-flex align-items-center gap-2">
-            <i data-lucide="log-in" style="width: 1em; height: 1em;"></i> <span>Sign In</span>
-        </a>
-    `;
-};
-
-const Header = () => `
     <div class="header__overlay header__overlay--default"></div>
     <header class="header">
         <div class="header__container">
@@ -82,11 +35,47 @@ const Header = () => `
             </a>
             <nav class="header__nav">
                 <ul class="header__menu">
-                    ${renderMenuItems('header__link fw-light')}
+                    ${MENU_ITEMS.map(
+                      (item) =>
+                        `<li><a href="${item.redirectPath}" class="header__link fw-light">${item.label}</a></li>`,
+                    ).join('')}
                 </ul>
             </nav>
             <div class="header__actions">
-                ${renderAuthSection()}
+                ${
+                  user
+                    ? `
+                    <div class="header__user-wrapper">
+                      <div class="header__user header__user--desktop" role="button">
+                        <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" onerror="this.src='${fallbackAvatar}'"/>
+                        <span class="header__user-name fw-medium">${user.fullName}</span>
+                      </div>
+                      <ul class="header__user-menu">
+                        <li>
+                          <a href="${ROUTES.PROFILE.redirectPath}" class="header__user-menu-item">
+                            <i data-lucide="user" style="width: 1em; height: 1em;"></i>
+                            <span>Profile</span>
+                          </a>
+                        </li>
+                        <li>
+                          <button class="header__user-menu-item logout-btn">
+                            <i data-lucide="log-out" style="width: 1em; height: 1em;"></i>
+                            <span>Logout</span>
+                          </button>
+                        </li>
+                      </ul>
+                      <a href="${ROUTES.PROFILE.redirectPath}" class="header__user header__user--mobile" role="button">
+                        <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" onerror="this.src='${fallbackAvatar}'"/>
+                        <span class="header__user-name fw-medium">${user.fullName}</span>
+                      </a>
+                    </div>
+                `
+                    : `
+                    <a href="../pages/login.html" class="btn btn-primary header__auth-btn d-flex align-items-center gap-2">
+                        <i data-lucide="log-in" style="width: 1em; height: 1em;"></i> <span>Sign In</span>
+                    </a>
+                `
+                }
                 <button class="header__toggle" aria-label="Open Menu">
                     <i data-lucide="menu"></i>
                 </button>
@@ -99,12 +88,16 @@ const Header = () => `
                     </button>
                 </div>
                 <ul class="header__drawer-menu">
-                    ${renderMenuItems('header__drawer-link fw-light')}
+                    ${MENU_ITEMS.map(
+                      (item) =>
+                        `<li><a href="${item.redirectPath}" class="header__drawer-link fw-light">${item.label}</a></li>`,
+                    ).join('')}
                 </ul>
             </aside>
         </div>
     </header>
-`;
+  `;
+};
 
 const Footer = () => `
     <footer id="app-footer">
@@ -119,10 +112,19 @@ const Footer = () => `
             </div>
             <nav class="footer__top__part footer__nav">
                 <ul>
-                    ${renderMenuItems('footer__link fw-light')}
+                    ${MENU_ITEMS.map(
+                      (item) =>
+                        `<li><a href="${item.redirectPath}" class="footer__link fw-light">${item.label}</a></li>`,
+                    ).join('')}
                 </ul>
                 <ul>
-                    ${renderSocialIcons(true)}
+                    ${SOCIAL_LINKS.map(
+                      (link) => `
+                        <a href="${link.url}" target="_blank" title="${link.label}" class="social-icon" aria-label="${link.label}">
+                            <i data-lucide="${link.icon}"></i>
+                        </a>
+                      `,
+                    ).join('')}
                 </ul>
             </nav>
         </div>
@@ -135,72 +137,56 @@ const Footer = () => `
 
 export class Layout {
   constructor() {
-    const root = document.getElementById('root');
-    if (!root || !(root instanceof HTMLElement))
-      throw new Error('Root element is required for Layout initialization.');
-    if (typeof window === 'undefined') throw new Error('Window object is not available.');
-    this.root = root;
+    this.root = document.getElementById('root');
+    if (!this.root) throw new Error('Root element not found');
   }
 
   init() {
-    this.#renderHeader();
-    this.#renderFooter();
+    this.root.insertAdjacentHTML('afterbegin', Header());
+    this.root.insertAdjacentHTML('beforeend', Footer());
+
     this.#activeNavLink();
     this.#bindEvents();
-    Logger.info('Layout rendered');
-  }
-
-  #renderHeader() {
-    this.root.insertAdjacentHTML('afterbegin', Header());
-  }
-
-  #renderFooter() {
-    this.root.insertAdjacentHTML('beforeend', Footer());
+    Logger.info('Layout initialized');
   }
 
   #activeNavLink() {
     const currentPath = window.location.pathname;
-    const selectors = ['.header__link', '.header__drawer-link', '.footer__link'];
-
-    selectors.forEach((selector) => {
-      this.root.querySelectorAll(selector).forEach((link) => {
-        const isActive = link.getAttribute('href') === currentPath;
-        link.classList.toggle('active', isActive);
+    this.root
+      .querySelectorAll('.header__link, .header__drawer-link, .footer__link')
+      .forEach((link) => {
+        link.classList.toggle('active', link.getAttribute('href') === currentPath);
       });
-    });
   }
 
   #bindEvents() {
     if (window.lucide) window.lucide.createIcons();
 
-    const toggleBtn = document.querySelector('.header__toggle');
-    const drawer = document.querySelector('.header__drawer');
-    const closeBtn = document.querySelector('.header__close-btn');
-    const overlay = document.querySelector('.header__overlay');
+    const elements = {
+      toggle: document.querySelector('.header__toggle'),
+      drawer: document.querySelector('.header__drawer'),
+      close: document.querySelector('.header__close-btn'),
+      overlay: document.querySelector('.header__overlay'),
+      logout: document.querySelector('.logout-btn'),
+    };
 
-    if (toggleBtn && drawer && closeBtn && overlay) {
-      const openDrawer = () => {
-        drawer.classList.add('header__drawer--open');
-        overlay.classList.add('header__overlay--visible');
-        overlay.classList.remove('header__overlay--hidden', 'header__overlay--default');
+    if (elements.toggle && elements.drawer && elements.overlay) {
+      const toggleDrawer = (isOpen) => {
+        elements.drawer.classList.toggle('header__drawer--open', isOpen);
+        elements.overlay.classList.toggle('header__overlay--visible', isOpen);
+        elements.overlay.classList.toggle('header__overlay--hidden', !isOpen);
       };
 
-      const closeDrawer = () => {
-        drawer.classList.remove('header__drawer--open');
-        overlay.classList.add('header__overlay--hidden');
-        overlay.classList.remove('header__overlay--visible');
-      };
-
-      toggleBtn.addEventListener('click', openDrawer);
-      closeBtn.addEventListener('click', closeDrawer);
-      overlay.addEventListener('click', closeDrawer);
+      elements.toggle.onclick = () => toggleDrawer(true);
+      if (elements.close) elements.close.onclick = () => toggleDrawer(false);
+      elements.overlay.onclick = () => toggleDrawer(false);
     }
 
-    const logoutBtn = document.querySelector('.logout-btn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
+    if (elements.logout) {
+      elements.logout.onclick = () => {
         AuthService.getInstance().signout();
-      });
+        window.location.reload();
+      };
     }
   }
 }

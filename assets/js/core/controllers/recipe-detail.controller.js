@@ -1,6 +1,8 @@
 import Logger from '../../utils/logger.js';
 import RecipeService from '../services/recipe.service.js';
 import CategoryService from '../services/category.service.js';
+import UserService from '../services/user.service.js';
+import AuthService from '../services/auth.service.js';
 import UserRepository from '../repositories/user.repository.js';
 import { RecipeList } from '../../ui/components/recipe-card.js';
 import { marked } from '../../libs/marked/marked.esm.js';
@@ -16,6 +18,8 @@ class RecipeDetailController {
 
     this.recipeService = RecipeService.getInstance();
     this.categoryService = CategoryService.getInstance();
+    this.userService = UserService.getInstance();
+    this.authService = AuthService.getInstance();
     this.userRepository = UserRepository.getInstance();
     this.recipe = null;
   }
@@ -87,6 +91,9 @@ class RecipeDetailController {
 
     const metaDataEl = document.getElementById('recipe-meta-data');
     if (metaDataEl) {
+      const isFavorite = this.authService
+        .getCurrentUser()
+        ?.favoriteRecipes?.includes(this.recipe.id);
       metaDataEl.innerHTML = `
             <div class="d-flex align-items-center gap-2" title="Preparation Time">
                 <i data-lucide="clock" width="18"></i>
@@ -96,6 +103,10 @@ class RecipeDetailController {
                 <i data-lucide="flame" width="18"></i>
                 <span>${this.recipe.cookTime} min</span>
             </div>
+            <button class="btn btn-outline-danger btn-sm rounded-pill ms-auto favorite-btn" id="fav-detail" style="display:flex; align-items:center; gap:0.5ch;">
+                <i data-lucide="heart" width="18" style="fill: ${isFavorite ? 'red' : 'none'}; color: ${isFavorite ? 'red' : 'currentColor'};"></i>
+                <span>Favorite</span>
+            </button>
         `;
     }
   }
@@ -239,6 +250,25 @@ class RecipeDetailController {
         }
       });
     });
+
+    const favBtn = document.getElementById('fav-detail');
+    if (favBtn) {
+      favBtn.onclick = () => {
+        const currentUser = this.authService.getCurrentUser();
+        if (!currentUser) {
+          alert('Please login to favorite this recipe');
+          return;
+        }
+
+        const result = this.userService.toggleFavorite(currentUser.id, this.recipe.id);
+        if (result.success) {
+          const icon = favBtn.querySelector('i');
+          const isFav = result.isFavorite;
+          icon.style.fill = isFav ? 'red' : 'none';
+          icon.style.color = isFav ? 'red' : 'currentColor';
+        }
+      };
+    }
   }
 
   #showError(msg) {

@@ -1,5 +1,7 @@
 import RecipeService from '../services/recipe.service.js';
 import CategoryService from '../services/category.service.js';
+import UserService from '../services/user.service.js';
+import AuthService from '../services/auth.service.js';
 import { RecipeList } from '../../ui/components/recipe-card.js';
 import Logger from '../../utils/logger.js';
 
@@ -14,6 +16,8 @@ class RecipeController {
 
     this.recipeService = RecipeService.getInstance();
     this.categoryService = CategoryService.getInstance();
+    this.userService = UserService.getInstance();
+    this.authService = AuthService.getInstance();
     this.recipeListRaw = new RecipeList('recipe-list');
 
     this.state = {
@@ -195,6 +199,33 @@ class RecipeController {
         container.addEventListener('change', handleFilterChange);
       }
     });
+
+    const listContainer = document.getElementById('recipe-list');
+    if (listContainer) {
+      listContainer.onclick = async (e) => {
+        const btn = e.target.closest('.favorite-btn');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        const currentUser = this.authService.getCurrentUser();
+        if (!currentUser) {
+          alert('Please login to add to favorites');
+          return;
+        }
+
+        const recipeId = btn.dataset.id;
+        const result = this.userService.toggleFavorite(currentUser.id, recipeId);
+        if (result.success) {
+          const icon = btn.querySelector('svg');
+          if (icon) {
+            const isFav = result.isFavorite;
+            icon.style.fill = isFav ? 'red' : 'white';
+            icon.style.color = isFav ? 'red' : 'white';
+          }
+        }
+      };
+    }
   }
 
   #attachRangeSliderListeners() {

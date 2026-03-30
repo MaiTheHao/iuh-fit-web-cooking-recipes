@@ -79,6 +79,22 @@ class UserService {
       return { success: false, message: error.message };
     }
   }
+
+  toggleFavorite(userId, recipeId) {
+    try {
+      const user = this.#userRepository.findById(userId);
+      if (!user) return { success: false, message: 'User not found' };
+
+      user.toggleFavorite(recipeId);
+      if (this.#userRepository.save(user)) {
+        const isFav = user.favoriteRecipes.includes(recipeId);
+        return { success: true, isFavorite: isFav, message: isFav ? 'Added' : 'Removed' };
+      }
+      return { success: false, message: 'Failed' };
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  }
 }
 
 export default UserService;

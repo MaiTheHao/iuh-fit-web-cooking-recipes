@@ -71,6 +71,15 @@ class RecipeService {
 
     return this.recipeRepository.findWithCriteria(finalCriteria);
   }
+
+  /**
+   * Get favorite recipes by IDs
+   * @param {string[]} ids
+   * @returns {Recipe[]}
+   */
+  getFavorites(ids = []) {
+    return this.recipeRepository.findAll().filter((r) => ids.includes(r.id));
+  }
 }
 
 export default RecipeService;

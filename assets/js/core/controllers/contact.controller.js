@@ -4,78 +4,39 @@ import Validator from '../../utils/validator.js';
 
 class ContactController {
   static #instance = null;
-  #notification;
 
   constructor() {
-    if (ContactController.#instance) {
-      return ContactController.#instance;
-    }
+    if (ContactController.#instance) return ContactController.#instance;
     ContactController.#instance = this;
-    this.#notification = new Notification();
+    this.notif = new Notification();
   }
 
   init() {
-    this.initContactForm();
-  }
+    const form = document.getElementById('contact-form');
+    if (!form) return Logger.warn('Contact form not found');
 
-  initContactForm() {
-    const contactForm = document.getElementById('contact-form');
-    if (!contactForm) {
-      Logger.warn('Contact form not found');
-      return;
-    }
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const data = {
+        name: form.querySelector('#name').value.trim(),
+        email: form.querySelector('#email').value.trim(),
+        subject: form.querySelector('#subject').value.trim(),
+        message: form.querySelector('#message').value.trim(),
+      };
 
-    contactForm.addEventListener('submit', (e) => this.#handleFormSubmit(e));
-  }
+      if (!Validator.fullName.isValid(data.name))
+        return this.notif.error('Invalid Input', 'Invalid full name (3-100 characters).');
+      if (!Validator.email.isValid(data.email))
+        return this.notif.error('Invalid Input', 'Invalid email address.');
+      if (data.subject.length < 3)
+        return this.notif.error('Invalid Input', 'Subject must be >= 3 chars.');
+      if (data.message.length < 10)
+        return this.notif.error('Invalid Input', 'Message must be >= 10 chars.');
 
-  #handleFormSubmit(e) {
-    e.preventDefault();
-    const form = e.target;
-
-    const formData = {
-      name: form.querySelector('#name').value.trim(),
-      email: form.querySelector('#email').value.trim(),
-      subject: form.querySelector('#subject').value.trim(),
-      message: form.querySelector('#message').value.trim(),
+      Logger.info('Contact form submitted', data);
+      this.notif.success('Message Sent', 'Thank you! We will get back to you soon.');
+      form.reset();
     };
-
-    if (!this.#validateForm(formData)) {
-      return;
-    }
-
-    Logger.info('Contact form submitted', formData);
-    this.#notification.success(
-      'Message Sent',
-      'Thank you for contacting us! We will get back to you soon.',
-    );
-    form.reset();
-  }
-
-  #validateForm(data) {
-    if (!Validator.fullName.isValid(data.name)) {
-      this.#notification.error(
-        'Invalid Input',
-        'Please enter a valid full name (3-100 characters).',
-      );
-      return false;
-    }
-
-    if (!Validator.email.isValid(data.email)) {
-      this.#notification.error('Invalid Input', 'Please enter a valid email address.');
-      return false;
-    }
-
-    if (data.subject.length < 3) {
-      this.#notification.error('Invalid Input', 'Subject must be at least 3 characters long.');
-      return false;
-    }
-
-    if (data.message.length < 10) {
-      this.#notification.error('Invalid Input', 'Message must be at least 10 characters long.');
-      return false;
-    }
-
-    return true;
   }
 }
 

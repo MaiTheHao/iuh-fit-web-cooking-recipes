@@ -4,29 +4,23 @@ import Logger from '../../utils/logger.js';
 import { ROUTES } from '../router/const.js';
 
 class RegisterController {
-  #authService;
-  #notification;
+  static #instance = null;
 
   constructor() {
-    this.#authService = AuthService.getInstance();
-    this.#notification = new Notification();
-    if (this.#authService.isAuthenticated()) {
-      window.location.href = ROUTES.HOME.redirectPath;
-    }
+    if (RegisterController.#instance) return RegisterController.#instance;
+    RegisterController.#instance = this;
+
+    this.auth = AuthService.getInstance();
+    this.notification = new Notification();
+    if (this.auth.isAuthenticated()) window.location.href = ROUTES.HOME.redirectPath;
   }
 
   init() {
-    this.#initRegisterForm();
-    Logger.info('RegisterController initialized');
-  }
-
-  #initRegisterForm() {
     const form = document.getElementById('register-form');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    form.onsubmit = (e) => {
       e.preventDefault();
-
       const formData = {
         fullName: document.getElementById('fullName').value.trim(),
         email: document.getElementById('email').value.trim(),
@@ -34,22 +28,17 @@ class RegisterController {
         confirmPassword: document.getElementById('confirmPassword').value,
       };
 
-      const result = this.#authService.register(formData);
+      const result = this.auth.register(formData);
 
       if (result.success) {
-        Logger.info('Registration successful', result);
-        this.#notification.success('Account Created!', 'Registration successful. Please sign in.');
-        form.reset();
-
-        setTimeout(() => {
-          window.location.href = '/pages/login.html';
-        }, 2000);
+        this.notification.success('Account Created!', 'Registration successful.');
+        setTimeout(() => (window.location.href = '/pages/login.html'), 1000);
       } else {
-        Logger.error('Registration failed', result);
-        const errorMessage = result.errors ? Object.values(result.errors)[0] : result.message;
-        this.#notification.error('Registration Failed', errorMessage);
+        const error = result.errors ? Object.values(result.errors)[0] : result.message;
+        this.notification.error('Registration Failed', error);
       }
-    });
+    };
+    Logger.info('RegisterController initialized');
   }
 }
 
