@@ -16,18 +16,23 @@ class NotFoundController {
 
     appBody.innerHTML = `
       <div class="notfound-wrapper">
-        <div class="container text-center py-5">
-          <div class="notfound-code display-1 fw-bold">404</div>
-          <h1 class="h2 mb-4">Page Not Found</h1>
-          <p class="text-muted mb-5">Sorry, the page you're looking for doesn't exist or has been moved.</p>
-          <div class="d-flex justify-content-center gap-3">
-            <a href="/pages" class="btn btn-primary d-flex align-items-center gap-2">
-              <i data-lucide="home" style="width: 1rem;"></i> Back to Home
-            </a>
-            <a href="/pages/recipes" class="btn btn-outline-secondary d-flex align-items-center gap-2">
-              <i data-lucide="utensils" style="width: 1rem;"></i> View Recipes
-            </a>
-          </div>
+        <div class="container">
+          <div class="notfound-content">
+            <div class="notfound-code">404</div>
+            <h1 class="notfound-title">Page Not Found</h1>
+            <p class="notfound-description">
+              Sorry, the page you're looking for doesn't exist or has been moved.
+            </p>
+            <div class="notfound-actions">
+              <a href="/pages" class="btn btn-primary notfound-btn">
+                <i data-lucide="home" style="width: 1em; height: 1em;"></i>
+                <span>Back to Home</span>
+              </a>
+              <a href="/pages/recipes" class="btn btn-secondary notfound-btn">
+                <i data-lucide="utensils" style="width: 1em; height: 1em;"></i>
+                <span>View Recipes</span>
+              </a>
+            </div>
         </div>
       </div>
     `;
