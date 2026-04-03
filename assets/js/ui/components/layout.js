@@ -18,7 +18,7 @@ const SOCIAL_LINKS = [
 ];
 
 const ASSETS = {
-  logo: '../assets/img/logo.svg',
+  logo: '/assets/img/logo.svg',
 };
 
 const Header = () => {
