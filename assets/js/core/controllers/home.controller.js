@@ -96,6 +96,10 @@ class HomeController {
 
     recipeList.render(items);
 
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+
     Logger.info(`Recipe grid initialized with ${total} recipes`);
   }
 

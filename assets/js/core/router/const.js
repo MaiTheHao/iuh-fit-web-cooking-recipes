@@ -8,6 +8,10 @@ import RegisterController from '../controllers/register.controller.js';
 import AboutController from '../controllers/about.controller.js';
 import ContactController from '../controllers/contact.controller.js';
 import ProfileController from '../controllers/profile.controller.js';
+// Admin
+import AdminRecipeController from '../../admin/controllers/admin-recipe.controller.js';
+import AdminBlogController from '../../admin/controllers/admin-blog.controller.js';
+import AdminUserController from '../../admin/controllers/admin-user.controller.js';
 
 export const ROUTES = {
   HOME: {
@@ -73,6 +77,24 @@ export const ROUTES = {
     redirectPath: '/pages/profile.html',
     path: '/pages/profile',
     controllers: [ProfileController],
+  },
+  ADMIN_RECIPES: {
+    label: 'Admin Recipes',
+    path: '/pages/admin/recipes',
+    redirectPath: '/pages/admin/recipes.html',
+    controllers: [AdminRecipeController],
+  },
+  ADMIN_BLOGS: {
+    label: 'Admin Blogs',
+    path: '/pages/admin/blogs',
+    redirectPath: '/pages/admin/blogs.html',
+    controllers: [AdminBlogController],
+  },
+  ADMIN_USERS: {
+    label: 'Admin Users',
+    path: '/pages/admin/users',
+    redirectPath: '/pages/admin/users.html',
+    controllers: [AdminUserController],
   },
 };
 

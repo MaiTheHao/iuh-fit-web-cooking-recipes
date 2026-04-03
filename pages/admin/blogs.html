@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Manage Blogs</title>
+    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <style>
+      .admin-page-header { padding: 40px 0; background: var(--surface-1); margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+      .table-cover { width: 80px; height: 50px; object-fit: cover; border-radius: 4px; }
+      .table-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 8px; }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <main id="app-body">
+        <div class="admin-page-header text-center">
+          <div class="container">
+            <h1 class="display-5 fw-bold mb-3">Manage Blogs</h1>
+            <p class="lead">Admin control panel for managing blog post entities.</p>
+          </div>
+        </div>
+
+        <div class="container mb-5">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">Blogs List</h3>
+            <button class="btn btn-primary" id="btnCreateBlog">
+              <i data-lucide="plus" class="me-2"></i>Create Blog
+            </button>
+          </div>
+
+          <div class="table-responsive bg-white rounded shadow-sm p-3">
+            <table class="table table-hover align-middle mb-0" id="blogsTable">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Cover</th>
+                  <th>Title</th>
+                  <th>Published Date</th>
+                  <th>Author</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="blogsTableBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="modal fade" id="blogModal" tabindex="-1">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="blogModalTitle">Create Blog</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <form id="blogForm">
+                  <input type="hidden" id="blogId" />
+                  <div class="row g-3">
+                    <div class="col-md-12">
+                      <label class="form-label">Post Title</label>
+                      <input type="text" class="form-control" id="blogTitle" required />
+                    </div>
+                    <div class="col-md-12">
+                      <label class="form-label">Excerpt</label>
+                      <textarea class="form-control" id="blogExcerpt" rows="2" required></textarea>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="form-label">Cover Image URL</label>
+                      <input type="url" class="form-control" id="blogImage" required />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Author (User)</label>
+                      <select class="form-select" id="blogAuthorId" required>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Tags (comma separated)</label>
+                      <input type="text" class="form-control" id="blogTags" />
+                    </div>
+                    <div class="col-md-12">
+                      <label class="form-label">Content (Markdown/HTML)</label>
+                      <textarea class="form-control" id="blogContent" rows="8" required></textarea>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnSaveBlog">Save Blog</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body py-4">
+            <p class="modal-message mb-0"></p>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/libs/lucide-icon/lucide.min.js"></script>
+  </body>
+</html>

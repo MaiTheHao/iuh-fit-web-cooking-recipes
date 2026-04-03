@@ -57,6 +57,30 @@ const Header = () => {
                             <span>Profile</span>
                           </a>
                         </li>
+                        ${
+                          user.role === 'admin'
+                            ? `
+                          <li>
+                            <a href="${ROUTES.ADMIN_USERS.redirectPath}" class="header__user-menu-item">
+                              <i data-lucide="shield" style="width: 1em; height: 1em;"></i>
+                              <span>Manage Users</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="${ROUTES.ADMIN_RECIPES.redirectPath}" class="header__user-menu-item">
+                              <i data-lucide="shield" style="width: 1em; height: 1em;"></i>
+                              <span>Manage Recipes</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="${ROUTES.ADMIN_BLOGS.redirectPath}" class="header__user-menu-item">
+                              <i data-lucide="shield" style="width: 1em; height: 1em;"></i>
+                              <span>Manage Blogs</span>
+                            </a>
+                          </li>
+                        `
+                            : ''
+                        }
                         <li>
                           <button class="header__user-menu-item logout-btn">
                             <i data-lucide="log-out" style="width: 1em; height: 1em;"></i>

@@ -151,6 +151,10 @@ class RecipeController {
         .replace(/name="([^"]+)"/g, 'name="mobile-$1"');
     }
     this.#attachRangeSliderListeners();
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   }
 
   #renderStars(count) {
@@ -278,6 +282,10 @@ class RecipeController {
     this.#renderRecipeList(sortedItems);
     this.#renderPagination(result.total);
     this.#updateUrl();
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   }
 
   #sortRecipes(recipes, sortBy) {

@@ -83,7 +83,7 @@ class BlogController {
                 ${tag}
               </label>
             </div>
-          `
+          `,
             )
             .join('')}
         </div>
@@ -98,14 +98,18 @@ class BlogController {
         .replace(/for="([^"]+)"/g, 'for="mobile-$1"')
         .replace(/name="([^"]+)"/g, 'name="mobile-$1"');
     }
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   }
 
   #attachEventListeners() {
     // Tag Filters (Delegate)
     const handleFilterChange = (e) => {
-       if (e.target.classList.contains('filter-tag')) {
-         this.#handleTagFilter(e.target);
-       }
+      if (e.target.classList.contains('filter-tag')) {
+        this.#handleTagFilter(e.target);
+      }
     };
 
     ['desktopFilterContainer', 'mobileFilterContainer'].forEach((id) => {
@@ -179,7 +183,7 @@ class BlogController {
   #fetchBlogs() {
     const result = this.blogService.getWithCriteria(this.state.criteria);
     let blogs = result.items;
-    
+
     // Client-side sorting if needed (service does date sort by default, but we have other options)
     blogs = this.#sortBlogs(blogs, this.state.sortBy);
 
@@ -234,20 +238,13 @@ class BlogController {
 
     // Page Numbers
     for (let i = 1; i <= totalPages; i++) {
-       if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= current - 1 && i <= current + 1)
-      ) {
-         html += `
+      if (i === 1 || i === totalPages || (i >= current - 1 && i <= current + 1)) {
+        html += `
                 <li class="page-item ${current === i ? 'active' : ''}">
                     <a class="page-link" href="#" data-page="${i}">${i}</a>
                 </li>
             `;
-      } else if (
-        (i === 2 && current > 3) ||
-        (i === totalPages - 1 && current < totalPages - 2)
-      ) {
+      } else if ((i === 2 && current > 3) || (i === totalPages - 1 && current < totalPages - 2)) {
         html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
       }
     }
@@ -284,13 +281,13 @@ class BlogController {
     } else {
       url.searchParams.delete('page');
     }
-    
+
     // Handle tags in URL (only one supported in URL for simplicity, or multi?)
     // Recipe controller didn't seem to support array updateUrl fully for categories, but let's stick to simple
     if (this.state.criteria.tags.length > 0) {
-        url.searchParams.set('tag', this.state.criteria.tags[0]);
+      url.searchParams.set('tag', this.state.criteria.tags[0]);
     } else {
-        url.searchParams.delete('tag');
+      url.searchParams.delete('tag');
     }
 
     window.history.replaceState({}, '', url);

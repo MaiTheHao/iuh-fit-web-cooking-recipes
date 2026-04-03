@@ -51,3 +51,41 @@
   color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
+
+.favorite-section {
+  padding-top: 3rem;
+  border-top: 1px solid var(--color-border);
+  margin-bottom: 3rem;
+}
+
+.favorite-section h3 {
+  color: var(--color-text-primary);
+  font-size: 1.5rem;
+}
+
+#favorite-list .info-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+#favorite-list .info-card:hover {
+  transform: translateY(-5px);
+}
+
+.unfavorite-btn {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  color: var(--color-error);
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.unfavorite-btn:hover {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border-color: var(--color-error-border);
+}

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Manage Recipes</title>
+    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <style>
+      .admin-page-header { padding: 40px 0; background: var(--surface-1); margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+      .table-cover { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+      .table-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 8px; }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <main id="app-body">
+        <div class="admin-page-header text-center">
+          <div class="container">
+            <h1 class="display-5 fw-bold mb-3">Manage Recipes</h1>
+            <p class="lead">Admin control panel for managing recipe entities.</p>
+          </div>
+        </div>
+
+        <div class="container mb-5">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">Recipes List</h3>
+            <button class="btn btn-primary" id="btnCreateRecipe">
+              <i data-lucide="plus" class="me-2"></i>Create Recipe
+            </button>
+          </div>
+
+          <div class="table-responsive bg-white rounded shadow-sm p-3">
+            <table class="table table-hover align-middle mb-0" id="recipesTable">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Cover</th>
+                  <th>Code & Name</th>
+                  <th>Cook Time</th>
+                  <th>Author</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="recipesTableBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="modal fade" id="recipeModal" tabindex="-1">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="recipeModalTitle">Create Recipe</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <form id="recipeForm">
+                  <input type="hidden" id="recipeId" />
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Recipe Code</label>
+                      <input type="text" class="form-control" id="recipeCode" required />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Recipe Name</label>
+                      <input type="text" class="form-control" id="recipeName" required />
+                    </div>
+                    <div class="col-md-12">
+                      <label class="form-label">Description</label>
+                      <textarea class="form-control" id="recipeDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="form-label">Image URL</label>
+                      <input type="url" class="form-control" id="recipeImage" required />
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Prep Time (mins)</label>
+                      <input type="number" class="form-control" id="recipePrepTime" required />
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Cook Time (mins)</label>
+                      <input type="number" class="form-control" id="recipeCookTime" required />
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Category ID</label>
+                      <input type="text" class="form-control" id="recipeCategoryId" required />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Author (User)</label>
+                      <select class="form-select" id="recipeAuthorId" required>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Stars</label>
+                      <input type="number" class="form-control" id="recipeStars" min="0" max="5" step="1" required />
+                    </div>
+                    <div class="col-md-12">
+                      <label class="form-label">Directions</label>
+                      <textarea class="form-control" id="recipeDirections" rows="5" required></textarea>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnSaveRecipe">Save Recipe</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body py-4">
+            <p class="modal-message mb-0"></p>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/libs/lucide-icon/lucide.min.js"></script>
+  </body>
+</html>

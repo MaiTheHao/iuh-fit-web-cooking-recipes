@@ -104,9 +104,7 @@ const Validator = {
     valid(imagePath) {
       if (!imagePath) return { isValid: false, errors: { format: 'Image path is required' } };
 
-      const commonExtensions = /\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i;
-      const bingPattern = /\/th\/id\/OIP\.[\w-]+/i;
-      const isValid = commonExtensions.test(imagePath) || bingPattern.test(imagePath);
+      let isValid = true;
 
       return {
         isValid,

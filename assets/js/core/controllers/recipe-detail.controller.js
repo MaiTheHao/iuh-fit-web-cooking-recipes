@@ -5,6 +5,7 @@ import UserService from '../services/user.service.js';
 import AuthService from '../services/auth.service.js';
 import UserRepository from '../repositories/user.repository.js';
 import { RecipeList } from '../../ui/components/recipe-card.js';
+import Notification from '../../ui/components/notification.js';
 import { marked } from '../../libs/marked/marked.esm.js';
 
 class RecipeDetailController {
@@ -21,6 +22,7 @@ class RecipeDetailController {
     this.userService = UserService.getInstance();
     this.authService = AuthService.getInstance();
     this.userRepository = UserRepository.getInstance();
+    this.notification = new Notification();
     this.recipe = null;
   }
 
@@ -55,6 +57,10 @@ class RecipeDetailController {
     this.#renderNutrition();
     this.#renderRelatedRecipes();
     this.#bindEvents();
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   }
 
   #renderHero() {
@@ -103,9 +109,9 @@ class RecipeDetailController {
                 <i data-lucide="flame" width="18"></i>
                 <span>${this.recipe.cookTime} min</span>
             </div>
-            <button class="btn btn-outline-danger btn-sm rounded-pill ms-auto favorite-btn" id="fav-detail" style="display:flex; align-items:center; gap:0.5ch;">
+            <button class="btn btn-outline-danger btn-sm rounded-pill ms-auto favorite-btn ${isFavorite ? 'favorited' : ''}" id="fav-detail" style="display:flex; align-items:center; gap:0.5ch;">
                 <i data-lucide="heart" width="18" style="fill: ${isFavorite ? 'red' : 'none'}; color: ${isFavorite ? 'red' : 'currentColor'};"></i>
-                <span>Favorite</span>
+                <span>${isFavorite ? 'Favorited' : 'Favorite'}</span>
             </button>
         `;
     }
@@ -262,10 +268,27 @@ class RecipeDetailController {
 
         const result = this.userService.toggleFavorite(currentUser.id, this.recipe.id);
         if (result.success) {
-          const icon = favBtn.querySelector('i');
           const isFav = result.isFavorite;
-          icon.style.fill = isFav ? 'red' : 'none';
-          icon.style.color = isFav ? 'red' : 'currentColor';
+          const icon = favBtn.querySelector('[data-lucide="heart"]');
+          const span = favBtn.querySelector('span');
+
+          favBtn.classList.toggle('favorited', isFav);
+
+          if (icon) {
+            icon.style.fill = isFav ? 'red' : 'none';
+            icon.style.color = isFav ? 'red' : 'currentColor';
+          }
+
+          if (span) {
+            span.textContent = isFav ? 'Favorited' : 'Favorite';
+          }
+
+          this.notification.success(
+            'Success',
+            isFav ? 'Added to favorites' : 'Removed from favorites',
+          );
+        } else {
+          this.notification.error('Error', result.message);
         }
       };
     }

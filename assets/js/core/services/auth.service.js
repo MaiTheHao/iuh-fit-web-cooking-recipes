@@ -209,6 +209,12 @@ class AuthService {
     return this.#loadCurrentUser() !== null;
   }
 
+  /** @returns {boolean} */
+  isAdmin() {
+    const user = this.#loadCurrentUser();
+    return user && user.role === 'admin';
+  }
+
   /** @returns {string} */
   #generateDefaultAvatar(fullName) {
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random&size=256`;
