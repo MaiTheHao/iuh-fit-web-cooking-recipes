@@ -1,7 +1,7 @@
-import AuthService from '../../core/services/auth.service.js';
-import RecipeRepository from '../../core/repositories/recipe.repository.js';
-import UserRepository from '../../core/repositories/user.repository.js';
-import Recipe from '../../core/entities/recipe.entity.js';
+import AuthService from '../services/auth.service.js';
+import RecipeRepository from '../repositories/recipe.repository.js';
+import UserRepository from '../repositories/user.repository.js';
+import Recipe from '../entities/recipe.entity.js';
 import Notification from '../../ui/components/notification.js';
 
 class AdminRecipeController {
@@ -15,11 +15,11 @@ class AdminRecipeController {
       window.location.href = '/pages/login.html';
       return;
     }
-    
+
     this.#recipeRepo = RecipeRepository.getInstance();
     this.#userRepo = UserRepository.getInstance();
     this.#noti = new Notification();
-    
+
     this.#loadUsers();
     this.#bindEvents();
     this.#renderTable();
@@ -29,8 +29,8 @@ class AdminRecipeController {
     const users = this.#userRepo.findAll();
     const selectEl = document.getElementById('recipeAuthorId');
     selectEl.innerHTML = '';
-    
-    users.forEach(u => {
+
+    users.forEach((u) => {
       this.#usersMap[u.id] = u;
       const option = document.createElement('option');
       option.value = u.id;
@@ -42,19 +42,21 @@ class AdminRecipeController {
   #renderTable() {
     const tbody = document.getElementById('recipesTableBody');
     const recipes = this.#recipeRepo.findAll();
-    
+
     if (recipes.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No recipes found.</td></tr>';
+      tbody.innerHTML =
+        '<tr><td colspan="6" class="text-center text-muted">No recipes found.</td></tr>';
       return;
     }
 
-    tbody.innerHTML = recipes.map(r => {
-      const author = this.#usersMap[r.authorId];
-      const authorHtml = author 
-        ? `<div class="d-flex align-items-center"><img src="${author.avatar}" class="table-avatar" alt="Avatar"><span>${author.fullName}</span></div>`
-        : '<span class="text-muted">Unknown</span>';
-      
-      return `
+    tbody.innerHTML = recipes
+      .map((r) => {
+        const author = this.#usersMap[r.authorId];
+        const authorHtml = author
+          ? `<div class="d-flex align-items-center"><img src="${author.avatar}" class="table-avatar" alt="Avatar"><span>${author.fullName}</span></div>`
+          : '<span class="text-muted">Unknown</span>';
+
+        return `
         <tr>
           <td><small class="text-muted">${r.id.substring(0, 8)}</small></td>
           <td><img src="${r.image}" class="table-cover" alt="Cover"></td>
@@ -70,7 +72,8 @@ class AdminRecipeController {
           </td>
         </tr>
       `;
-    }).join('');
+      })
+      .join('');
 
     if (window.lucide) {
       window.lucide.createIcons();
@@ -80,11 +83,11 @@ class AdminRecipeController {
   #bindEvents() {
     document.getElementById('btnCreateRecipe').addEventListener('click', () => this.#openModal());
     document.getElementById('btnSaveRecipe').addEventListener('click', () => this.#saveRecipe());
-    
+
     document.getElementById('recipesTableBody').addEventListener('click', (e) => {
       const editBtn = e.target.closest('.btn-edit');
       const delBtn = e.target.closest('.btn-delete');
-      
+
       if (editBtn) this.#openModal(editBtn.getAttribute('data-id'));
       if (delBtn) this.#deleteRecipe(delBtn.getAttribute('data-id'));
     });
@@ -94,7 +97,7 @@ class AdminRecipeController {
     const form = document.getElementById('recipeForm');
     form.reset();
     document.getElementById('recipeId').value = id || '';
-    
+
     if (id) {
       const recipe = this.#recipeRepo.findById(id);
       if (recipe) {
@@ -117,7 +120,7 @@ class AdminRecipeController {
         document.getElementById('recipeAuthorId').value = currentUser.id;
       }
     }
-    
+
     const modal = new bootstrap.Modal(document.getElementById('recipeModal'));
     modal.show();
   }
@@ -146,15 +149,28 @@ class AdminRecipeController {
 
       const existing = this.#recipeRepo.findById(id);
       const ingredients = existing ? existing.ingredients : [];
-      const nutrition = existing ? existing.nutrition : { calories: 0, protein: 0, carbs: 0, fat: 0, cholesterol: 0 };
+      const nutrition = existing
+        ? existing.nutrition
+        : { calories: 0, protein: 0, carbs: 0, fat: 0, cholesterol: 0 };
 
       const recipe = new Recipe({
-        id, code, name, description, image, prepTime, cookTime, 
-        categoryId, authorId, nutrition, ingredients, directions, stars
+        id,
+        code,
+        name,
+        description,
+        image,
+        prepTime,
+        cookTime,
+        categoryId,
+        authorId,
+        nutrition,
+        ingredients,
+        directions,
+        stars,
       });
 
       if (this.#recipeRepo.save(recipe)) {
-            bootstrap.Modal.getInstance(document.getElementById('recipeModal')).hide();
+        bootstrap.Modal.getInstance(document.getElementById('recipeModal')).hide();
         this.#renderTable();
         if (isUpdate) {
           this.#noti.success('Success', 'Update successfully');

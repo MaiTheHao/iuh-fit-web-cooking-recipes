@@ -1,7 +1,7 @@
-import AuthService from '../../core/services/auth.service.js';
-import BlogPostRepository from '../../core/repositories/blog-post.repository.js';
-import UserRepository from '../../core/repositories/user.repository.js';
-import BlogPost from '../../core/entities/blog-post.entity.js';
+import AuthService from '../services/auth.service.js';
+import BlogPostRepository from '../repositories/blog-post.repository.js';
+import UserRepository from '../repositories/user.repository.js';
+import BlogPost from '../entities/blog-post.entity.js';
 import Notification from '../../ui/components/notification.js';
 
 class AdminBlogController {
@@ -15,11 +15,11 @@ class AdminBlogController {
       window.location.href = '/pages/login.html';
       return;
     }
-    
+
     this.#blogRepo = BlogPostRepository.getInstance();
     this.#userRepo = UserRepository.getInstance();
     this.#noti = new Notification();
-    
+
     this.#loadUsers();
     this.#bindEvents();
     this.#renderTable();
@@ -28,9 +28,9 @@ class AdminBlogController {
   #loadUsers() {
     const users = this.#userRepo.findAll();
     const selectEl = document.getElementById('blogAuthorId');
-    if(selectEl) {
+    if (selectEl) {
       selectEl.innerHTML = '';
-      users.forEach(u => {
+      users.forEach((u) => {
         this.#usersMap[u.id] = u;
         const option = document.createElement('option');
         option.value = u.id;
@@ -42,23 +42,25 @@ class AdminBlogController {
 
   #renderTable() {
     const tbody = document.getElementById('blogsTableBody');
-    if(!tbody) return;
+    if (!tbody) return;
     const blogs = this.#blogRepo.findAll();
-    
+
     if (blogs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No blogs found.</td></tr>';
+      tbody.innerHTML =
+        '<tr><td colspan="6" class="text-center text-muted">No blogs found.</td></tr>';
       return;
     }
 
-    tbody.innerHTML = blogs.map(b => {
-      const author = this.#usersMap[b.authorId];
-      const authorHtml = author 
-        ? `<div class="d-flex align-items-center"><img src="${author.avatar}" class="table-avatar" alt="Avatar"><span>${author.fullName}</span></div>`
-        : '<span class="text-muted">Unknown</span>';
-      
-      const dateStr = new Date(b.publishedAt).toLocaleDateString();
+    tbody.innerHTML = blogs
+      .map((b) => {
+        const author = this.#usersMap[b.authorId];
+        const authorHtml = author
+          ? `<div class="d-flex align-items-center"><img src="${author.avatar}" class="table-avatar" alt="Avatar"><span>${author.fullName}</span></div>`
+          : '<span class="text-muted">Unknown</span>';
 
-      return `
+        const dateStr = new Date(b.publishedAt).toLocaleDateString();
+
+        return `
         <tr>
           <td><small class="text-muted">${b.id.substring(0, 8)}</small></td>
           <td><img src="${b.image}" class="table-cover" alt="Cover"></td>
@@ -71,7 +73,8 @@ class AdminBlogController {
           </td>
         </tr>
       `;
-    }).join('');
+      })
+      .join('');
 
     if (window.lucide) {
       window.lucide.createIcons();
@@ -80,21 +83,21 @@ class AdminBlogController {
 
   #bindEvents() {
     const btnCreate = document.getElementById('btnCreateBlog');
-    if(btnCreate) {
+    if (btnCreate) {
       btnCreate.addEventListener('click', () => this.#openModal());
     }
 
     const btnSave = document.getElementById('btnSaveBlog');
-    if(btnSave) {
+    if (btnSave) {
       btnSave.addEventListener('click', () => this.#saveBlog());
     }
-    
+
     const tbody = document.getElementById('blogsTableBody');
-    if(tbody) {
+    if (tbody) {
       tbody.addEventListener('click', (e) => {
         const editBtn = e.target.closest('.btn-edit');
         const delBtn = e.target.closest('.btn-delete');
-        
+
         if (editBtn) this.#openModal(editBtn.getAttribute('data-id'));
         if (delBtn) this.#deleteBlog(delBtn.getAttribute('data-id'));
       });
@@ -105,7 +108,7 @@ class AdminBlogController {
     const form = document.getElementById('blogForm');
     form.reset();
     document.getElementById('blogId').value = id || '';
-    
+
     if (id) {
       const blog = this.#blogRepo.findById(id);
       if (blog) {
@@ -124,7 +127,7 @@ class AdminBlogController {
         document.getElementById('blogAuthorId').value = currentUser.id;
       }
     }
-    
+
     const modal = new bootstrap.Modal(document.getElementById('blogModal'));
     modal.show();
   }
@@ -145,18 +148,30 @@ class AdminBlogController {
       const image = document.getElementById('blogImage').value;
       const authorId = document.getElementById('blogAuthorId').value;
       const rawTags = document.getElementById('blogTags').value;
-      const tags = rawTags ? rawTags.split(',').map(t => t.trim()).filter(Boolean) : [];
+      const tags = rawTags
+        ? rawTags
+            .split(',')
+            .map((t) => t.trim())
+            .filter(Boolean)
+        : [];
       const content = document.getElementById('blogContent').value;
 
       const existing = this.#blogRepo.findById(id);
       const publishedAt = existing ? existing.publishedAt : new Date().toISOString();
 
       const blog = new BlogPost({
-        id, title, excerpt, content, image, authorId, publishedAt, tags
+        id,
+        title,
+        excerpt,
+        content,
+        image,
+        authorId,
+        publishedAt,
+        tags,
       });
 
       if (this.#blogRepo.save(blog)) {
-            bootstrap.Modal.getInstance(document.getElementById('blogModal')).hide();
+        bootstrap.Modal.getInstance(document.getElementById('blogModal')).hide();
         this.#renderTable();
         if (isUpdate) {
           this.#noti.success('Success', 'Update successfully');

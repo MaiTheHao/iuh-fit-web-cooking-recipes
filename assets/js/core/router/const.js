@@ -8,10 +8,9 @@ import RegisterController from '../controllers/register.controller.js';
 import AboutController from '../controllers/about.controller.js';
 import ContactController from '../controllers/contact.controller.js';
 import ProfileController from '../controllers/profile.controller.js';
-// Admin
-import AdminRecipeController from '../../admin/controllers/admin-recipe.controller.js';
-import AdminBlogController from '../../admin/controllers/admin-blog.controller.js';
-import AdminUserController from '../../admin/controllers/admin-user.controller.js';
+import AdminRecipeController from '../controllers/admin-recipe.controller.js';
+import AdminBlogController from '../controllers/admin-blog.controller.js';
+import AdminUserController from '../controllers/admin-user.controller.js';
 
 export const ROUTES = {
   HOME: {

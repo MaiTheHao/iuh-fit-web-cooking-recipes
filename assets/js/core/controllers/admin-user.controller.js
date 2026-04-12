@@ -1,6 +1,6 @@
-import AuthService from '../../core/services/auth.service.js';
-import UserRepository from '../../core/repositories/user.repository.js';
-import User from '../../core/entities/user.entity.js';
+import AuthService from '../services/auth.service.js';
+import UserRepository from '../repositories/user.repository.js';
+import User from '../entities/user.entity.js';
 import Notification from '../../ui/components/notification.js';
 
 class AdminUserController {
@@ -12,10 +12,10 @@ class AdminUserController {
       window.location.href = '/pages/login.html';
       return;
     }
-    
+
     this.#userRepo = UserRepository.getInstance();
     this.#noti = new Notification();
-    
+
     this.#bindEvents();
     this.#renderTable();
   }
@@ -24,17 +24,22 @@ class AdminUserController {
     const tbody = document.getElementById('usersTableBody');
     if (!tbody) return;
     const users = this.#userRepo.findAll();
-    
+
     if (users.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No users found.</td></tr>';
+      tbody.innerHTML =
+        '<tr><td colspan="5" class="text-center text-muted">No users found.</td></tr>';
       return;
     }
 
-    tbody.innerHTML = users.map(u => {
-      const avatarHtml = `<img src="${u.avatar || 'https://via.placeholder.com/40'}" class="table-avatar me-2" alt="Avatar">`;
-      const roleStr = u.role === 'admin' ? '<span class="badge bg-danger">Admin</span>' : '<span class="badge bg-secondary">User</span>';
+    tbody.innerHTML = users
+      .map((u) => {
+        const avatarHtml = `<img src="${u.avatar || 'https://via.placeholder.com/40'}" class="table-avatar me-2" alt="Avatar">`;
+        const roleStr =
+          u.role === 'admin'
+            ? '<span class="badge bg-danger">Admin</span>'
+            : '<span class="badge bg-secondary">User</span>';
 
-      return `
+        return `
         <tr>
           <td>
             <div class="d-flex align-items-center">
@@ -52,7 +57,8 @@ class AdminUserController {
           </td>
         </tr>
       `;
-    }).join('');
+      })
+      .join('');
 
     if (window.lucide) {
       window.lucide.createIcons();
@@ -61,21 +67,21 @@ class AdminUserController {
 
   #bindEvents() {
     const btnCreate = document.getElementById('btnCreateUser');
-    if(btnCreate) btnCreate.addEventListener('click', () => this.#openModal());
+    if (btnCreate) btnCreate.addEventListener('click', () => this.#openModal());
 
     const btnSave = document.getElementById('btnSaveUser');
-    if(btnSave) btnSave.addEventListener('click', () => this.#saveUser());
+    if (btnSave) btnSave.addEventListener('click', () => this.#saveUser());
 
     const btnSavePass = document.getElementById('btnSavePassword');
-    if(btnSavePass) btnSavePass.addEventListener('click', () => this.#savePassword());
+    if (btnSavePass) btnSavePass.addEventListener('click', () => this.#savePassword());
 
     const tbody = document.getElementById('usersTableBody');
-    if(tbody) {
+    if (tbody) {
       tbody.addEventListener('click', (e) => {
         const editBtn = e.target.closest('.btn-edit');
         const delBtn = e.target.closest('.btn-delete');
         const repassBtn = e.target.closest('.btn-repass');
-        
+
         if (editBtn) this.#openModal(editBtn.getAttribute('data-id'));
         if (delBtn) this.#deleteUser(delBtn.getAttribute('data-id'));
         if (repassBtn) this.#openResetPassModal(repassBtn.getAttribute('data-id'));
@@ -87,7 +93,7 @@ class AdminUserController {
     const form = document.getElementById('userForm');
     form.reset();
     document.getElementById('userId').value = id || '';
-    
+
     if (id) {
       const user = this.#userRepo.findById(id);
       if (user) {
@@ -105,7 +111,7 @@ class AdminUserController {
       document.getElementById('passwordGroup').style.display = 'block';
       document.getElementById('userPassword').required = true;
     }
-    
+
     const modal = new bootstrap.Modal(document.getElementById('userModal'));
     modal.show();
   }
@@ -124,8 +130,10 @@ class AdminUserController {
       const email = document.getElementById('userEmail').value.trim();
       const fullName = document.getElementById('userFullName').value.trim();
       const role = document.getElementById('userRole').value;
-      const avatar = document.getElementById('userAvatar').value || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random&size=256`;
-      
+      const avatar =
+        document.getElementById('userAvatar').value ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random&size=256`;
+
       let password = null;
       let favoriteRecipes = [];
 
@@ -146,11 +154,17 @@ class AdminUserController {
       }
 
       const user = new User({
-        id, email, fullName, password, avatar, role, favoriteRecipes
+        id,
+        email,
+        fullName,
+        password,
+        avatar,
+        role,
+        favoriteRecipes,
       });
 
       if (this.#userRepo.save(user)) {
-            bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+        bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
         this.#renderTable();
         this.#noti.success('Success', isUpdate ? 'Update successfully' : 'Create successfully');
       } else {
@@ -164,7 +178,7 @@ class AdminUserController {
   #openResetPassModal(id) {
     document.getElementById('resetPassForm').reset();
     document.getElementById('resetPassUserId').value = id;
-    
+
     const modal = new bootstrap.Modal(document.getElementById('resetPassModal'));
     modal.show();
   }
@@ -180,16 +194,16 @@ class AdminUserController {
       const id = document.getElementById('resetPassUserId').value;
       const newPassword = document.getElementById('newPassword').value;
       const user = this.#userRepo.findById(id);
-      
+
       if (!user) {
         this.#noti.error('Error', 'User not found');
         return;
       }
 
       user.password = newPassword;
-      
+
       if (this.#userRepo.save(user)) {
-            bootstrap.Modal.getInstance(document.getElementById('resetPassModal')).hide();
+        bootstrap.Modal.getInstance(document.getElementById('resetPassModal')).hide();
         this.#noti.success('Success', 'Update successfully');
       } else {
         this.#noti.error('Error', 'Failed to reset password');
