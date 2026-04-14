@@ -1,3 +1,4 @@
+<!-- Created By: Nguyễn Minh Hùng -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -203,7 +204,62 @@
     </div>
 
     <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script type="module" src="../assets/js/main.js"></script>
     <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+
+    <script src="../assets/js/utils/logger.js"></script>
+    <script src="../assets/js/utils/validator.js"></script>
+    <script src="../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../assets/js/core/domains/base.domain.js"></script>
+
+    <script src="../assets/js/core/domains/user.domain.js"></script>
+
+    <script src="../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../assets/js/ui/components/notification.js"></script>
+    <script src="../assets/js/ui/components/layout.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const notification = new Notification();
+        const form = document.getElementById('contact-form');
+
+        if (form) {
+          form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const data = {
+              name: document.getElementById('name').value.trim(),
+              email: document.getElementById('email').value.trim(),
+              subject: document.getElementById('subject').value.trim(),
+              message: document.getElementById('message').value.trim(),
+            };
+
+            if (!Validator.fullName.isValid(data.name)) {
+              return notification.error('Invalid Input', 'Invalid full name (3-100 characters).');
+            }
+
+            if (!Validator.email.isValid(data.email)) {
+              return notification.error('Invalid Input', 'Invalid email address.');
+            }
+
+            if (data.subject.length < 3) {
+              return notification.error('Invalid Input', 'Subject must be >= 3 chars.');
+            }
+
+            if (data.message.length < 10) {
+              return notification.error('Invalid Input', 'Message must be >= 10 chars.');
+            }
+
+            notification.success('Message Sent', 'Thank you! We will get back to you soon.');
+            form.reset();
+          });
+        }
+
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+    </script>
   </body>
 </html>

@@ -1,3 +1,4 @@
+<!-- Created By: Mai Thế Hào -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -96,7 +97,218 @@
       </div>
     </div>
 
-    <script type="module" src="../assets/js/main.js"></script>
+    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+
+    <script src="../assets/js/utils/logger.js"></script>
+    <script src="../assets/js/utils/validator.js"></script>
+    <script src="../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../assets/js/core/domains/base.domain.js"></script>
+
+    <script src="../assets/js/core/domains/blog.domain.js"></script>
+    <script src="../assets/js/core/domains/user.domain.js"></script>
+
+    <script src="../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../assets/js/ui/components/notification.js"></script>
+    <script src="../assets/js/ui/components/cards.js"></script>
+    <script src="../assets/js/ui/components/layout.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const blogService = BlogService.getInstance();
+        const userRepository = UserRepository.getInstance();
+        const blogListRaw = new BlogList('blog-list');
+
+        let state = {
+          criteria: {
+            text: '',
+            tags: [],
+            skip: 0,
+            limit: 9,
+          },
+          currentPage: 1,
+          sortBy: 'newest',
+        };
+
+        let searchTimeout;
+
+        function renderFilters() {
+          const desktopContainer = document.getElementById('desktopFilterContainer');
+          if (!desktopContainer) return;
+
+          const allTags = blogService.getAllTags();
+          const html = `
+            <div class="filter-group">
+              <h5 class="filter-title">Filter by Tags</h5>
+              <div class="d-flex flex-column gap-2">
+                ${allTags
+                  .map(
+                    (tag) => `
+                  <div class="form-check">
+                    <input class="form-check-input filter-tag" type="checkbox" value="${tag}" id="tag-${tag}" 
+                      ${state.criteria.tags?.includes(tag) ? 'checked' : ''}>
+                    <label class="form-check-label" for="tag-${tag}">${tag}</label>
+                  </div>
+                `,
+                  )
+                  .join('')}
+              </div>
+            </div>
+          `;
+
+          desktopContainer.innerHTML = html;
+          const mobileContainer = document.getElementById('mobileFilterContainer');
+          if (mobileContainer) {
+            mobileContainer.innerHTML = html
+              .replace(/id="([^"]+)"/g, 'id="mobile-$1"')
+              .replace(/for="([^"]+)"/g, 'for="mobile-$1"')
+              .replace(/name="([^"]+)"/g, 'name="mobile-$1"');
+          }
+
+          if (window.lucide) window.lucide.createIcons();
+        }
+
+        function fetchBlogs() {
+          const result = blogService.getWithCriteria(state.criteria);
+          let items = [...result.items];
+
+          items.sort((blogA, blogB) => {
+            switch (state.sortBy) {
+              case 'newest':
+                return new Date(blogB.publishedAt) - new Date(blogA.publishedAt);
+              case 'oldest':
+                return new Date(blogA.publishedAt) - new Date(blogB.publishedAt);
+              case 'title_asc':
+                return blogA.title.localeCompare(blogB.title);
+              case 'title_desc':
+                return blogB.title.localeCompare(blogA.title);
+              default:
+                return 0;
+            }
+          });
+
+          blogListRaw.toHTML(items);
+          renderPagination(result.total);
+
+          const url = new URL(window.location);
+          if (state.criteria.text) url.searchParams.set('q', state.criteria.text);
+          else url.searchParams.delete('q');
+          if (state.sortBy !== 'newest') url.searchParams.set('sort', state.sortBy);
+          else url.searchParams.delete('sort');
+          if (state.currentPage > 1) url.searchParams.set('page', state.currentPage);
+          else url.searchParams.delete('page');
+          if (state.criteria.tags.length > 0) url.searchParams.set('tag', state.criteria.tags[0]);
+          else url.searchParams.delete('tag');
+          window.history.replaceState({}, '', url);
+
+          if (window.lucide) window.lucide.createIcons();
+        }
+
+        function renderPagination(total) {
+          const container = document.getElementById('pagination');
+          if (!container) return;
+
+          const totalPages = Math.ceil(total / state.criteria.limit);
+          if (totalPages <= 1) {
+            container.innerHTML = '';
+            return;
+          }
+
+          let html = '';
+          const current = state.currentPage;
+          html += `<li class="page-item ${current === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${current - 1}"><i data-lucide="chevron-left" style="width:16px;"></i></a></li>`;
+          for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= current - 1 && i <= current + 1)) {
+              html += `<li class="page-item ${current === i ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+            } else if (
+              (i === 2 && current > 3) ||
+              (i === totalPages - 1 && current < totalPages - 2)
+            ) {
+              html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+          }
+          html += `<li class="page-item ${current === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${current + 1}"><i data-lucide="chevron-right" style="width:16px;"></i></a></li>`;
+          container.innerHTML = html;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('q')) {
+          state.criteria.text = params.get('q');
+          document.getElementById('searchInput').value = state.criteria.text;
+        }
+
+        if (params.has('tag')) {
+          state.criteria.tags = [params.get('tag')];
+        }
+
+        if (params.has('page')) {
+          state.currentPage = parseInt(params.get('page')) || 1;
+          state.criteria.skip = (state.currentPage - 1) * state.criteria.limit;
+        }
+
+        if (params.has('sort')) {
+          state.sortBy = params.get('sort');
+          document.getElementById('sortSelect').value = state.sortBy;
+        }
+
+        renderFilters();
+        fetchBlogs();
+
+        document.getElementById('searchInput')?.addEventListener('input', (event) => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            state.criteria.text = event.target.value.trim();
+            state.currentPage = 1;
+            state.criteria.skip = 0;
+            fetchBlogs();
+          }, 500);
+        });
+
+        document.getElementById('sortSelect')?.addEventListener('change', (event) => {
+          state.sortBy = event.target.value;
+          fetchBlogs();
+        });
+
+        document.querySelectorAll('.filter-sidebar, .offcanvas-body').forEach((element) => {
+          element.addEventListener('change', (event) => {
+            const target = event.target;
+            if (target.classList.contains('filter-tag')) {
+              const value = target.value;
+              if (target.checked) {
+                if (!state.criteria.tags.includes(value)) state.criteria.tags.push(value);
+              } else {
+                state.criteria.tags = state.criteria.tags.filter((tag) => tag !== value);
+              }
+
+              state.currentPage = 1;
+              state.criteria.skip = 0;
+
+              renderFilters();
+              fetchBlogs();
+            }
+          });
+        });
+
+        document.getElementById('pagination')?.addEventListener('click', (event) => {
+          event.preventDefault();
+          const link = event.target.closest('.page-link');
+          if (link && !link.parentElement.classList.contains('disabled')) {
+            const page = parseInt(link.dataset.page);
+            if (page) {
+              state.currentPage = page;
+              state.criteria.skip = (page - 1) * state.criteria.limit;
+              fetchBlogs();
+              document
+                .getElementById('blog-list-container')
+                ?.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+      });
+    </script>
   </body>
 </html>

@@ -1,3 +1,4 @@
+<!-- Created By: Nguyễn Minh Hùng -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -111,8 +112,88 @@
       </main>
     </div>
 
-    <script type="module" src="../assets/js/main.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
     <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+
+    <script src="../assets/js/utils/logger.js"></script>
+    <script src="../assets/js/utils/validator.js"></script>
+    <script src="../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../assets/js/core/domains/base.domain.js"></script>
+
+    <script src="../assets/js/core/domains/user.domain.js"></script>
+
+    <script src="../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../assets/js/ui/components/notification.js"></script>
+    <script src="../assets/js/ui/components/layout.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const TEAM = [
+          {
+            name: 'Gordon Ramsay',
+            role: 'Head Chef',
+            image:
+              'https://tse1.explicit.bing.net/th/id/OIP.xSytpxu8ZLcNP0VmBboDiwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3',
+            socials: [
+              { p: 'facebook', u: 'https://www.facebook.com/gordonramsay/' },
+              { p: 'instagram', u: 'https://www.instagram.com/gordongram/' },
+            ],
+          },
+          {
+            name: 'Christine Ha',
+            role: 'Sous Chef',
+            image:
+              'https://files.nc.gov/dncr/Christine_Ha_crop.jpg?VersionId=GlNyONUhfxIa3pR1tQr8aSKn2.6mL6Gn',
+            socials: [
+              { p: 'facebook', u: 'https://www.facebook.com/theblindcook/' },
+              { p: 'instagram', u: 'https://www.instagram.com/theblindcook/' },
+            ],
+          },
+          {
+            name: 'Marcus Samuelsson',
+            role: 'Pastry Chef',
+            image:
+              'https://th.bing.com/th/id/R.d0f8ac5a94ce5bc1296b03654deb99c8?rik=F%2fRQu91qf0kemg&pid=ImgRaw&r=0',
+            socials: [
+              { p: 'facebook', u: 'https://www.facebook.com/MarcusCooks/' },
+              { p: 'instagram', u: 'https://www.instagram.com/marcuscooks/' },
+            ],
+          },
+        ];
+
+        const container = document.getElementById('team-members');
+
+        if (container) {
+          container.innerHTML = TEAM.map(
+            (member) => `
+            <div class="col-md-6 col-lg-4">
+              <div class="team-card">
+                <img src="${member.image}" alt="${member.name}" class="team-img" />
+                <div class="team-info">
+                  <h3 class="team-name">${member.name}</h3>
+                  <p class="team-role mb-3">${member.role}</p>
+                  <div class="d-flex justify-content-center gap-2">
+                    ${member.socials
+                      .map(
+                        (social) => `
+                      <a href="${social.u}" class="btn btn-sm btn-outline-primary rounded-circle p-2 lh-1">
+                        <i data-lucide="${social.p}" style="width: 16px; height: 16px"></i>
+                      </a>
+                    `,
+                      )
+                      .join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `,
+          ).join('');
+        }
+
+        if (window.lucide) window.lucide.createIcons();
+      });
+    </script>
   </body>
 </html>

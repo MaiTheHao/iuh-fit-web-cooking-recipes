@@ -1,3 +1,4 @@
+<!-- Created By: Mai Thế Hào -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -92,7 +93,6 @@
       </main>
     </div>
 
-    <!-- Notification Modal (Reused) -->
     <div
       class="modal fade"
       id="noti-modal"
@@ -123,6 +123,191 @@
 
     <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-    <script type="module" src="../assets/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script src="../assets/js/utils/logger.js"></script>
+    <script src="../assets/js/utils/validator.js"></script>
+    <script src="../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../assets/js/core/domains/base.domain.js"></script>
+
+    <script src="../assets/js/core/domains/category.domain.js"></script>
+    <script src="../assets/js/core/domains/user.domain.js"></script>
+    <script src="../assets/js/core/domains/recipe.domain.js"></script>
+
+    <script src="../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../assets/js/ui/components/notification.js"></script>
+    <script src="../assets/js/ui/components/cards.js"></script>
+    <script src="../assets/js/ui/components/layout.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const recipeService = RecipeService.getInstance();
+        const categoryService = CategoryService.getInstance();
+        const userService = UserService.getInstance();
+        const authService = AuthService.getInstance();
+        const userRepository = UserRepository.getInstance();
+        const notification = new Notification();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const recipeCode = urlParams.get('code');
+
+        if (!recipeCode) {
+          renderError('No recipe code found in URL');
+          return;
+        }
+
+        const recipe = recipeService.getByCode(recipeCode);
+
+        if (!recipe) {
+          renderError('Recipe not found');
+          return;
+        }
+
+        document.title = recipe.name;
+        document.getElementById('recipe-title').textContent = recipe.name;
+        document.getElementById('recipe-description').textContent = recipe.description;
+
+        const imgEl = document.getElementById('recipe-image');
+        if (imgEl) {
+          imgEl.src = recipe.image;
+          imgEl.alt = recipe.name;
+        }
+
+        const category = categoryService.getById(recipe.categoryId);
+        document.getElementById('recipe-category').textContent = category
+          ? category.name
+          : 'Web Recipe';
+
+        renderStars(recipe.stars);
+
+        const author = userRepository.findById(recipe.authorId);
+        const authorName = author ? author.fullName : 'Chef';
+        const authorAvatar = author ? author.avatar : '../assets/img/default-avatar.jpg';
+
+        document.getElementById('recipe-author').innerHTML = `
+          <img src="${authorAvatar}" class="rounded-circle" width="40" height="40" alt="${authorName}" style="object-fit: cover;">
+          <div class="d-flex flex-column" style="line-height:1.2;">
+            <span class="small text-muted text-uppercase" style="font-size:0.7rem;">Created by</span>
+            <span class="fw-bold text-dark">${authorName}</span>
+          </div>
+        `;
+
+        const isFavorite = authService.getCurrentUser()?.favoriteRecipes?.includes(recipe.id);
+        document.getElementById('recipe-meta-data').innerHTML = `
+          <div class="d-flex align-items-center gap-2" title="Prep Time"><i data-lucide="clock" width="18"></i><span>${recipe.prepTime} min</span></div>
+          <div class="d-flex align-items-center gap-2" title="Cook Time"><i data-lucide="flame" width="18"></i><span>${recipe.cookTime} min</span></div>
+          <button class="btn btn-outline-danger btn-sm rounded-pill ms-auto favorite-btn ${isFavorite ? 'favorited' : ''}" id="fav-detail" style="display:flex; align-items:center; gap:0.5ch;">
+            <i data-lucide="heart" width="18" style="fill: ${isFavorite ? 'red' : 'none'}; color: ${isFavorite ? 'red' : 'currentColor'};"></i>
+            <span>${isFavorite ? 'Favorited' : 'Favorite'}</span>
+          </button>
+        `;
+
+        let ingHtml = '';
+        recipe.ingredients.forEach((group, groupIndex) => {
+          if (group.section) ingHtml += `<h5 class="ingredient-group-title">${group.section}</h5>`;
+          group.items.forEach((item, itemIndex) => {
+            const id = `ing-${groupIndex}-${itemIndex}`;
+            ingHtml += `
+              <label class="ingredient-label" for="${id}">
+                <input type="checkbox" id="${id}" class="ingredient-checkbox">
+                <span class="ingredient-text"><strong class="text-dark">${item.quantity}</strong> <span>${item.name}</span></span>
+              </label>
+            `;
+          });
+        });
+        document.getElementById('recipe-ingredients').innerHTML = ingHtml;
+
+        if (recipe.directions) {
+          const rawDirections = recipe.directions;
+          if (!rawDirections.includes('###')) {
+            document.getElementById('recipe-directions').innerHTML = marked.parse(rawDirections);
+          } else {
+            const chunks = rawDirections
+              .split('###')
+              .map((chunk) => chunk.trim())
+              .filter((chunk) => chunk.length > 0);
+            document.getElementById('recipe-directions').innerHTML = chunks
+              .map((chunk, i) => {
+                const lines = chunk.split('\n');
+                const title = lines.shift().trim();
+                return `<div class="step-card"><div class="step-header"><div class="step-number">${i + 1}</div><h3 class="step-title">${title}</h3></div><div class="step-content">${marked.parse(lines.join('\n').trim())}</div></div>`;
+              })
+              .join('');
+          }
+        }
+
+        const { calories, protein, fat, carbs } = recipe.nutrition;
+        const nutItems = [
+          { label: 'Calories', val: calories, unit: 'kcal', icon: 'flame' },
+          { label: 'Protein', val: protein, unit: 'g', icon: 'drumstick' },
+          { label: 'Fat', val: fat, unit: 'g', icon: 'droplet' },
+          { label: 'Carbs', val: carbs, unit: 'g', icon: 'wheat' },
+        ];
+        document.getElementById('recipe-nutrition').innerHTML = nutItems
+          .map(
+            (item) =>
+              `<div class="nutrition-item"><div class="d-flex align-items-center"><i data-lucide="${item.icon}" class="nutrition-icon" width="18"></i><span class="nutrition-label">${item.label}</span></div><span class="nutrition-value">${item.val}<small>${item.unit}</small></span></div>`,
+          )
+          .join('');
+
+        const related = recipeService
+          .getAll()
+          .filter(
+            (recipeItem) =>
+              recipeItem.categoryId === recipe.categoryId && recipeItem.id !== recipe.id,
+          )
+          .slice(0, 3);
+
+        if (related.length > 0) {
+          new RecipeList('related-recipes').toHTML(related);
+        }
+
+        document.getElementById('recipe-ingredients').addEventListener('change', (event) => {
+          if (event.target.classList.contains('ingredient-checkbox')) {
+            event.target
+              .closest('.ingredient-label')
+              .classList.toggle('checked', event.target.checked);
+          }
+        });
+
+        document.getElementById('fav-detail')?.addEventListener('click', () => {
+          const user = authService.getCurrentUser();
+          if (!user) {
+            notification.warn('Authentication Required', 'Please login to favorite this recipe');
+            return;
+          }
+          const result = userService.toggleFavorite(user.id, recipe.id);
+          if (result.success) {
+            const btn = document.getElementById('fav-detail');
+            const icon = btn.querySelector('svg');
+            const span = btn.querySelector('span');
+            btn.classList.toggle('favorited', result.isFavorite);
+            icon.style.fill = result.isFavorite ? 'red' : 'none';
+            icon.style.color = result.isFavorite ? 'red' : 'currentColor';
+            span.textContent = result.isFavorite ? 'Favorited' : 'Favorite';
+          }
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+
+        function renderStars(count) {
+          const element = document.getElementById('recipe-stars');
+          let html = '';
+          for (let i = 0; i < 5; i++) {
+            const fill = i < count ? 'fill-current' : 'text-muted opacity-25';
+            html += `<i data-lucide="star" class="${fill}" width="16" height="16"></i>`;
+          }
+          html += `<span class="text-muted ms-1">(${count}/5)</span>`;
+          element.innerHTML = html;
+        }
+
+        function renderError(message) {
+          document.getElementById('app-body').innerHTML =
+            `<div class="container text-center py-5"><h2 class="text-muted">${message}</h2><a href="/pages/recipes.html" class="btn btn-primary mt-3">Back to Recipes</a></div>`;
+        }
+      });
+    </script>
   </body>
 </html>

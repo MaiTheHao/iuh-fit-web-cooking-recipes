@@ -1,19 +1,9 @@
-import UserRepository from './repositories/user.repository.js';
-import RecipeRepository from './repositories/recipe.repository.js';
-import CategoryRepository from './repositories/category.repository.js';
-import BlogPostRepository from './repositories/blog-post.repository.js';
-import User from './entities/user.entity.js';
-import Recipe from './entities/recipe.entity.js';
-import Category from './entities/category.entity.js';
-import BlogPost from './entities/blog-post.entity.js';
-import Logger from '../utils/logger.js';
-
 const INIT_KEY = 'APP_INITIALIZED';
 const VERSION = '08-02-2026-1:01';
 
 const initData = () => {
   if (localStorage.getItem(INIT_KEY) === VERSION && VERSION !== null) {
-    Logger.info('--- MOCK DATA ALREADY INITIALIZED ---');
+    console.log('--- MOCK DATA ALREADY INITIALIZED ---');
     return;
   }
 
@@ -1189,7 +1179,7 @@ Hãy đi chợ sớm để chọn được những miếng thịt ngon nhất nh
   blogPostRepo.saveBatch(blogPosts);
 
   localStorage.setItem(INIT_KEY, VERSION);
-  Logger.info('--- MOCK DATA INITIALIZED SUCCESSFULLY ---');
+  console.log('--- MOCK DATA INITIALIZED SUCCESSFULLY ---');
 };
 
-export default initData;
+initData();

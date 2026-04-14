@@ -1,9 +1,3 @@
-import Logger from '../../utils/logger.js';
-import Validator from '../../utils/validator.js';
-import UserRepository from '../repositories/user.repository.js';
-import User from '../entities/user.entity.js';
-import { ROUTES } from '../router/const.js';
-
 class AuthService {
   static #instance = null;
   #userRepository;
@@ -74,7 +68,7 @@ class AuthService {
         };
       }
 
-      Logger.info(`New user registered: ${email}`);
+      console.log(`New user registered: ${email}`);
 
       return {
         success: true,
@@ -82,7 +76,7 @@ class AuthService {
         user: user,
       };
     } catch (error) {
-      Logger.error('Registration error', error);
+      console.error('Registration error', error);
       return {
         success: false,
         message: 'Registration failed. Please check your input.',
@@ -96,7 +90,6 @@ class AuthService {
     const errors = {};
     let isValid = true;
 
-    // Validate email
     const emailValidation = Validator.email.valid(email);
     if (!emailValidation.isValid) {
       isValid = false;
@@ -156,7 +149,7 @@ class AuthService {
 
       localStorage.setItem('CURRENT_USER_ID', user.id);
 
-      Logger.info(`User signed in: ${email}`);
+      console.log(`User signed in: ${email}`);
 
       return {
         success: true,
@@ -164,7 +157,7 @@ class AuthService {
         user: user,
       };
     } catch (error) {
-      Logger.error('Sign in error', error);
+      console.error('Sign in error', error);
       return {
         success: false,
         message: 'Sign in failed. Please try again.',
@@ -196,7 +189,7 @@ class AuthService {
     localStorage.removeItem('CURRENT_USER_ID');
     window.location.reload();
     window.location.href = ROUTES.HOME.redirectPath;
-    Logger.info('User signed out');
+    console.log('User signed out');
   }
 
   /** @returns {User|null} */
@@ -220,5 +213,3 @@ class AuthService {
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random&size=256`;
   }
 }
-
-export default AuthService;

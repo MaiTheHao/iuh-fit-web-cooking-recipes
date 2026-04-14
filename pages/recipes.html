@@ -1,3 +1,4 @@
+<!-- Created By: Mai Thế Hào -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -99,7 +100,289 @@
       </div>
     </div>
 
-    <script type="module" src="../assets/js/main.js"></script>
+    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+
+    <script src="../assets/js/utils/logger.js"></script>
+    <script src="../assets/js/utils/validator.js"></script>
+    <script src="../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../assets/js/core/domains/base.domain.js"></script>
+
+    <script src="../assets/js/core/domains/category.domain.js"></script>
+    <script src="../assets/js/core/domains/user.domain.js"></script>
+    <script src="../assets/js/core/domains/recipe.domain.js"></script>
+
+    <script src="../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../assets/js/ui/components/notification.js"></script>
+    <script src="../assets/js/ui/components/cards.js"></script>
+    <script src="../assets/js/ui/components/layout.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const recipeService = RecipeService.getInstance();
+        const categoryService = CategoryService.getInstance();
+        const userService = UserService.getInstance();
+        const authService = AuthService.getInstance();
+        const recipeListRaw = new RecipeList('recipe-list');
+
+        let state = {
+          criteria: {
+            text: '',
+            categories: [],
+            stars: null,
+            totalTime: null,
+            limit: 9,
+            skip: 0,
+          },
+          currentPage: 1,
+          sortBy: 'name_asc',
+        };
+
+        let searchTimeout;
+
+        function renderStars(count) {
+          let stars = '';
+          for (let i = 0; i < count; i++) {
+            stars += `<i data-lucide="star" class="fill-current text-warning" style="width:14px; height:14px;"></i>`;
+          }
+          return `<div class="d-flex align-items-center">${stars}</div>`;
+        }
+
+        function renderFilters() {
+          const desktopContainer = document.getElementById('desktopFilterContainer');
+          if (!desktopContainer) return;
+
+          const categories = categoryService.getAll();
+          const html = `
+            <div class="filter-group">
+              <h5 class="filter-title">Categories</h5>
+              <div class="d-flex flex-column gap-2">
+                ${categories
+                  .map(
+                    (category) => `
+                  <div class="form-check">
+                    <input class="form-check-input filter-category" type="checkbox" value="${category.id}" id="cat-${category.id}" 
+                      ${state.criteria.categories?.includes(category.id) ? 'checked' : ''}>
+                    <label class="form-check-label" for="cat-${category.id}">${category.name}</label>
+                  </div>
+                `,
+                  )
+                  .join('')}
+              </div>
+            </div>
+            <div class="filter-group">
+              <h5 class="filter-title">Total Time</h5>
+              <div class="d-flex flex-column gap-2">
+                <div class="form-check">
+                  <input class="form-check-input filter-time" type="radio" name="totalTime" value="under_30" id="time-1" 
+                    ${state.criteria.totalTime?.max === 30 ? 'checked' : ''}>
+                  <label class="form-check-label" for="time-1">Under 30 min</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input filter-time" type="radio" name="totalTime" value="30_60" id="time-2"
+                    ${state.criteria.totalTime?.min === 30 ? 'checked' : ''}>
+                  <label class="form-check-label" for="time-2">30 - 60 min</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input filter-time" type="radio" name="totalTime" value="over_60" id="time-3"
+                    ${state.criteria.totalTime?.min === 60 ? 'checked' : ''}>
+                  <label class="form-check-label" for="time-3">Over 60 min</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input filter-time" type="radio" name="totalTime" value="all" id="time-all"
+                    ${!state.criteria.totalTime ? 'checked' : ''}>
+                  <label class="form-check-label" for="time-all">Any time</label>
+                </div>
+              </div>
+            </div>
+            <div class="filter-group">
+              <h5 class="filter-title mb-3">Minimum Rating</h5>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="text-muted small">0</span>
+                <input type="range" class="form-range filter-rating-range" min="0" max="5" step="1" value="${state.criteria.stars?.min || 0}" id="ratingRange">
+                <span class="text-muted small">5</span>
+              </div>
+              <div class="d-flex align-items-center justify-content-center gap-1" id="ratingDisplay">
+                ${renderStars(state.criteria.stars?.min || 0)}
+                <span class="small text-muted ms-1">${state.criteria.stars?.min || 0}+ stars</span>
+              </div>
+            </div>
+          `;
+
+          desktopContainer.innerHTML = html;
+          const mobileContainer = document.getElementById('mobileFilterContainer');
+          if (mobileContainer) {
+            mobileContainer.innerHTML = html
+              .replace(/id="([^"]+)"/g, 'id="mobile-$1"')
+              .replace(/for="([^"]+)"/g, 'for="mobile-$1"')
+              .replace(/name="([^"]+)"/g, 'name="mobile-$1"');
+          }
+
+          if (window.lucide) window.lucide.createIcons();
+        }
+
+        function fetchRecipes() {
+          const result = recipeService.getWithCriteria(state.criteria);
+          let items = [...result.items];
+          const [field, order] = state.sortBy.split('_');
+
+          items.sort((recipeA, recipeB) => {
+            let aVal = recipeA[field];
+            let bVal = recipeB[field];
+            if (field === 'name') {
+              aVal = aVal.toLowerCase();
+              bVal = bVal.toLowerCase();
+            }
+            return order === 'asc' ? (aVal > bVal ? 1 : -1) : aVal < bVal ? 1 : -1;
+          });
+
+          recipeListRaw.toHTML(items);
+          renderPagination(result.total);
+
+          const url = new URL(window.location);
+          if (state.criteria.text) url.searchParams.set('q', state.criteria.text);
+          else url.searchParams.delete('q');
+          if (state.sortBy !== 'name_asc') url.searchParams.set('sort', state.sortBy);
+          else url.searchParams.delete('sort');
+          if (state.currentPage > 1) url.searchParams.set('page', state.currentPage);
+          else url.searchParams.delete('page');
+          window.history.replaceState({}, '', url);
+
+          if (window.lucide) window.lucide.createIcons();
+        }
+
+        function renderPagination(total) {
+          const container = document.getElementById('pagination');
+          if (!container) return;
+
+          const totalPages = Math.ceil(total / state.criteria.limit);
+          if (totalPages <= 1) {
+            container.innerHTML = '';
+            return;
+          }
+
+          let html = '';
+          const current = state.currentPage;
+          html += `<li class="page-item ${current === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${current - 1}"><i data-lucide="chevron-left" style="width:16px;"></i></a></li>`;
+          for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= current - 1 && i <= current + 1)) {
+              html += `<li class="page-item ${current === i ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+            } else if (i === current - 2 || i === current + 2) {
+              html += `<li class="page-item disabled"><span class="page-link border-0">...</span></li>`;
+            }
+          }
+          html += `<li class="page-item ${current === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${current + 1}"><i data-lucide="chevron-right" style="width:16px;"></i></a></li>`;
+          container.innerHTML = html;
+
+          container.querySelectorAll('.page-link').forEach((link) => {
+            link.addEventListener('click', (event) => {
+              event.preventDefault();
+              const page = parseInt(event.currentTarget.dataset.page);
+              if (page && page !== current && page > 0 && page <= totalPages) {
+                state.currentPage = page;
+                state.criteria.skip = (page - 1) * state.criteria.limit;
+                fetchRecipes();
+                window.scrollTo({
+                  top: document.getElementById('recipe-list-container').offsetTop,
+                  behavior: 'smooth',
+                });
+              }
+            });
+          });
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('q')) {
+          state.criteria.text = params.get('q');
+          document.getElementById('searchInput').value = state.criteria.text;
+        }
+
+        if (params.has('category')) {
+          const category = categoryService.getByCode(params.get('category'));
+          if (category) state.criteria.categories = [category.id];
+        }
+
+        if (params.has('page')) {
+          state.currentPage = parseInt(params.get('page')) || 1;
+          state.criteria.skip = (state.currentPage - 1) * state.criteria.limit;
+        }
+
+        if (params.has('sort')) {
+          state.sortBy = params.get('sort');
+          document.getElementById('sortSelect').value = state.sortBy;
+        }
+
+        renderFilters();
+        fetchRecipes();
+
+        document.getElementById('searchInput')?.addEventListener('input', (event) => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            state.criteria.text = event.target.value.trim();
+            state.currentPage = 1;
+            state.criteria.skip = 0;
+            fetchRecipes();
+          }, 500);
+        });
+
+        document.getElementById('sortSelect')?.addEventListener('change', (event) => {
+          state.sortBy = event.target.value;
+          state.currentPage = 1;
+          state.criteria.skip = 0;
+          fetchRecipes();
+        });
+
+        document.querySelectorAll('.filter-sidebar, .offcanvas-body').forEach((element) => {
+          element.addEventListener('change', (event) => {
+            const target = event.target;
+
+            if (target.classList.contains('filter-category')) {
+              const value = target.value;
+              if (target.checked) {
+                if (!state.criteria.categories.includes(value))
+                  state.criteria.categories.push(value);
+              } else {
+                state.criteria.categories = state.criteria.categories.filter(
+                  (catId) => catId !== value,
+                );
+              }
+            }
+
+            if (target.classList.contains('filter-time')) {
+              const timeValue = target.value;
+              if (timeValue === 'under_30') state.criteria.totalTime = { min: 0, max: 30 };
+              else if (timeValue === '30_60') state.criteria.totalTime = { min: 30, max: 60 };
+              else if (timeValue === 'over_60') state.criteria.totalTime = { min: 60, max: 9999 };
+              else state.criteria.totalTime = null;
+            }
+
+            state.currentPage = 1;
+            state.criteria.skip = 0;
+
+            renderFilters();
+            fetchRecipes();
+          });
+        });
+
+        document.addEventListener('input', (event) => {
+          if (event.target.classList.contains('filter-rating-range')) {
+            const value = parseInt(event.target.value);
+            state.criteria.stars = value > 0 ? { min: value, max: 5 } : null;
+            state.currentPage = 1;
+            state.criteria.skip = 0;
+
+            const display = document.getElementById('ratingDisplay');
+            if (display) {
+              display.innerHTML = `${renderStars(value)}<span class="small text-muted ms-1">${value}+ stars</span>`;
+            }
+            fetchRecipes();
+          }
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+      });
+    </script>
   </body>
 </html>

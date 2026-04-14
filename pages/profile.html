@@ -1,3 +1,4 @@
+<!-- Created By: Hồ Đức Huy -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -112,9 +113,15 @@
                 <div id="favorite-list" class="row g-4">
                   <div class="col-12 text-center py-5">
                     <div class="text-muted">
-                      <i data-lucide="heart" class="mb-2" style="width: 48px; height: 48px; opacity: 0.2;"></i>
+                      <i
+                        data-lucide="heart"
+                        class="mb-2"
+                        style="width: 48px; height: 48px; opacity: 0.2"
+                      ></i>
                       <p>You haven't saved any recipes yet.</p>
-                      <a href="recipes.html" class="btn btn-outline-primary btn-sm mt-2">Explore Now</a>
+                      <a href="recipes.html" class="btn btn-outline-primary btn-sm mt-2"
+                        >Explore Now</a
+                      >
                     </div>
                   </div>
                 </div>
@@ -125,7 +132,6 @@
       </main>
     </div>
 
-    <!-- Confirmation Modal -->
     <div
       class="modal fade"
       id="confirm-delete-modal"
@@ -164,7 +170,6 @@
       </div>
     </div>
 
-    <!-- Notification Modal (Reused) -->
     <div
       class="modal fade"
       id="noti-modal"
@@ -195,6 +200,122 @@
 
     <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-    <script type="module" src="../assets/js/main.js"></script>
+
+    <script src="../assets/js/utils/logger.js"></script>
+    <script src="../assets/js/utils/validator.js"></script>
+    <script src="../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../assets/js/core/domains/base.domain.js"></script>
+
+    <script src="../assets/js/core/domains/user.domain.js"></script>
+    <script src="../assets/js/core/domains/recipe.domain.js"></script>
+
+    <script src="../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../assets/js/ui/components/notification.js"></script>
+    <script src="../assets/js/ui/components/cards.js"></script>
+    <script src="../assets/js/ui/components/layout.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const authService = AuthService.getInstance();
+        const userService = UserService.getInstance();
+        const recipeService = RecipeService.getInstance();
+        const notification = new Notification();
+        if (!authService.isAuthenticated()) {
+          window.location.href = '/pages/login.html';
+          return;
+        }
+        const user = authService.getCurrentUser();
+        const fallbackAvatar =
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s';
+        const avatarPreview = document.getElementById('avatar-preview');
+
+        if (avatarPreview) {
+          avatarPreview.onerror = () => {
+            if (avatarPreview.src !== fallbackAvatar) avatarPreview.src = fallbackAvatar;
+          };
+        }
+
+        if (user) {
+          document.getElementById('email').value = user.email || '';
+          document.getElementById('fullName').value = user.fullName || '';
+          document.getElementById('avatar').value = user.avatar || '';
+          if (avatarPreview) avatarPreview.src = user.avatar || fallbackAvatar;
+        }
+        function loadFavorites() {
+          const user = authService.getCurrentUser();
+          const container = document.getElementById('favorite-list');
+          const badge = document.getElementById('favorite-count');
+          if (!container) return;
+          const favoriteIds = user?.favoriteRecipes || [];
+          const favorites = recipeService.getFavorites(favoriteIds);
+          if (badge) badge.textContent = `${favorites.length} items`;
+          if (favorites.length === 0) {
+            container.innerHTML = `<div class="col-12 text-center py-5"><div class="text-muted"><i data-lucide="heart" class="mb-2" style="width: 48px; height: 48px; opacity: 0.2;"></i><p>You haven't saved any recipes yet.</p><a href="recipes.html" class="btn btn-outline-primary btn-sm mt-2">Explore Now</a></div></div>`;
+          } else {
+            container.innerHTML = favorites
+              .map((recipe) => {
+                const card = new FavoriteCard(recipe);
+                return `<div class="col-md-6 col-lg-4">${card.toHTML()}</div>`;
+              })
+              .join('');
+          }
+          if (window.lucide) window.lucide.createIcons();
+        }
+
+        document.getElementById('avatar')?.addEventListener('input', (event) => {
+          if (avatarPreview) avatarPreview.src = event.target.value.trim() || fallbackAvatar;
+        });
+
+        document.getElementById('profile-form')?.addEventListener('submit', (event) => {
+          event.preventDefault();
+          const user = authService.getCurrentUser();
+          const formData = new FormData(event.target);
+          const updateData = {
+            fullName: formData.get('fullName'),
+            avatar: formData.get('avatar'),
+            password: formData.get('password'),
+          };
+          const result = userService.updateProfile(user.id, updateData);
+          if (result.success) {
+            notification.success('Success', result.message);
+            setTimeout(() => window.location.reload(), 1500);
+          } else {
+            notification.error('Error', result.message);
+          }
+        });
+
+        document.getElementById('btn-confirm-delete')?.addEventListener('click', () => {
+          const user = authService.getCurrentUser();
+          const result = userService.deleteAccount(user.id);
+          if (result.success) {
+            window.location.href = '/pages/index.html';
+          } else {
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById('confirm-delete-modal'),
+            );
+            modal.hide();
+            notification.error('Error', result.message);
+          }
+        });
+
+        document.getElementById('favorite-list')?.addEventListener('click', (event) => {
+          const btn = event.target.closest('.unfavorite-btn');
+          if (btn) {
+            event.preventDefault();
+            const user = authService.getCurrentUser();
+            const result = userService.toggleFavorite(user.id, btn.dataset.id);
+            if (result.success) {
+              notification.success('Success', 'Removed from favorites');
+              loadFavorites();
+            }
+          }
+        });
+
+        loadFavorites();
+        if (window.lucide) window.lucide.createIcons();
+      });
+    </script>
   </body>
 </html>

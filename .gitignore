@@ -34,3 +34,5 @@ temp/
 *.bak
 
 .agent/
+
+local

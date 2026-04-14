@@ -1,3 +1,4 @@
+<!-- Created By: Quý Hương -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -91,6 +92,54 @@
 
     <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-    <script type="module" src="../assets/js/main.js"></script>
+
+    <script src="../assets/js/utils/logger.js"></script>
+    <script src="../assets/js/utils/validator.js"></script>
+    <script src="../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../assets/js/core/domains/base.domain.js"></script>
+
+    <script src="../assets/js/core/domains/user.domain.js"></script>
+
+    <script src="../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../assets/js/ui/components/notification.js"></script>
+    <script src="../assets/js/ui/components/layout.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const auth = AuthService.getInstance();
+        const notification = new Notification();
+
+        if (auth.isAuthenticated()) {
+          window.location.href = '/pages/index.html';
+          return;
+        }
+
+        const form = document.getElementById('login-form');
+
+        if (form) {
+          form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            const result = auth.signin(email, password);
+
+            if (result.success) {
+              notification.success('Welcome back!', 'Login successful.');
+              setTimeout(() => (window.location.href = '/pages/index.html'), 1000);
+            } else {
+              const error = result.errors ? Object.values(result.errors)[0] : result.message;
+              notification.error('Login Failed', error);
+            }
+          });
+        }
+
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+    </script>
   </body>
 </html>

@@ -1,3 +1,4 @@
+<!-- Created By: Mai Thế Hào -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -88,7 +89,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="btnSaveBlog">Save Blog</button>
+                <button type="submit" form="blogForm" class="btn btn-primary" id="btnSaveBlog">Save Blog</button>
               </div>
             </div>
           </div>
@@ -114,7 +115,167 @@
     </div>
 
     <script src="../../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script type="module" src="../../assets/js/main.js"></script>
     <script src="../../assets/js/libs/lucide-icon/lucide.min.js"></script>
+
+    <script src="../../assets/js/utils/logger.js"></script>
+    <script src="../../assets/js/utils/validator.js"></script>
+    <script src="../../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../../assets/js/core/domains/base.domain.js"></script>
+
+    <script src="../../assets/js/core/domains/blog.domain.js"></script>
+    <script src="../../assets/js/core/domains/user.domain.js"></script>
+
+    <script src="../../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../../assets/js/ui/components/notification.js"></script>
+    <script src="../../assets/js/ui/components/cards.js"></script>
+    <script src="../../assets/js/ui/components/layout.js"></script>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const authService = AuthService.getInstance();
+
+        if (!authService.isAdmin()) {
+          window.location.href = '/pages/login.html';
+          return;
+        }
+
+        const blogRepo = BlogPostRepository.getInstance();
+        const userRepo = UserRepository.getInstance();
+        const notification = new Notification();
+        const usersMap = {};
+
+        function loadUsers() {
+          const users = userRepo.findAll();
+          const selectEl = document.getElementById('blogAuthorId');
+          if (!selectEl) return;
+
+          selectEl.innerHTML = '';
+          users.forEach(user => {
+            usersMap[user.id] = user;
+            const opt = document.createElement('option');
+            opt.value = user.id;
+            opt.textContent = user.fullName;
+            selectEl.appendChild(opt);
+          });
+        }
+
+        function renderTable() {
+          const tbody = document.getElementById('blogsTableBody');
+          const blogs = blogRepo.findAll();
+          if (!tbody) return;
+
+          if (blogs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No blogs found.</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = blogs.map(blog => {
+            const author = usersMap[blog.authorId];
+            const authorHtml = author 
+              ? `<div class="d-flex align-items-center"><img src="${author.avatar}" class="table-avatar" alt="Avatar"><span>${author.fullName}</span></div>`
+              : '<span class="text-muted">Unknown</span>';
+            const dateStr = new Date(blog.publishedAt).toLocaleDateString();
+
+            return `
+              <tr>
+                <td><small class="text-muted">${blog.id.substring(0, 8)}</small></td>
+                <td><img src="${blog.image}" class="table-cover" alt="Cover"></td>
+                <td><div class="fw-bold">${blog.title}</div></td>
+                <td>${dateStr}</td>
+                <td>${authorHtml}</td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-primary me-2 btn-edit" data-id="${blog.id}"><i data-lucide="edit"></i> Edit</button>
+                  <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${blog.id}"><i data-lucide="trash"></i> Del</button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+
+          if (window.lucide) window.lucide.createIcons();
+        }
+
+        function openModal(id = null) {
+          const form = document.getElementById('blogForm');
+          form.reset();
+
+          document.getElementById('blogId').value = id || '';
+          document.getElementById('blogModalTitle').textContent = id ? 'Edit Blog' : 'Create Blog';
+
+          if (id) {
+            const b = blogRepo.findById(id);
+            if (b) {
+              document.getElementById('blogTitle').value = b.title;
+              document.getElementById('blogExcerpt').value = b.excerpt;
+              document.getElementById('blogImage').value = b.image;
+              document.getElementById('blogAuthorId').value = b.authorId;
+              document.getElementById('blogTags').value = (b.tags || []).join(', ');
+              document.getElementById('blogContent').value = b.content;
+            }
+          } else {
+            const curr = authService.getCurrentUser();
+            if (curr) document.getElementById('blogAuthorId').value = curr.id;
+          }
+          new bootstrap.Modal(document.getElementById('blogModal')).show();
+        }
+
+        function saveBlog() {
+          const form = document.getElementById('blogForm');
+          if (!form.checkValidity()) { form.reportValidity(); return; }
+
+          try {
+            const idInput = document.getElementById('blogId').value;
+            const id = idInput || crypto.randomUUID();
+            const existing = idInput ? blogRepo.findById(idInput) : null;
+            
+            const rawTags = document.getElementById('blogTags').value;
+            const tags = rawTags ? rawTags.split(',').map(tag => tag.trim()).filter(Boolean) : [];
+
+            const blogData = new BlogPost({
+              id,
+              title: document.getElementById('blogTitle').value,
+              excerpt: document.getElementById('blogExcerpt').value,
+              content: document.getElementById('blogContent').value,
+              image: document.getElementById('blogImage').value,
+              authorId: document.getElementById('blogAuthorId').value,
+              publishedAt: existing ? existing.publishedAt : new Date().toISOString(),
+              tags: tags
+            });
+
+            if (blogRepo.save(blogData)) {
+              bootstrap.Modal.getInstance(document.getElementById('blogModal')).hide();
+              renderTable();
+              notification.success('Success', idInput ? 'Updated successfully' : 'Created successfully');
+            }
+          } catch (error) {
+            notification.error('Error', error.message);
+          }
+        }
+
+        loadUsers();
+        renderTable();
+
+        document.getElementById('btnCreateBlog')?.addEventListener('click', () => openModal());
+
+        document.getElementById('blogForm')?.addEventListener('submit', (event) => {
+          event.preventDefault();
+          saveBlog();
+        });
+
+        document.getElementById('blogsTableBody')?.addEventListener('click', (event) => {
+          const editBtn = event.target.closest('.btn-edit');
+          const delBtn = event.target.closest('.btn-delete');
+
+          if (editBtn) openModal(editBtn.dataset.id);
+          if (delBtn && confirm('Are you sure?')) {
+            if (blogRepo.delete(delBtn.dataset.id)) { renderTable(); notification.success('Success', 'Deleted'); }
+          }
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+      });
+    </script>
   </body>
 </html>

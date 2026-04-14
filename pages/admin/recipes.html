@@ -1,3 +1,4 @@
+<!-- Created By: Mai Thế Hào -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -104,7 +105,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="btnSaveRecipe">Save Recipe</button>
+                <button type="submit" form="recipeForm" class="btn btn-primary" id="btnSaveRecipe">Save Recipe</button>
               </div>
             </div>
           </div>
@@ -130,7 +131,173 @@
     </div>
 
     <script src="../../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script type="module" src="../../assets/js/main.js"></script>
     <script src="../../assets/js/libs/lucide-icon/lucide.min.js"></script>
+
+    <script src="../../assets/js/utils/logger.js"></script>
+    <script src="../../assets/js/utils/validator.js"></script>
+    <script src="../../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../../assets/js/core/domains/base.domain.js"></script>
+
+    <script src="../../assets/js/core/domains/category.domain.js"></script>
+    <script src="../../assets/js/core/domains/user.domain.js"></script>
+    <script src="../../assets/js/core/domains/recipe.domain.js"></script>
+
+    <script src="../../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../../assets/js/ui/components/notification.js"></script>
+    <script src="../../assets/js/ui/components/cards.js"></script>
+    <script src="../../assets/js/ui/components/layout.js"></script>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const authService = AuthService.getInstance();
+
+        if (!authService.isAdmin()) {
+          window.location.href = '/pages/login.html';
+          return;
+        }
+
+        const recipeRepo = RecipeRepository.getInstance();
+        const userRepo = UserRepository.getInstance();
+        const notification = new Notification();
+        const usersMap = {};
+
+        function loadUsers() {
+          const users = userRepo.findAll();
+          const selectEl = document.getElementById('recipeAuthorId');
+          if (!selectEl) return;
+
+          selectEl.innerHTML = '';
+          users.forEach(user => {
+            usersMap[user.id] = user;
+            const opt = document.createElement('option');
+            opt.value = user.id;
+            opt.textContent = user.fullName;
+            selectEl.appendChild(opt);
+          });
+        }
+
+        function renderTable() {
+          const tbody = document.getElementById('recipesTableBody');
+          const recipes = recipeRepo.findAll();
+          if (!tbody) return;
+
+          if (recipes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No recipes found.</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = recipes.map(recipe => {
+            const author = usersMap[recipe.authorId];
+            const authorHtml = author 
+              ? `<div class="d-flex align-items-center"><img src="${author.avatar}" class="table-avatar" alt="Avatar"><span>${author.fullName}</span></div>`
+              : '<span class="text-muted">Unknown</span>';
+
+            return `
+              <tr>
+                <td><small class="text-muted">${recipe.id.substring(0, 8)}</small></td>
+                <td><img src="${recipe.image}" class="table-cover" alt="Cover"></td>
+                <td><div class="fw-bold">${recipe.name}</div><div class="text-muted small">${recipe.code}</div></td>
+                <td>${recipe.cookTime ? recipe.cookTime + 'm' : '-'}</td>
+                <td>${authorHtml}</td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-primary me-2 btn-edit" data-id="${recipe.id}"><i data-lucide="edit"></i> Edit</button>
+                  <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${recipe.id}"><i data-lucide="trash"></i> Del</button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+
+          if (window.lucide) window.lucide.createIcons();
+        }
+
+        function openModal(id = null) {
+          const form = document.getElementById('recipeForm');
+          form.reset();
+
+          document.getElementById('recipeId').value = id || '';
+          document.getElementById('recipeModalTitle').textContent = id ? 'Edit Recipe' : 'Create Recipe';
+
+          if (id) {
+            const r = recipeRepo.findById(id);
+            if (r) {
+              document.getElementById('recipeCode').value = r.code;
+              document.getElementById('recipeName').value = r.name;
+              document.getElementById('recipeDescription').value = r.description;
+              document.getElementById('recipeImage').value = r.image;
+              document.getElementById('recipePrepTime').value = r.prepTime;
+              document.getElementById('recipeCookTime').value = r.cookTime;
+              document.getElementById('recipeCategoryId').value = r.categoryId;
+              document.getElementById('recipeAuthorId').value = r.authorId;
+              document.getElementById('recipeStars').value = r.stars;
+              document.getElementById('recipeDirections').value = r.directions;
+            }
+          } else {
+            const curr = authService.getCurrentUser();
+            if (curr) document.getElementById('recipeAuthorId').value = curr.id;
+          }
+          new bootstrap.Modal(document.getElementById('recipeModal')).show();
+        }
+
+        function saveRecipe() {
+          const form = document.getElementById('recipeForm');
+          if (!form.checkValidity()) { form.reportValidity(); return; }
+
+          try {
+            const idInput = document.getElementById('recipeId').value;
+            const id = idInput || crypto.randomUUID();
+            const existing = idInput ? recipeRepo.findById(idInput) : null;
+            
+            const recipeData = new Recipe({
+              id,
+              code: document.getElementById('recipeCode').value,
+              name: document.getElementById('recipeName').value,
+              description: document.getElementById('recipeDescription').value,
+              image: document.getElementById('recipeImage').value,
+              prepTime: parseInt(document.getElementById('recipePrepTime').value) || 0,
+              cookTime: parseInt(document.getElementById('recipeCookTime').value) || 0,
+              categoryId: document.getElementById('recipeCategoryId').value,
+              authorId: document.getElementById('recipeAuthorId').value,
+              stars: parseInt(document.getElementById('recipeStars').value) || 0,
+              directions: document.getElementById('recipeDirections').value,
+              ingredients: existing ? existing.ingredients : [],
+              nutrition: existing ? existing.nutrition : { calories: 0, protein: 0, carbs: 0, fat: 0, cholesterol: 0 }
+            });
+
+            if (recipeRepo.save(recipeData)) {
+              bootstrap.Modal.getInstance(document.getElementById('recipeModal')).hide();
+              renderTable();
+              notification.success('Success', idInput ? 'Updated successfully' : 'Created successfully');
+            }
+          } catch (error) {
+            notification.error('Error', error.message);
+          }
+        }
+
+        loadUsers();
+        renderTable();
+
+        document.getElementById('btnCreateRecipe')?.addEventListener('click', () => openModal());
+
+        document.getElementById('recipeForm')?.addEventListener('submit', (event) => {
+          event.preventDefault();
+          saveRecipe();
+        });
+
+        document.getElementById('recipesTableBody')?.addEventListener('click', (event) => {
+          const editBtn = event.target.closest('.btn-edit');
+          const delBtn = event.target.closest('.btn-delete');
+
+          if (editBtn) openModal(editBtn.dataset.id);
+          if (delBtn && confirm('Are you sure?')) {
+            if (recipeRepo.delete(delBtn.dataset.id)) { renderTable(); notification.success('Success', 'Deleted'); }
+          }
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+      });
+    </script>
   </body>
 </html>

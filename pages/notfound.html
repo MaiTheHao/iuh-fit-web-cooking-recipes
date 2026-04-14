@@ -1,17 +1,90 @@
+<!-- Created By: Trần Hải Anh -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../assets/css/style.css" />
-    <title>Recipe4f</title>
+    <title>404 - Page Not Found | Recipe4f</title>
+    <style>
+      .error-container {
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      .error-code {
+        font-size: 8rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 1rem;
+        color: var(--primary);
+        font-family: var(--ff-serif);
+      }
+    </style>
   </head>
   <body>
     <div id="root">
-      <main id="app-body"></main>
+      <main id="app-body">
+        <div class="container error-container">
+          <div class="error-code">404</div>
+          <h1 class="h2 mb-4 ff-serif">Oops! Page not found</h1>
+          <p class="text-muted mb-5" style="max-width: 500px">
+            The page you are looking for might have been removed, had its name changed, or is
+            temporarily unavailable.
+          </p>
+          <div class="d-flex gap-3">
+            <a href="/pages/index.html" class="btn btn-primary px-4 py-2 rounded-pill">
+              Back to Home
+            </a>
+            <a href="/pages/recipes.html" class="btn btn-outline-dark px-4 py-2 rounded-pill">
+              Browse Recipes
+            </a>
+          </div>
+        </div>
+      </main>
     </div>
+
+    <div class="modal fade" id="noti-modal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title">Notification</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body py-4">
+            <p class="modal-message mb-0"></p>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-    <script type="module" src="../assets/js/main.js"></script>
+
+    <script src="../assets/js/utils/logger.js"></script>
+    <script src="../assets/js/utils/validator.js"></script>
+    <script src="../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../assets/js/core/domains/base.domain.js"></script>
+    <script src="../assets/js/core/domains/user.domain.js"></script>
+
+    <script src="../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../assets/js/ui/components/layout.js"></script>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+    </script>
   </body>
 </html>

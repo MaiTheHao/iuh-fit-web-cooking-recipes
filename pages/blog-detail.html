@@ -1,3 +1,4 @@
+<!-- Created By: Mai Thế Hào -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -74,8 +75,113 @@
       </main>
     </div>
 
-    <script type="module" src="../assets/js/main.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
     <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script src="../assets/js/utils/logger.js"></script>
+    <script src="../assets/js/utils/validator.js"></script>
+    <script src="../assets/js/core/config/localstorage.js"></script>
+
+    <script src="../assets/js/core/domains/base.domain.js"></script>
+
+    <script src="../assets/js/core/domains/blog.domain.js"></script>
+    <script src="../assets/js/core/domains/user.domain.js"></script>
+
+    <script src="../assets/js/core/services/auth.service.js"></script>
+
+    <script src="../assets/js/ui/components/notification.js"></script>
+    <script src="../assets/js/ui/components/cards.js"></script>
+    <script src="../assets/js/ui/components/layout.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const blogService = BlogService.getInstance();
+        const userRepository = UserRepository.getInstance();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const blogId = urlParams.get('id');
+
+        if (!blogId) {
+          renderError('No blog ID found in URL');
+          return;
+        }
+
+        const blog = blogService.getById(blogId);
+
+        if (!blog) {
+          renderError('Blog post not found');
+          return;
+        }
+
+        document.title = `${blog.title} - Recipe4f`;
+        document.getElementById('blog-title').textContent = blog.title;
+        document.getElementById('blog-excerpt').textContent = blog.excerpt;
+
+        const imgEl = document.getElementById('blog-image');
+        if (imgEl) {
+          imgEl.src = blog.image;
+          imgEl.alt = blog.title;
+        }
+
+        const author = userRepository.findById(blog.authorId);
+        const authorName = author ? author.fullName : 'Author';
+        const authorAvatar = author ? author.avatar : '../assets/img/default-avatar.jpg';
+        const publishDate = new Date(blog.publishedAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+
+        const words = blog.content.split(/\s+/).length;
+        const readTime = Math.ceil(words / 200);
+
+        document.getElementById('blog-read-time').innerHTML =
+          `<i data-lucide="clock" width="14"></i><span>${readTime} min read</span>`;
+
+        document.getElementById('blog-author').innerHTML = `
+          <img src="${authorAvatar}" class="rounded-circle" width="40" height="40" alt="${authorName}" style="object-fit: cover;">
+          <div class="d-flex flex-column" style="line-height:1.2;">
+            <span class="small text-muted text-uppercase" style="font-size:0.7rem;">Written by</span>
+            <span class="fw-bold text-dark">${authorName}</span>
+          </div>
+        `;
+
+        document.getElementById('blog-meta-data').innerHTML = `
+          <div class="d-flex align-items-center gap-2" title="Published Date"><i data-lucide="calendar" width="18"></i><span>${publishDate}</span></div>
+        `;
+
+        document.getElementById('blog-content').innerHTML = marked.parse(blog.content);
+
+        document.getElementById('blog-tags').innerHTML = blog.tags
+          .map((tag) => `<span class="badge bg-light text-dark border p-2 fw-normal">${tag}</span>`)
+          .join('');
+
+        const related = blogService
+          .getAll()
+          .filter(
+            (blogItem) =>
+              blogItem.id !== blog.id &&
+              blogItem.tags.some((tagItem) => blog.tags.includes(tagItem)),
+          )
+          .slice(0, 3);
+
+        if (related.length > 0) {
+          document.getElementById('related-blogs').innerHTML = related
+            .map((blogItem) => `<div class="col">${new BlogCard(blogItem).toHTML()}</div>`)
+            .join('');
+        } else {
+          document.getElementById('related-blogs').innerHTML =
+            '<div class="col-12 text-center text-muted">No related posts found.</div>';
+        }
+
+        if (window.lucide) window.lucide.createIcons();
+
+        function renderError(message) {
+          document.getElementById('app-body').innerHTML =
+            `<div class="container py-5"><div class="text-center"><h1 class="display-4">Oops!</h1><p class="lead">${message}</p><a href="/pages/blogs.html" class="btn btn-primary mt-3">Back to Blogs</a></div></div>`;
+        }
+      });
+    </script>
   </body>
 </html>
