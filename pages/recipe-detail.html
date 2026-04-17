@@ -16,19 +16,14 @@
             <div class="row g-0">
               <div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center">
                 <div class="d-flex align-items-center gap-2 mb-3">
-                  <span
-                    id="recipe-category"
-                    class="badge bg-accent bg-opacity-10 text-accent"
-                  ></span>
+                  <span id="recipe-category" class="badge bg-accent bg-opacity-10 text-accent"></span>
                   <div id="recipe-stars" class="d-flex gap-1 text-warning small"></div>
                 </div>
 
                 <h1 id="recipe-title" class="display-5 fw-bold ff-serif mb-3 text-primary"></h1>
                 <p id="recipe-description" class="text-secondary mb-4"></p>
 
-                <div
-                  class="recipe-meta-bar d-flex flex-wrap align-items-center gap-4 py-3 border-top w-100"
-                >
+                <div class="recipe-meta-bar d-flex flex-wrap align-items-center gap-4 py-3 border-top w-100">
                   <div id="recipe-author" class="d-flex align-items-center gap-2"></div>
 
                   <div class="vr mx-2 text-muted d-none d-md-block opacity-25"></div>
@@ -38,12 +33,7 @@
               </div>
 
               <div class="col-lg-6 bg-light d-flex align-items-stretch">
-                <img
-                  id="recipe-image"
-                  src=""
-                  alt="Recipe Cover"
-                  class="w-100 h-100 object-fit-cover"
-                />
+                <img id="recipe-image" src="" alt="Recipe Cover" class="w-100 h-100 object-fit-cover" />
               </div>
             </div>
           </div>
@@ -93,23 +83,12 @@
       </main>
     </div>
 
-    <div
-      class="modal fade"
-      id="noti-modal"
-      tabindex="-1"
-      aria-labelledby="noti-modal__label"
-      aria-hidden="true"
-    >
+    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header border-0">
             <h5 class="modal-title" id="noti-modal__label">Notification</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body py-4">
             <p class="modal-message mb-0"></p>
@@ -125,9 +104,7 @@
     <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <script src="../assets/js/utils/logger.js"></script>
     <script src="../assets/js/utils/validator.js"></script>
-    <script src="../assets/js/core/config/localstorage.js"></script>
 
     <script src="../assets/js/core/domains/base.domain.js"></script>
 
@@ -176,9 +153,7 @@
         }
 
         const category = categoryService.getById(recipe.categoryId);
-        document.getElementById('recipe-category').textContent = category
-          ? category.name
-          : 'Web Recipe';
+        document.getElementById('recipe-category').textContent = category ? category.name : 'Web Recipe';
 
         renderStars(recipe.stars);
 
@@ -245,19 +220,11 @@
           { label: 'Fat', val: fat, unit: 'g', icon: 'droplet' },
           { label: 'Carbs', val: carbs, unit: 'g', icon: 'wheat' },
         ];
-        document.getElementById('recipe-nutrition').innerHTML = nutItems
-          .map(
-            (item) =>
-              `<div class="nutrition-item"><div class="d-flex align-items-center"><i data-lucide="${item.icon}" class="nutrition-icon" width="18"></i><span class="nutrition-label">${item.label}</span></div><span class="nutrition-value">${item.val}<small>${item.unit}</small></span></div>`,
-          )
-          .join('');
+        document.getElementById('recipe-nutrition').innerHTML = nutItems.map((item) => `<div class="nutrition-item"><div class="d-flex align-items-center"><i data-lucide="${item.icon}" class="nutrition-icon" width="18"></i><span class="nutrition-label">${item.label}</span></div><span class="nutrition-value">${item.val}<small>${item.unit}</small></span></div>`).join('');
 
         const related = recipeService
           .getAll()
-          .filter(
-            (recipeItem) =>
-              recipeItem.categoryId === recipe.categoryId && recipeItem.id !== recipe.id,
-          )
+          .filter((recipeItem) => recipeItem.categoryId === recipe.categoryId && recipeItem.id !== recipe.id)
           .slice(0, 3);
 
         if (related.length > 0) {
@@ -266,9 +233,7 @@
 
         document.getElementById('recipe-ingredients').addEventListener('change', (event) => {
           if (event.target.classList.contains('ingredient-checkbox')) {
-            event.target
-              .closest('.ingredient-label')
-              .classList.toggle('checked', event.target.checked);
+            event.target.closest('.ingredient-label').classList.toggle('checked', event.target.checked);
           }
         });
 
@@ -304,8 +269,7 @@
         }
 
         function renderError(message) {
-          document.getElementById('app-body').innerHTML =
-            `<div class="container text-center py-5"><h2 class="text-muted">${message}</h2><a href="/pages/recipes.html" class="btn btn-primary mt-3">Back to Recipes</a></div>`;
+          document.getElementById('app-body').innerHTML = `<div class="container text-center py-5"><h2 class="text-muted">${message}</h2><a href="/pages/recipes.html" class="btn btn-primary mt-3">Back to Recipes</a></div>`;
         }
       });
     </script>

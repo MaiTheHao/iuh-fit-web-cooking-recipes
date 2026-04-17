@@ -1,53 +1,22 @@
-const ROUTES = {
-  HOME: { label: 'Home', redirectPath: 'index.html' },
-  RECIPES: { label: 'Recipes', redirectPath: 'recipes.html' },
-  BLOGS: { label: 'Blog', redirectPath: 'blogs.html' },
-  ABOUT: { label: 'About', redirectPath: 'about.html' },
-  CONTACT: { label: 'Contact', redirectPath: 'contact.html' },
-  PROFILE: { label: 'Profile', redirectPath: 'profile.html' },
-  ADMIN_USERS: { label: 'Admin Users', redirectPath: 'admin/users.html' },
-  ADMIN_RECIPES: { label: 'Admin Recipes', redirectPath: 'admin/recipes.html' },
-  ADMIN_BLOGS: { label: 'Admin Blogs', redirectPath: 'admin/blogs.html' },
-};
-
-const MENU_ITEMS = [ROUTES.HOME, ROUTES.RECIPES, ROUTES.BLOGS, ROUTES.ABOUT, ROUTES.CONTACT];
-
-const SOCIAL_LINKS = [
-  { icon: 'facebook', label: 'Facebook', url: 'https://www.facebook.com' },
-  { icon: 'instagram', label: 'Instagram', url: 'https://www.instagram.com' },
-  {
-    icon: 'github',
-    label: 'Github',
-    url: 'https://github.com/MaiTheHao/iuh-fit-web-cooking-recipes.git',
-  },
-];
-
-const ASSETS = {
-  logo: '../assets/img/logo.svg',
-};
-
 const Header = () => {
   const user = AuthService.getInstance().getCurrentUser();
-  const fallbackAvatar =
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s';
-
-  const isLoginPage = window.location.pathname.includes('login.html');
+  const fallbackAvatar = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s';
   const pathPrefix = window.location.pathname.includes('/admin/') ? '../' : '';
-  const rootPrefix = window.location.pathname.includes('/pages/') ? '' : 'pages/';
 
   return `
     <div class="header__overlay header__overlay--default"></div>
     <header class="header">
         <div class="header__container">
-            <a href="${pathPrefix}${ROUTES.HOME.redirectPath}" class="header__logo" title="Recipe4f Logo">
+            <a href="${pathPrefix}index.html" class="header__logo" title="Recipe4f Logo">
                 <img src="${pathPrefix}../assets/img/logo.svg" alt="Logo" />
             </a>
             <nav class="header__nav">
                 <ul class="header__menu">
-                    ${MENU_ITEMS.map(
-                      (item) =>
-                        `<li><a href="${pathPrefix}${item.redirectPath}" class="header__link fw-light">${item.label}</a></li>`,
-                    ).join('')}
+                    <li><a href="${pathPrefix}index.html" class="header__link fw-light">Home</a></li>
+                    <li><a href="${pathPrefix}recipes.html" class="header__link fw-light">Recipes</a></li>
+                    <li><a href="${pathPrefix}blogs.html" class="header__link fw-light">Blog</a></li>
+                    <li><a href="${pathPrefix}about.html" class="header__link fw-light">About</a></li>
+                    <li><a href="${pathPrefix}contact.html" class="header__link fw-light">Contact</a></li>
                 </ul>
             </nav>
             <div class="header__actions">
@@ -61,7 +30,7 @@ const Header = () => {
                       </div>
                       <ul class="header__user-menu">
                         <li>
-                          <a href="${pathPrefix}${ROUTES.PROFILE.redirectPath}" class="header__user-menu-item">
+                          <a href="${pathPrefix}profile.html" class="header__user-menu-item">
                             <i data-lucide="user" style="width: 1em; height: 1em;"></i>
                             <span>Profile</span>
                           </a>
@@ -70,19 +39,19 @@ const Header = () => {
                           user.role === 'admin'
                             ? `
                           <li>
-                            <a href="${pathPrefix}${ROUTES.ADMIN_USERS.redirectPath}" class="header__user-menu-item">
+                            <a href="${pathPrefix}admin/users.html" class="header__user-menu-item">
                               <i data-lucide="shield" style="width: 1em; height: 1em;"></i>
                               <span>Manage Users</span>
                             </a>
                           </li>
                           <li>
-                            <a href="${pathPrefix}${ROUTES.ADMIN_RECIPES.redirectPath}" class="header__user-menu-item">
+                            <a href="${pathPrefix}admin/recipes.html" class="header__user-menu-item">
                               <i data-lucide="shield" style="width: 1em; height: 1em;"></i>
                               <span>Manage Recipes</span>
                             </a>
                           </li>
                           <li>
-                            <a href="${pathPrefix}${ROUTES.ADMIN_BLOGS.redirectPath}" class="header__user-menu-item">
+                            <a href="${pathPrefix}admin/blogs.html" class="header__user-menu-item">
                               <i data-lucide="shield" style="width: 1em; height: 1em;"></i>
                               <span>Manage Blogs</span>
                             </a>
@@ -97,7 +66,7 @@ const Header = () => {
                           </button>
                         </li>
                       </ul>
-                      <a href="${pathPrefix}${ROUTES.PROFILE.redirectPath}" class="header__user header__user--mobile" role="button">
+                      <a href="${pathPrefix}profile.html" class="header__user header__user--mobile" role="button">
                         <img src="${user.avatar}" alt="${user.fullName}" class="header__user-avatar" onerror="this.src='${fallbackAvatar}'"/>
                         <span class="header__user-name fw-medium">${user.fullName}</span>
                       </a>
@@ -121,10 +90,11 @@ const Header = () => {
                     </button>
                 </div>
                 <ul class="header__drawer-menu">
-                    ${MENU_ITEMS.map(
-                      (item) =>
-                        `<li><a href="${pathPrefix}${item.redirectPath}" class="header__drawer-link fw-light">${item.label}</a></li>`,
-                    ).join('')}
+                    <li><a href="${pathPrefix}index.html" class="header__drawer-link fw-light">Home</a></li>
+                    <li><a href="${pathPrefix}recipes.html" class="header__drawer-link fw-light">Recipes</a></li>
+                    <li><a href="${pathPrefix}blogs.html" class="header__drawer-link fw-light">Blog</a></li>
+                    <li><a href="${pathPrefix}about.html" class="header__drawer-link fw-light">About</a></li>
+                    <li><a href="${pathPrefix}contact.html" class="header__drawer-link fw-light">Contact</a></li>
                 </ul>
             </aside>
         </div>
@@ -138,7 +108,7 @@ const Footer = () => {
     <footer id="app-footer">
         <div class="footer__top">
             <div class="footer__top__part footer__info">
-                <a href="${pathPrefix}${ROUTES.HOME.redirectPath}" class="footer__logo" title="Recipe4f Logo">
+                <a href="${pathPrefix}index.html" class="footer__logo" title="Recipe4f Logo">
                     <img src="${pathPrefix}../assets/img/logo.svg" alt="Logo" />
                 </a>
                 <p class="footer__description ff-main fw-light">
@@ -147,19 +117,22 @@ const Footer = () => {
             </div>
             <nav class="footer__top__part footer__nav">
                 <ul>
-                    ${MENU_ITEMS.map(
-                      (item) =>
-                        `<li><a href="${pathPrefix}${item.redirectPath}" class="footer__link fw-light">${item.label}</a></li>`,
-                    ).join('')}
+                    <li><a href="${pathPrefix}index.html" class="footer__link fw-light">Home</a></li>
+                    <li><a href="${pathPrefix}recipes.html" class="footer__link fw-light">Recipes</a></li>
+                    <li><a href="${pathPrefix}blogs.html" class="footer__link fw-light">Blog</a></li>
+                    <li><a href="${pathPrefix}about.html" class="footer__link fw-light">About</a></li>
+                    <li><a href="${pathPrefix}contact.html" class="footer__link fw-light">Contact</a></li>
                 </ul>
                 <ul>
-                    ${SOCIAL_LINKS.map(
-                      (link) => `
-                        <a href="${link.url}" target="_blank" title="${link.label}" class="social-icon" aria-label="${link.label}">
-                            <i data-lucide="${link.icon}"></i>
-                        </a>
-                      `,
-                    ).join('')}
+                    <a href="https://www.facebook.com" target="_blank" title="Facebook" class="social-icon" aria-label="Facebook">
+                        <i data-lucide="facebook"></i>
+                    </a>
+                    <a href="https://www.instagram.com" target="_blank" title="Instagram" class="social-icon" aria-label="Instagram">
+                        <i data-lucide="instagram"></i>
+                    </a>
+                    <a href="https://github.com/MaiTheHao/iuh-fit-web-cooking-recipes.git" target="_blank" title="Github" class="social-icon" aria-label="Github">
+                        <i data-lucide="github"></i>
+                    </a>
                 </ul>
             </nav>
         </div>
@@ -171,44 +144,37 @@ const Footer = () => {
   `;
 };
 
-class Layout {
-  constructor() {
-    this.root = document.getElementById('root');
-    if (!this.root) throw new Error('Root element not found');
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    // Kiểm tra phần tử gốc (root) nơi sẽ chèn giao diện
+    const root = document.getElementById('root');
+    if (!root) throw new Error('Không tìm thấy phần tử root');
 
-  init() {
-    this.root.insertAdjacentHTML('afterbegin', Header());
-    this.root.insertAdjacentHTML('beforeend', Footer());
+    // Chèn nội dung Header vào đầu và Footer vào cuối phần tử root
+    root.insertAdjacentHTML('afterbegin', Header());
+    root.insertAdjacentHTML('beforeend', Footer());
 
-    this.#activeNavLink();
-    this.#bindEvents();
-    console.log('Layout initialized');
-  }
-
-  #activeNavLink() {
     const currentPath = window.location.pathname;
-    this.root
-      .querySelectorAll('.header__link, .header__drawer-link, .footer__link')
-      .forEach((link) => {
-        const href = link.getAttribute('href');
-        if (currentPath.endsWith(href)) {
-          link.classList.add('active');
-        }
-      });
-  }
+    root.querySelectorAll('.header__link, .header__drawer-link, .footer__link').forEach((link) => {
+      const href = link.getAttribute('href');
+      if (currentPath.endsWith(href)) {
+        link.classList.add('active');
+      }
+    });
 
-  #bindEvents() {
+    // Khởi tạo các icon từ thư viện Lucide
     if (window.lucide) window.lucide.createIcons();
 
+    // Thiết lập các sự kiện tương tác cho giao diện
     const elements = {
-      toggle: document.querySelector('.header__toggle'),
-      drawer: document.querySelector('.header__drawer'),
-      close: document.querySelector('.header__close-btn'),
-      overlay: document.querySelector('.header__overlay'),
-      logout: document.querySelector('.logout-btn'),
+      toggle: document.querySelector('.header__toggle'), // Nút mở menu mobile
+      drawer: document.querySelector('.header__drawer'), // Thanh menu mobile
+      close: document.querySelector('.header__close-btn'), // Nút đóng menu mobile
+      overlay: document.querySelector('.header__overlay'), // Lớp phủ mờ khi mở menu
+      logout: document.querySelector('.logout-btn'), // Nút đăng xuất
     };
 
+    // Xử lý đóng/mở menu mobile
     if (elements.toggle && elements.drawer && elements.overlay) {
       const toggleDrawer = (isOpen) => {
         elements.drawer.classList.toggle('header__drawer--open', isOpen);
@@ -221,19 +187,14 @@ class Layout {
       elements.overlay.onclick = () => toggleDrawer(false);
     }
 
+    // Xử lý sự kiện đăng xuất
     if (elements.logout) {
       elements.logout.onclick = () => {
-        AuthService.getInstance().signout();
-        window.location.reload();
+        AuthService.getInstance().signout(); // Gọi service xóa session/token
+        window.location.reload(); // Tải lại trang để cập nhật trạng thái
       };
     }
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  try {
-    new Layout().init();
   } catch (e) {
-    console.error('Layout initialization failed:', e.message);
+    console.error('Lỗi khi khởi tạo Layout:', e.message);
   }
 });

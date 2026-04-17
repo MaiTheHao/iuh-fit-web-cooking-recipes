@@ -14,32 +14,16 @@
         <div class="blog-page-header text-center">
           <div class="container">
             <h1 class="display-4 fw-bold ff-serif mb-3">Culinary Stories & Tips</h1>
-            <p class="lead" style="max-width: 600px">
-              Explore delicious recipes, cooking techniques, and culinary adventures from our
-              community.
-            </p>
+            <p class="lead" style="max-width: 600px">Explore delicious recipes, cooking techniques, and culinary adventures from our community.</p>
           </div>
         </div>
 
         <div class="container" id="blog-list-container">
-          <div
-            class="d-flex flex-column flex-lg-row gap-3 mb-4 align-items-lg-center justify-content-between"
-          >
-            <button
-              class="btn btn-outline-primary d-lg-none w-100"
-              type="button"
-              data-bs-toggle="offcanvas"
-              data-bs-target="#filterOffcanvas"
-            >
-              <i data-lucide="filter" class="me-2"></i> Filters
-            </button>
+          <div class="d-flex flex-column flex-lg-row gap-3 mb-4 align-items-lg-center justify-content-between">
+            <button class="btn btn-outline-primary d-lg-none w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas"><i data-lucide="filter" class="me-2"></i> Filters</button>
 
             <div class="d-flex gap-2 align-items-center grow blog-search-sort-container">
-              <select
-                class="form-select sort-select"
-                id="sortSelect"
-                style="width: auto; min-width: 180px"
-              >
+              <select class="form-select sort-select" id="sortSelect" style="width: auto; min-width: 180px">
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
                 <option value="title_asc">Title (A-Z)</option>
@@ -47,12 +31,7 @@
               </select>
               <div class="search-container grow">
                 <i data-lucide="search" class="search-icon"></i>
-                <input
-                  type="text"
-                  class="form-control search-input"
-                  id="searchInput"
-                  placeholder="Search stories..."
-                />
+                <input type="text" class="form-control search-input" id="searchInput" placeholder="Search stories..." />
               </div>
             </div>
           </div>
@@ -74,35 +53,21 @@
       </main>
     </div>
 
-    <div
-      class="offcanvas offcanvas-start"
-      tabindex="-1"
-      id="filterOffcanvas"
-      aria-labelledby="filterOffcanvasLabel"
-    >
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="filterOffcanvasLabel">Filters</h5>
-        <button
-          type="button"
-          class="btn-close text-reset"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body" id="mobileFilterContainer"></div>
       <div class="offcanvas-footer p-3 border-top">
-        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="offcanvas">
-          Apply Filters
-        </button>
+        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="offcanvas">Apply Filters</button>
       </div>
     </div>
 
     <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
 
-    <script src="../assets/js/utils/logger.js"></script>
     <script src="../assets/js/utils/validator.js"></script>
-    <script src="../assets/js/core/config/localstorage.js"></script>
 
     <script src="../assets/js/core/domains/base.domain.js"></script>
 
@@ -222,10 +187,7 @@
           for (let i = 1; i <= totalPages; i++) {
             if (i === 1 || i === totalPages || (i >= current - 1 && i <= current + 1)) {
               html += `<li class="page-item ${current === i ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
-            } else if (
-              (i === 2 && current > 3) ||
-              (i === totalPages - 1 && current < totalPages - 2)
-            ) {
+            } else if ((i === 2 && current > 3) || (i === totalPages - 1 && current < totalPages - 2)) {
               html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
             }
           }
@@ -300,9 +262,7 @@
               state.currentPage = page;
               state.criteria.skip = (page - 1) * state.criteria.limit;
               fetchBlogs();
-              document
-                .getElementById('blog-list-container')
-                ?.scrollIntoView({ behavior: 'smooth' });
+              document.getElementById('blog-list-container')?.scrollIntoView({ behavior: 'smooth' });
             }
           }
         });

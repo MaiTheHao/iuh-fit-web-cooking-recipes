@@ -34,9 +34,7 @@
         <div class="container mb-5">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="mb-0">Users List</h3>
-            <button class="btn btn-primary" id="btnCreateUser">
-              <i data-lucide="plus" class="me-2"></i>Create User
-            </button>
+            <button class="btn btn-primary" id="btnCreateUser"><i data-lucide="plus" class="me-2"></i>Create User</button>
           </div>
 
           <div class="table-responsive bg-white rounded shadow-sm p-3">
@@ -91,12 +89,8 @@
                 </form>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                  Cancel
-                </button>
-                <button type="submit" form="userForm" class="btn btn-primary" id="btnSaveUser">
-                  Save User
-                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="userForm" class="btn btn-primary" id="btnSaveUser">Save User</button>
               </div>
             </div>
           </div>
@@ -119,14 +113,7 @@
                 </form>
               </div>
               <div class="modal-footer">
-                <button
-                  type="submit"
-                  form="resetPassForm"
-                  class="btn btn-primary w-100"
-                  id="btnSavePassword"
-                >
-                  Update Password
-                </button>
+                <button type="submit" form="resetPassForm" class="btn btn-primary w-100" id="btnSavePassword">Update Password</button>
               </div>
             </div>
           </div>
@@ -134,23 +121,12 @@
       </main>
     </div>
 
-    <div
-      class="modal fade"
-      id="noti-modal"
-      tabindex="-1"
-      aria-labelledby="noti-modal__label"
-      aria-hidden="true"
-    >
+    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header border-0">
             <h5 class="modal-title" id="noti-modal__label">Notification</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body py-4">
             <p class="modal-message mb-0"></p>
@@ -165,9 +141,7 @@
     <script src="../../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/libs/lucide-icon/lucide.min.js"></script>
 
-    <script src="../../assets/js/utils/logger.js"></script>
     <script src="../../assets/js/utils/validator.js"></script>
-    <script src="../../assets/js/core/config/localstorage.js"></script>
 
     <script src="../../assets/js/core/domains/base.domain.js"></script>
 
@@ -189,6 +163,7 @@
         }
 
         const userRepo = UserRepository.getInstance();
+        const userService = UserService.getInstance();
         const notification = new Notification();
 
         function renderTable() {
@@ -197,18 +172,14 @@
           if (!tbody) return;
 
           if (users.length === 0) {
-            tbody.innerHTML =
-              '<tr><td colspan="5" class="text-center text-muted">No users found.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No users found.</td></tr>';
             return;
           }
 
           tbody.innerHTML = users
             .map((user) => {
-              const avatarHtml = `<img src="${user.avatar || 'https://via.placeholder.com/40'}" class="table-avatar me-2" alt="Avatar">`;
-              const roleStr =
-                user.role === 'admin'
-                  ? '<span class="badge bg-danger">Admin</span>'
-                  : '<span class="badge bg-secondary">User</span>';
+              const avatarHtml = `<img src="${user.avatar}" class="table-avatar me-2" alt="Avatar">`;
+              const roleStr = user.role === 'admin' ? '<span class="badge bg-danger">Admin</span>' : '<span class="badge bg-secondary">User</span>';
               return `
               <tr>
                 <td><div class="d-flex align-items-center">${avatarHtml}<small class="text-muted">${user.id.substring(0, 8)}</small></div></td>
@@ -258,36 +229,34 @@
 
           try {
             const idInput = document.getElementById('userId').value;
-            const id = idInput || crypto.randomUUID();
             const email = document.getElementById('userEmail').value.trim();
             const fullName = document.getElementById('userFullName').value.trim();
             const role = document.getElementById('userRole').value;
+            const avatar = document.getElementById('userAvatar').value.trim() || undefined;
 
-            if (!idInput && userRepo.emailExists(email)) {
-              notification.error('Error', 'Email already exists!');
-              return;
-            }
-
-            const existing = idInput ? userRepo.findById(idInput) : null;
-            const userData = new User({
-              id,
-              email,
-              fullName,
-              role,
-              password: idInput ? existing.password : document.getElementById('userPassword').value,
-              avatar:
-                document.getElementById('userAvatar').value ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random&size=256`,
-              favoriteRecipes: existing ? existing.favoriteRecipes : [],
-            });
-
-            if (userRepo.save(userData)) {
-              bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
-              renderTable();
-              notification.success(
-                'Success',
-                idInput ? 'Updated successfully' : 'Created successfully',
-              );
+            if (idInput) {
+              const result = userService.updateProfile(idInput, { fullName, role, avatar });
+              if (result.success) {
+                bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                renderTable();
+                notification.success('Success', result.message);
+              } else {
+                notification.error('Error', result.message);
+              }
+            } else {
+              if (userRepo.emailExists(email)) {
+                notification.error('Error', 'Email already exists!');
+                return;
+              }
+              const password = document.getElementById('userPassword').value;
+              const result = userService.createUser({ email, fullName, password, role });
+              if (result) {
+                bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                renderTable();
+                notification.success('Success', 'Created successfully');
+              } else {
+                notification.error('Error', 'Failed to create user');
+              }
             }
           } catch (error) {
             notification.error('Error', error.message);
@@ -303,14 +272,13 @@
         function savePassword() {
           const id = document.getElementById('resetPassUserId').value;
           const newPass = document.getElementById('newPassword').value;
-          const user = userRepo.findById(id);
 
-          if (user) {
-            user.password = newPass;
-            if (userRepo.save(user)) {
-              bootstrap.Modal.getInstance(document.getElementById('resetPassModal')).hide();
-              notification.success('Success', 'Password updated');
-            }
+          const result = userService.updateProfile(id, { password: newPass });
+          if (result.success) {
+            bootstrap.Modal.getInstance(document.getElementById('resetPassModal')).hide();
+            notification.success('Success', 'Password updated');
+          } else {
+            notification.error('Error', result.message);
           }
         }
 
@@ -343,9 +311,12 @@
               return;
             }
             if (confirm('Are you sure?')) {
-              if (userRepo.delete(delBtn.dataset.id)) {
+              const result = userService.deleteAccount(delBtn.dataset.id);
+              if (result.success) {
                 renderTable();
                 notification.success('Success', 'Deleted');
+              } else {
+                notification.error('Error', result.message);
               }
             }
           }

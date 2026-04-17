@@ -237,12 +237,42 @@ class UserService {
   }
 
   /**
+   * Create a new user
+   * @param {Object} userData
+   * @returns {User|null}
+   */
+  createUser({ email, fullName, password, role = 'user' }) {
+    try {
+      const user = new User({
+        id: crypto.randomUUID(),
+        email: email.trim(),
+        fullName: fullName.trim(),
+        password: password,
+        avatar: this.#generateDefaultAvatar(fullName),
+        role: role,
+        favoriteRecipes: [],
+      });
+
+      const saved = this.#userRepository.save(user);
+      return saved ? user : null;
+    } catch (error) {
+      console.error('Create user error', error);
+      throw error;
+    }
+  }
+
+  /** @returns {string} */
+  #generateDefaultAvatar(fullName) {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random&size=256`;
+  }
+
+  /**
    * Update user profile
    * @param {string} userId
    * @param {Object} updateData
    * @returns {{success: boolean, message?: string, user?: User}}
    */
-  updateProfile(userId, { fullName, avatar, password }) {
+  updateProfile(userId, { fullName, avatar, password, role }) {
     try {
       const user = this.#userRepository.findById(userId);
       if (!user) {
@@ -250,7 +280,8 @@ class UserService {
       }
 
       if (fullName !== undefined) user.fullName = fullName;
-      if (avatar !== undefined) user.avatar = avatar || 'https://via.placeholder.com/150';
+      if (role !== undefined) user.role = role;
+      if (avatar !== undefined) user.avatar = avatar;
       if (password !== undefined && password.trim() !== '') user.password = password;
 
       const saved = this.#userRepository.save(user);

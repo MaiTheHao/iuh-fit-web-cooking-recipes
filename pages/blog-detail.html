@@ -25,10 +25,7 @@
                 <h1 id="blog-title" class="display-5 fw-bold ff-serif mb-3 text-primary"></h1>
                 <p id="blog-excerpt" class="text-secondary mb-4"></p>
 
-                <div
-                  class="blog-meta-bar d-flex flex-wrap align-items-center gap-4 py-3 border-top w-100"
-                  style="border-color: var(--color-border) !important"
-                >
+                <div class="blog-meta-bar d-flex flex-wrap align-items-center gap-4 py-3 border-top w-100" style="border-color: var(--color-border) !important">
                   <div id="blog-author" class="d-flex align-items-center gap-2"></div>
 
                   <div class="vr mx-2 text-muted d-none d-md-block opacity-25"></div>
@@ -79,9 +76,7 @@
     <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <script src="../assets/js/utils/logger.js"></script>
     <script src="../assets/js/utils/validator.js"></script>
-    <script src="../assets/js/core/config/localstorage.js"></script>
 
     <script src="../assets/js/core/domains/base.domain.js"></script>
 
@@ -136,8 +131,7 @@
         const words = blog.content.split(/\s+/).length;
         const readTime = Math.ceil(words / 200);
 
-        document.getElementById('blog-read-time').innerHTML =
-          `<i data-lucide="clock" width="14"></i><span>${readTime} min read</span>`;
+        document.getElementById('blog-read-time').innerHTML = `<i data-lucide="clock" width="14"></i><span>${readTime} min read</span>`;
 
         document.getElementById('blog-author').innerHTML = `
           <img src="${authorAvatar}" class="rounded-circle" width="40" height="40" alt="${authorName}" style="object-fit: cover;">
@@ -153,33 +147,23 @@
 
         document.getElementById('blog-content').innerHTML = marked.parse(blog.content);
 
-        document.getElementById('blog-tags').innerHTML = blog.tags
-          .map((tag) => `<span class="badge bg-light text-dark border p-2 fw-normal">${tag}</span>`)
-          .join('');
+        document.getElementById('blog-tags').innerHTML = blog.tags.map((tag) => `<span class="badge bg-light text-dark border p-2 fw-normal">${tag}</span>`).join('');
 
         const related = blogService
           .getAll()
-          .filter(
-            (blogItem) =>
-              blogItem.id !== blog.id &&
-              blogItem.tags.some((tagItem) => blog.tags.includes(tagItem)),
-          )
+          .filter((blogItem) => blogItem.id !== blog.id && blogItem.tags.some((tagItem) => blog.tags.includes(tagItem)))
           .slice(0, 3);
 
         if (related.length > 0) {
-          document.getElementById('related-blogs').innerHTML = related
-            .map((blogItem) => `<div class="col">${new BlogCard(blogItem).toHTML()}</div>`)
-            .join('');
+          document.getElementById('related-blogs').innerHTML = related.map((blogItem) => `<div class="col">${new BlogCard(blogItem).toHTML()}</div>`).join('');
         } else {
-          document.getElementById('related-blogs').innerHTML =
-            '<div class="col-12 text-center text-muted">No related posts found.</div>';
+          document.getElementById('related-blogs').innerHTML = '<div class="col-12 text-center text-muted">No related posts found.</div>';
         }
 
         if (window.lucide) window.lucide.createIcons();
 
         function renderError(message) {
-          document.getElementById('app-body').innerHTML =
-            `<div class="container py-5"><div class="text-center"><h1 class="display-4">Oops!</h1><p class="lead">${message}</p><a href="/pages/blogs.html" class="btn btn-primary mt-3">Back to Blogs</a></div></div>`;
+          document.getElementById('app-body').innerHTML = `<div class="container py-5"><div class="text-center"><h1 class="display-4">Oops!</h1><p class="lead">${message}</p><a href="/pages/blogs.html" class="btn btn-primary mt-3">Back to Blogs</a></div></div>`;
         }
       });
     </script>

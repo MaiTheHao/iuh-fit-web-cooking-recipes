@@ -7,9 +7,25 @@
     <title>Admin - Manage Recipes</title>
     <link rel="stylesheet" href="../../assets/css/style.css" />
     <style>
-      .admin-page-header { padding: 40px 0; background: var(--surface-1); margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
-      .table-cover { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
-      .table-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 8px; }
+      .admin-page-header {
+        padding: 40px 0;
+        background: var(--surface-1);
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .table-cover {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .table-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 8px;
+      }
     </style>
   </head>
   <body>
@@ -25,9 +41,7 @@
         <div class="container mb-5">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="mb-0">Recipes List</h3>
-            <button class="btn btn-primary" id="btnCreateRecipe">
-              <i data-lucide="plus" class="me-2"></i>Create Recipe
-            </button>
+            <button class="btn btn-primary" id="btnCreateRecipe"><i data-lucide="plus" class="me-2"></i>Create Recipe</button>
           </div>
 
           <div class="table-responsive bg-white rounded shadow-sm p-3">
@@ -42,8 +56,7 @@
                   <th class="text-end">Actions</th>
                 </tr>
               </thead>
-              <tbody id="recipesTableBody">
-              </tbody>
+              <tbody id="recipesTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -89,8 +102,7 @@
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Author (User)</label>
-                      <select class="form-select" id="recipeAuthorId" required>
-                      </select>
+                      <select class="form-select" id="recipeAuthorId" required></select>
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Stars</label>
@@ -133,9 +145,7 @@
     <script src="../../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/libs/lucide-icon/lucide.min.js"></script>
 
-    <script src="../../assets/js/utils/logger.js"></script>
     <script src="../../assets/js/utils/validator.js"></script>
-    <script src="../../assets/js/core/config/localstorage.js"></script>
 
     <script src="../../assets/js/core/domains/base.domain.js"></script>
 
@@ -148,7 +158,6 @@
     <script src="../../assets/js/ui/components/notification.js"></script>
     <script src="../../assets/js/ui/components/cards.js"></script>
     <script src="../../assets/js/ui/components/layout.js"></script>
-
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -170,7 +179,7 @@
           if (!selectEl) return;
 
           selectEl.innerHTML = '';
-          users.forEach(user => {
+          users.forEach((user) => {
             usersMap[user.id] = user;
             const opt = document.createElement('option');
             opt.value = user.id;
@@ -189,13 +198,12 @@
             return;
           }
 
-          tbody.innerHTML = recipes.map(recipe => {
-            const author = usersMap[recipe.authorId];
-            const authorHtml = author 
-              ? `<div class="d-flex align-items-center"><img src="${author.avatar}" class="table-avatar" alt="Avatar"><span>${author.fullName}</span></div>`
-              : '<span class="text-muted">Unknown</span>';
+          tbody.innerHTML = recipes
+            .map((recipe) => {
+              const author = usersMap[recipe.authorId];
+              const authorHtml = author ? `<div class="d-flex align-items-center"><img src="${author.avatar}" class="table-avatar" alt="Avatar"><span>${author.fullName}</span></div>` : '<span class="text-muted">Unknown</span>';
 
-            return `
+              return `
               <tr>
                 <td><small class="text-muted">${recipe.id.substring(0, 8)}</small></td>
                 <td><img src="${recipe.image}" class="table-cover" alt="Cover"></td>
@@ -208,7 +216,8 @@
                 </td>
               </tr>
             `;
-          }).join('');
+            })
+            .join('');
 
           if (window.lucide) window.lucide.createIcons();
         }
@@ -243,13 +252,16 @@
 
         function saveRecipe() {
           const form = document.getElementById('recipeForm');
-          if (!form.checkValidity()) { form.reportValidity(); return; }
+          if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+          }
 
           try {
             const idInput = document.getElementById('recipeId').value;
             const id = idInput || crypto.randomUUID();
             const existing = idInput ? recipeRepo.findById(idInput) : null;
-            
+
             const recipeData = new Recipe({
               id,
               code: document.getElementById('recipeCode').value,
@@ -263,7 +275,7 @@
               stars: parseInt(document.getElementById('recipeStars').value) || 0,
               directions: document.getElementById('recipeDirections').value,
               ingredients: existing ? existing.ingredients : [],
-              nutrition: existing ? existing.nutrition : { calories: 0, protein: 0, carbs: 0, fat: 0, cholesterol: 0 }
+              nutrition: existing ? existing.nutrition : { calories: 0, protein: 0, carbs: 0, fat: 0, cholesterol: 0 },
             });
 
             if (recipeRepo.save(recipeData)) {
@@ -292,7 +304,10 @@
 
           if (editBtn) openModal(editBtn.dataset.id);
           if (delBtn && confirm('Are you sure?')) {
-            if (recipeRepo.delete(delBtn.dataset.id)) { renderTable(); notification.success('Success', 'Deleted'); }
+            if (recipeRepo.delete(delBtn.dataset.id)) {
+              renderTable();
+              notification.success('Success', 'Deleted');
+            }
           }
         });
 

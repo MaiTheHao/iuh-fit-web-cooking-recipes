@@ -7,9 +7,25 @@
     <title>Admin - Manage Blogs</title>
     <link rel="stylesheet" href="../../assets/css/style.css" />
     <style>
-      .admin-page-header { padding: 40px 0; background: var(--surface-1); margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
-      .table-cover { width: 80px; height: 50px; object-fit: cover; border-radius: 4px; }
-      .table-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 8px; }
+      .admin-page-header {
+        padding: 40px 0;
+        background: var(--surface-1);
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .table-cover {
+        width: 80px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+      .table-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 8px;
+      }
     </style>
   </head>
   <body>
@@ -25,9 +41,7 @@
         <div class="container mb-5">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="mb-0">Blogs List</h3>
-            <button class="btn btn-primary" id="btnCreateBlog">
-              <i data-lucide="plus" class="me-2"></i>Create Blog
-            </button>
+            <button class="btn btn-primary" id="btnCreateBlog"><i data-lucide="plus" class="me-2"></i>Create Blog</button>
           </div>
 
           <div class="table-responsive bg-white rounded shadow-sm p-3">
@@ -42,8 +56,7 @@
                   <th class="text-end">Actions</th>
                 </tr>
               </thead>
-              <tbody id="blogsTableBody">
-              </tbody>
+              <tbody id="blogsTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -73,8 +86,7 @@
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Author (User)</label>
-                      <select class="form-select" id="blogAuthorId" required>
-                      </select>
+                      <select class="form-select" id="blogAuthorId" required></select>
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Tags (comma separated)</label>
@@ -117,9 +129,7 @@
     <script src="../../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/libs/lucide-icon/lucide.min.js"></script>
 
-    <script src="../../assets/js/utils/logger.js"></script>
     <script src="../../assets/js/utils/validator.js"></script>
-    <script src="../../assets/js/core/config/localstorage.js"></script>
 
     <script src="../../assets/js/core/domains/base.domain.js"></script>
 
@@ -131,7 +141,6 @@
     <script src="../../assets/js/ui/components/notification.js"></script>
     <script src="../../assets/js/ui/components/cards.js"></script>
     <script src="../../assets/js/ui/components/layout.js"></script>
-
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -153,7 +162,7 @@
           if (!selectEl) return;
 
           selectEl.innerHTML = '';
-          users.forEach(user => {
+          users.forEach((user) => {
             usersMap[user.id] = user;
             const opt = document.createElement('option');
             opt.value = user.id;
@@ -172,14 +181,13 @@
             return;
           }
 
-          tbody.innerHTML = blogs.map(blog => {
-            const author = usersMap[blog.authorId];
-            const authorHtml = author 
-              ? `<div class="d-flex align-items-center"><img src="${author.avatar}" class="table-avatar" alt="Avatar"><span>${author.fullName}</span></div>`
-              : '<span class="text-muted">Unknown</span>';
-            const dateStr = new Date(blog.publishedAt).toLocaleDateString();
+          tbody.innerHTML = blogs
+            .map((blog) => {
+              const author = usersMap[blog.authorId];
+              const authorHtml = author ? `<div class="d-flex align-items-center"><img src="${author.avatar}" class="table-avatar" alt="Avatar"><span>${author.fullName}</span></div>` : '<span class="text-muted">Unknown</span>';
+              const dateStr = new Date(blog.publishedAt).toLocaleDateString();
 
-            return `
+              return `
               <tr>
                 <td><small class="text-muted">${blog.id.substring(0, 8)}</small></td>
                 <td><img src="${blog.image}" class="table-cover" alt="Cover"></td>
@@ -192,7 +200,8 @@
                 </td>
               </tr>
             `;
-          }).join('');
+            })
+            .join('');
 
           if (window.lucide) window.lucide.createIcons();
         }
@@ -223,15 +232,23 @@
 
         function saveBlog() {
           const form = document.getElementById('blogForm');
-          if (!form.checkValidity()) { form.reportValidity(); return; }
+          if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+          }
 
           try {
             const idInput = document.getElementById('blogId').value;
             const id = idInput || crypto.randomUUID();
             const existing = idInput ? blogRepo.findById(idInput) : null;
-            
+
             const rawTags = document.getElementById('blogTags').value;
-            const tags = rawTags ? rawTags.split(',').map(tag => tag.trim()).filter(Boolean) : [];
+            const tags = rawTags
+              ? rawTags
+                  .split(',')
+                  .map((tag) => tag.trim())
+                  .filter(Boolean)
+              : [];
 
             const blogData = new BlogPost({
               id,
@@ -241,7 +258,7 @@
               image: document.getElementById('blogImage').value,
               authorId: document.getElementById('blogAuthorId').value,
               publishedAt: existing ? existing.publishedAt : new Date().toISOString(),
-              tags: tags
+              tags: tags,
             });
 
             if (blogRepo.save(blogData)) {
@@ -270,7 +287,10 @@
 
           if (editBtn) openModal(editBtn.dataset.id);
           if (delBtn && confirm('Are you sure?')) {
-            if (blogRepo.delete(delBtn.dataset.id)) { renderTable(); notification.success('Success', 'Deleted'); }
+            if (blogRepo.delete(delBtn.dataset.id)) {
+              renderTable();
+              notification.success('Success', 'Deleted');
+            }
           }
         });
 

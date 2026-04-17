@@ -8,8 +8,11 @@ class AuthService {
     }
     AuthService.#instance = this;
     this.#userRepository = UserRepository.getInstance();
+    this.#userService = UserService.getInstance();
     this.#loadCurrentUser();
   }
+
+  #userService;
 
   /** @returns {AuthService} */
   static getInstance() {
@@ -19,6 +22,7 @@ class AuthService {
     return this.#instance;
   }
 
+  /** @returns {User|null} */
   #loadCurrentUser() {
     const currentUserId = localStorage.getItem('CURRENT_USER_ID');
     if (currentUserId) {
@@ -48,22 +52,16 @@ class AuthService {
         };
       }
 
-      const user = new User({
-        id: crypto.randomUUID(),
-        email: email.trim(),
-        fullName: fullName.trim(),
+      const user = this.#userService.createUser({
+        email: email,
+        fullName: fullName,
         password: password,
-        avatar: this.#generateDefaultAvatar(fullName),
-        role: 'user',
-        favoriteRecipes: [],
       });
 
-      const saved = this.#userRepository.save(user);
-
-      if (!saved) {
+      if (!user) {
         return {
           success: false,
-          message: 'Failed to save user. Please try again.',
+          message: 'Failed to create user. Please try again.',
           errors: { system: 'Database save failed' },
         };
       }
@@ -208,8 +206,5 @@ class AuthService {
     return user && user.role === 'admin';
   }
 
-  /** @returns {string} */
-  #generateDefaultAvatar(fullName) {
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random&size=256`;
-  }
+
 }
