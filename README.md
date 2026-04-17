@@ -50,6 +50,55 @@ graph LR
 
 **Note**: This architecture is simplified without complex DTOs to maintain lightweight and straightforward design.
 
+## Site Map
+
+```mermaid
+graph TD
+    %% Site Map Styles
+    classDef page fill:#ffffff,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a,font-weight:600
+    classDef sub fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,color:#64748b
+    classDef admin fill:#fef2f2,stroke:#ef4444,stroke-width:2px,color:#991b1b,font-weight:600
+
+    %% Top Level Pages
+    Home["fa:fa-home Home<br/>/pages/index.html"]:::page
+    Login["fa:fa-sign-in-alt Login<br/>/pages/login.html"]:::page
+    Register["fa:fa-user-plus Register<br/>/pages/register.html"]:::page
+    
+    %% Main Sections
+    Recipes["fa:fa-utensils Recipes<br/>/pages/recipes.html"]:::page
+    RecipeDetail["fa:fa-list-alt Recipe Detail<br/>/pages/recipe-detail.html"]:::sub
+    
+    Blogs["fa:fa-blog Blogs<br/>/pages/blogs.html"]:::page
+    BlogDetail["fa:fa-newspaper Blog Detail<br/>/pages/blog-detail.html"]:::sub
+    
+    About["fa:fa-info-circle About<br/>/pages/about.html"]:::page
+    Contact["fa:fa-envelope Contact<br/>/pages/contact.html"]:::page
+    
+    Profile["fa:fa-id-card Profile<br/>/pages/profile.html"]:::page
+    
+    %% Admin Pages
+    AdminBlogs["fa:fa-shield-alt Manage Blogs<br/>/pages/admin/blogs.html"]:::admin
+    AdminRecipes["fa:fa-shield-alt Manage Recipes<br/>/pages/admin/recipes.html"]:::admin
+    AdminUsers["fa:fa-shield-alt Manage Users<br/>/pages/admin/users.html"]:::admin
+
+    %% Connections & Layout Alignment
+    Home --> Recipes
+    Home --> Blogs
+    Home --> About
+    Home --> Contact
+    Home --> Profile
+    
+    Recipes --> RecipeDetail
+    Blogs --> BlogDetail
+    
+    Profile --> AdminBlogs
+    Profile --> AdminRecipes
+    Profile --> AdminUsers
+
+    %% Global Link Styles
+    linkStyle default stroke:#94a3b8,stroke-width:1.5px
+```
+
 ## Key Features
 
 - **Recipe Showcase**: Interactive browsing of detailed cooking recipes
