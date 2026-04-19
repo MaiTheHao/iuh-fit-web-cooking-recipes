@@ -36,7 +36,7 @@ class Entity {
 
 class BaseRepository {
   #collectionName;
-  #prefix = 'RECIPE4F_';
+  #prefix = '';
 
   constructor(collectionName) {
     if (!collectionName) throw new Error('Collection name is required');

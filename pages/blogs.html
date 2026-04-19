@@ -38,7 +38,12 @@
 
           <div class="row">
             <aside class="col-lg-3 d-none d-lg-block">
-              <div class="filter-sidebar" id="desktopFilterContainer"></div>
+              <div class="filter-sidebar" id="desktopFilterContainer">
+                <div class="filter-group">
+                  <h5 class="filter-title">Filter by Tags</h5>
+                  <div class="d-flex flex-column gap-2" id="desktopTagFilter"></div>
+                </div>
+              </div>
             </aside>
 
             <div class="col-lg-9">
@@ -64,28 +69,19 @@
       </div>
     </div>
 
-    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/lucide.min.js"></script>
 
-    <script src="../assets/js/utils/validator.js"></script>
-
-    <script src="../assets/js/core/domains/base.domain.js"></script>
-
-    <script src="../assets/js/core/domains/blog.domain.js"></script>
-    <script src="../assets/js/core/domains/user.domain.js"></script>
-
-    <script src="../assets/js/core/services/auth.service.js"></script>
-
-    <script src="../assets/js/ui/components/notification.js"></script>
-    <script src="../assets/js/ui/components/cards.js"></script>
-    <script src="../assets/js/ui/components/layout.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/lucide.min.js"></script>
+    <script src="../assets/js/init.js"></script>
 
     <script>
+      // Chạy khi DOM đã sẵn sàng
       document.addEventListener('DOMContentLoaded', () => {
-        const blogService = BlogService.getInstance();
-        const userRepository = UserRepository.getInstance();
-        const blogListRaw = new BlogList('blog-list');
+        const blogListRaw = window.BlogList;
 
+        // Trạng thái bộ lọc và phân trang
         let state = {
           criteria: {
             text: '',
@@ -99,64 +95,85 @@
 
         let searchTimeout;
 
-        function renderFilters() {
-          const desktopContainer = document.getElementById('desktopFilterContainer');
-          if (!desktopContainer) return;
+        // Khởi tạo bộ lọc
+        function initFilters() {
+          const tagContainer = document.getElementById('desktopTagFilter');
+          if (!tagContainer) return;
 
-          const allTags = blogService.getAllTags();
-          const html = `
-            <div class="filter-group">
-              <h5 class="filter-title">Filter by Tags</h5>
-              <div class="d-flex flex-column gap-2">
-                ${allTags
-                  .map(
-                    (tag) => `
-                  <div class="form-check">
-                    <input class="form-check-input filter-tag" type="checkbox" value="${tag}" id="tag-${tag}" 
-                      ${state.criteria.tags?.includes(tag) ? 'checked' : ''}>
-                    <label class="form-check-label" for="tag-${tag}">${tag}</label>
-                  </div>
-                `,
-                  )
-                  .join('')}
-              </div>
+          const allBlogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
+          const allTags = [...new Set(allBlogs.flatMap((b) => b.tags || []))].filter(Boolean).sort();
+
+          tagContainer.innerHTML = allTags
+            .map(
+              (tag) => `
+            <div class="form-check">
+              <input class="form-check-input filter-tag" type="checkbox" value="${tag}" id="tag-${tag}">
+              <label class="form-check-label" for="tag-${tag}">${tag}</label>
             </div>
-          `;
+          `,
+            )
+            .join('');
 
-          desktopContainer.innerHTML = html;
+          const desktopContainer = document.getElementById('desktopFilterContainer');
           const mobileContainer = document.getElementById('mobileFilterContainer');
-          if (mobileContainer) {
-            mobileContainer.innerHTML = html
+          if (desktopContainer && mobileContainer) {
+            mobileContainer.innerHTML = desktopContainer.innerHTML
               .replace(/id="([^"]+)"/g, 'id="mobile-$1"')
               .replace(/for="([^"]+)"/g, 'for="mobile-$1"')
               .replace(/name="([^"]+)"/g, 'name="mobile-$1"');
           }
-
-          if (window.lucide) window.lucide.createIcons();
         }
 
-        function fetchBlogs() {
-          const result = blogService.getWithCriteria(state.criteria);
-          let items = [...result.items];
+        // Đồng bộ UI với state
+        function syncFilterUI() {
+          document.querySelectorAll('.filter-tag').forEach((input) => {
+            input.checked = state.criteria.tags.includes(input.value);
+          });
+        }
 
-          items.sort((blogA, blogB) => {
+        // Lọc, sắp xếp và lấy dữ liệu
+        function fetchBlogs() {
+          const allBlogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
+          let filtered = allBlogs;
+
+          // Lọc theo từ khóa
+          if (state.criteria.text) {
+            const term = state.criteria.text.toLowerCase();
+            filtered = filtered.filter((b) => (b.title && b.title.toLowerCase().includes(term)) || (b.content && b.content.toLowerCase().includes(term)));
+          }
+
+          // Lọc theo tag
+          if (state.criteria.tags && state.criteria.tags.length > 0) {
+            filtered = filtered.filter((b) => b.tags && b.tags.some((tag) => state.criteria.tags.includes(tag)));
+          }
+
+          // Sắp xếp
+          filtered.sort((blogA, blogB) => {
             switch (state.sortBy) {
               case 'newest':
-                return new Date(blogB.publishedAt) - new Date(blogA.publishedAt);
+                return new Date(blogB.publishedAt || 0) - new Date(blogA.publishedAt || 0);
               case 'oldest':
-                return new Date(blogA.publishedAt) - new Date(blogB.publishedAt);
+                return new Date(blogA.publishedAt || 0) - new Date(blogB.publishedAt || 0);
               case 'title_asc':
-                return blogA.title.localeCompare(blogB.title);
+                return (blogA.title || '').localeCompare(blogB.title || '');
               case 'title_desc':
-                return blogB.title.localeCompare(blogA.title);
+                return (blogB.title || '').localeCompare(blogA.title || '');
               default:
                 return 0;
             }
           });
 
-          blogListRaw.toHTML(items);
-          renderPagination(result.total);
+          // Phân trang
+          const total = filtered.length;
+          const skip = state.criteria.skip || 0;
+          const limit = state.criteria.limit || 9;
+          const items = filtered.slice(skip, skip + limit);
 
+          // Render danh sách và phân trang
+          blogListRaw.render('blog-list', items);
+          renderPagination(total);
+
+          // Cập nhật URL
           const url = new URL(window.location);
           if (state.criteria.text) url.searchParams.set('q', state.criteria.text);
           else url.searchParams.delete('q');
@@ -171,6 +188,7 @@
           if (window.lucide) window.lucide.createIcons();
         }
 
+        // Vẽ UI phân trang
         function renderPagination(total) {
           const container = document.getElementById('pagination');
           if (!container) return;
@@ -188,13 +206,14 @@
             if (i === 1 || i === totalPages || (i >= current - 1 && i <= current + 1)) {
               html += `<li class="page-item ${current === i ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
             } else if ((i === 2 && current > 3) || (i === totalPages - 1 && current < totalPages - 2)) {
-              html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+              html += `<li class="page-item disabled"><span class="page-link border-0">...</span></li>`;
             }
           }
           html += `<li class="page-item ${current === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${current + 1}"><i data-lucide="chevron-right" style="width:16px;"></i></a></li>`;
           container.innerHTML = html;
         }
 
+        // Khởi tạo trạng thái từ URL
         const params = new URLSearchParams(window.location.search);
         if (params.has('q')) {
           state.criteria.text = params.get('q');
@@ -215,9 +234,12 @@
           document.getElementById('sortSelect').value = state.sortBy;
         }
 
-        renderFilters();
+        // Chạy lần đầu
+        initFilters();
+        syncFilterUI();
         fetchBlogs();
 
+        // Xử lý sự kiện tìm kiếm
         document.getElementById('searchInput')?.addEventListener('input', (event) => {
           clearTimeout(searchTimeout);
           searchTimeout = setTimeout(() => {
@@ -228,11 +250,15 @@
           }, 500);
         });
 
+        // Xử lý sự kiện sắp xếp
         document.getElementById('sortSelect')?.addEventListener('change', (event) => {
           state.sortBy = event.target.value;
+          state.currentPage = 1;
+          state.criteria.skip = 0;
           fetchBlogs();
         });
 
+        // Xử lý sự kiện thay đổi bộ lọc tag
         document.querySelectorAll('.filter-sidebar, .offcanvas-body').forEach((element) => {
           element.addEventListener('change', (event) => {
             const target = event.target;
@@ -247,12 +273,12 @@
               state.currentPage = 1;
               state.criteria.skip = 0;
 
-              renderFilters();
               fetchBlogs();
             }
           });
         });
 
+        // Xử lý sự kiện click phân trang
         document.getElementById('pagination')?.addEventListener('click', (event) => {
           event.preventDefault();
           const link = event.target.closest('.page-link');
@@ -267,6 +293,7 @@
           }
         });
 
+        // Vẽ biểu tượng Lucide
         if (window.lucide) window.lucide.createIcons();
       });
     </script>

@@ -21,22 +21,22 @@
             <form id="register-form" class="row g-3">
               <div class="col-12">
                 <label for="fullName" class="form-label fw-medium small text-uppercase text-muted">Full Name</label>
-                <input type="text" class="form-control form-control-auth" id="fullName" placeholder="e.g. Gordon Ramsay" required />
+                <input type="text" class="form-control form-control-auth" id="fullName" placeholder="e.g. Gordon Ramsay" />
               </div>
 
               <div class="col-12">
                 <label for="email" class="form-label fw-medium small text-uppercase text-muted">Email Address</label>
-                <input type="text" class="form-control form-control-auth" id="email" placeholder="name@example.com" required />
+                <input type="text" class="form-control form-control-auth" id="email" placeholder="name@example.com" />
               </div>
 
               <div class="col-md-6">
                 <label for="password" class="form-label fw-medium small text-uppercase text-muted">Password</label>
-                <input type="password" class="form-control form-control-auth" id="password" placeholder="••••••••" required />
+                <input type="text" class="form-control form-control-auth" id="password" placeholder="••••••••" />
               </div>
 
               <div class="col-md-6">
                 <label for="confirmPassword" class="form-label fw-medium small text-uppercase text-muted">Confirm</label>
-                <input type="password" class="form-control form-control-auth" id="confirmPassword" placeholder="••••••••" required />
+                <input type="text" class="form-control form-control-auth" id="confirmPassword" placeholder="••••••••" />
               </div>
 
               <div class="col-12 mt-4">
@@ -52,40 +52,15 @@
         </section>
       </main>
     </div>
-    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body py-4">
-            <p class="modal-message mb-0"></p>
-          </div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-    <script src="../assets/js/utils/validator.js"></script>
-    <script src="../assets/js/core/domains/base.domain.js"></script>
-    <script src="../assets/js/core/domains/user.domain.js"></script>
-    <script src="../assets/js/core/services/auth.service.js"></script>
-    <script src="../assets/js/ui/components/notification.js"></script>
-    <script src="../assets/js/ui/components/layout.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/lucide.min.js"></script>
+    <script src="../assets/js/init.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        // Khởi tạo các service cần thiết
-        const auth = AuthService.getInstance();
-        const notification = new Notification();
-
-        // Nếu người dùng đã đăng nhập, chuyển hướng về trang chủ
-        if (auth.isAuthenticated()) {
+        // Chuyển hướng nếu người dùng đã đăng nhập
+        const currentUserId = localStorage.getItem('CURRENT_USER_ID');
+        if (currentUserId) {
           window.location.href = '/pages/index.html';
           return;
         }
@@ -93,59 +68,67 @@
         const form = document.getElementById('register-form');
 
         if (form) {
-          // Xử lý sự kiện khi gửi form đăng ký
           form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            // Thu thập dữ liệu từ các trường nhập liệu
-            const formData = {
-              fullName: document.getElementById('fullName').value.trim(),
-              email: document.getElementById('email').value.trim(),
-              password: document.getElementById('password').value,
-              confirmPassword: document.getElementById('confirmPassword').value,
-            };
+            // Lấy thông tin
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
 
-            // Lớp kiểm tra dữ liệu đầu vào (Manual Validation Layer)
-            // Kiểm tra họ và tên
-            if (formData.fullName.length < 3 || formData.fullName.length > 100) {
+            // Kiểm tra độ dài họ tên hợp lệ
+            if (fullName.length < 3 || fullName.length > 100) {
               return notification.error('Invalid Name', 'Full name must be between 3 and 100 characters.');
             }
-
-            // Kiểm tra email (độ dài và định dạng)
-            if (formData.email.length < 5 || formData.email.length > 254) {
+            // Kiểm tra độ dài email hợp lệ
+            if (email.length < 5 || email.length > 254) {
               return notification.error('Invalid Email', 'Email length must be between 5 and 254 characters.');
             }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            // Kiểm tra định dạng email
+            if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
               return notification.error('Invalid Email', 'Please enter a valid email address.');
             }
-
-            // Kiểm tra độ mạnh của mật khẩu
-            if (formData.password.length < 8) {
+            // Kiểm tra độ dài mật khẩu tối thiểu
+            if (password.length < 8) {
               return notification.error('Invalid Password', 'Password must be at least 8 characters long.');
             }
-            if (!/[a-zA-Z]/.test(formData.password)) {
-              return notification.error('Invalid Password', 'Password must contain at least one letter.');
+            // Kiểm tra mật khẩu phải có cả chữ và số
+            if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
+              return notification.error('Invalid Password', 'Password must contain both letters and numbers.');
             }
-            if (!/\d/.test(formData.password)) {
-              return notification.error('Invalid Password', 'Password must contain at least one number.');
-            }
-
-            // Kiểm tra xem mật khẩu nhập lại có khớp không
-            if (formData.password !== formData.confirmPassword) {
+            // Kiểm tra mật khẩu xác nhận phải khớp
+            if (password !== confirmPassword) {
               return notification.error('Password Mismatch', 'Passwords do not match.');
             }
 
-            // Gọi service để thực hiện đăng ký tài khoản mới
-            const result = auth.register(formData);
-
-            if (result.success) {
-              notification.success('Account Created!', 'Registration successful.');
-              setTimeout(() => (window.location.href = '/pages/login.html'), 1000);
-            } else {
-              // Hiển thị thông báo lỗi từ server nếu có
-              const error = result.errors ? Object.values(result.errors)[0] : result.message;
-              notification.error('Registration Failed', error);
+            // Lấy danh sách người dùng và kiểm tra trùng email
+            const users = JSON.parse(localStorage.getItem('USERS') || '[]');
+            if (users.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
+              return notification.error('Registration Failed', 'This email is already registered.');
             }
+
+            // Tạo người dùng
+            const newUser = {
+              id: crypto.randomUUID(), // Tạo ID random duy nhất
+              email: email,
+              fullName: fullName,
+              password: password,
+              avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random&size=256`, // Tạo ảnh đại diện
+              role: 'user', // Gán quyền mặc định
+              favoriteRecipes: [], // Danh sách yêu thích trống
+            };
+
+            // Lưu người dùng mới vào LocalStorage
+            users.push(newUser);
+            localStorage.setItem('USERS', JSON.stringify(users));
+
+            // Thông báo thành công và chuyển hướng sau 1 giây
+            notification.success('Account Created!', 'Registration successful. Redirecting to login...');
+
+            setTimeout(() => {
+              window.location.href = '/pages/login.html';
+            }, 1000);
           });
         }
 

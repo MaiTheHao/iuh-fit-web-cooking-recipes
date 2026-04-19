@@ -74,43 +74,43 @@
                   <div class="row g-3">
                     <div class="col-md-6">
                       <label class="form-label">Recipe Code</label>
-                      <input type="text" class="form-control" id="recipeCode" required />
+                      <input type="text" class="form-control" id="recipeCode" />
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Recipe Name</label>
-                      <input type="text" class="form-control" id="recipeName" required />
+                      <input type="text" class="form-control" id="recipeName" />
                     </div>
                     <div class="col-md-12">
                       <label class="form-label">Description</label>
-                      <textarea class="form-control" id="recipeDescription" rows="3" required></textarea>
+                      <textarea class="form-control" id="recipeDescription" rows="3"></textarea>
                     </div>
                     <div class="col-md-12">
                       <label class="form-label">Image URL</label>
-                      <input type="url" class="form-control" id="recipeImage" required />
+                      <input type="url" class="form-control" id="recipeImage" />
                     </div>
                     <div class="col-md-4">
                       <label class="form-label">Prep Time (mins)</label>
-                      <input type="number" class="form-control" id="recipePrepTime" required />
+                      <input type="number" class="form-control" id="recipePrepTime" />
                     </div>
                     <div class="col-md-4">
                       <label class="form-label">Cook Time (mins)</label>
-                      <input type="number" class="form-control" id="recipeCookTime" required />
+                      <input type="number" class="form-control" id="recipeCookTime" />
                     </div>
                     <div class="col-md-4">
                       <label class="form-label">Category ID</label>
-                      <input type="text" class="form-control" id="recipeCategoryId" required />
+                      <input type="text" class="form-control" id="recipeCategoryId" />
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Author (User)</label>
-                      <select class="form-select" id="recipeAuthorId" required></select>
+                      <select class="form-select" id="recipeAuthorId"></select>
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Stars</label>
-                      <input type="number" class="form-control" id="recipeStars" min="0" max="5" step="1" required />
+                      <input type="number" class="form-control" id="recipeStars" min="0" max="5" step="1" />
                     </div>
                     <div class="col-md-12">
                       <label class="form-label">Directions</label>
-                      <textarea class="form-control" id="recipeDirections" rows="5" required></textarea>
+                      <textarea class="form-control" id="recipeDirections" rows="5"></textarea>
                     </div>
                   </div>
                 </form>
@@ -125,56 +125,29 @@
       </main>
     </div>
 
-    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body py-4">
-            <p class="modal-message mb-0"></p>
-          </div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="../../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../../assets/js/libs/lucide-icon/lucide.min.js"></script>
-
-    <script src="../../assets/js/utils/validator.js"></script>
-
-    <script src="../../assets/js/core/domains/base.domain.js"></script>
-
-    <script src="../../assets/js/core/domains/category.domain.js"></script>
-    <script src="../../assets/js/core/domains/user.domain.js"></script>
-    <script src="../../assets/js/core/domains/recipe.domain.js"></script>
-
-    <script src="../../assets/js/core/services/auth.service.js"></script>
-
-    <script src="../../assets/js/ui/components/notification.js"></script>
-    <script src="../../assets/js/ui/components/cards.js"></script>
-    <script src="../../assets/js/ui/components/layout.js"></script>
+    <script src="../../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/lucide.min.js"></script>
+    <script src="../../assets/js/init.js"></script>
 
     <script>
+      // Khởi chạy khi DOM sẵn sàng
       document.addEventListener('DOMContentLoaded', () => {
-        const authService = AuthService.getInstance();
+        // Kiểm tra quyền Admin
+        const currentUserId = localStorage.getItem('CURRENT_USER_ID');
+        const users = JSON.parse(localStorage.getItem('USERS') || '[]');
+        const currentUser = users.find((u) => u.id === currentUserId);
 
-        if (!authService.isAdmin()) {
+        if (!currentUser || currentUser.role !== 'admin') {
           window.location.href = '/pages/login.html';
           return;
         }
 
-        const recipeRepo = RecipeRepository.getInstance();
-        const userRepo = UserRepository.getInstance();
-        const notification = new Notification();
-        const usersMap = {};
+        // Lưu trữ danh sách users để map tên tác giả
+        let usersMap = {};
 
+        // Tải danh sách tác giả vào select box
         function loadUsers() {
-          const users = userRepo.findAll();
+          const users = JSON.parse(localStorage.getItem('USERS') || '[]');
           const selectEl = document.getElementById('recipeAuthorId');
           if (!selectEl) return;
 
@@ -188,9 +161,10 @@
           });
         }
 
+        // Render bảng danh sách công thức
         function renderTable() {
           const tbody = document.getElementById('recipesTableBody');
-          const recipes = recipeRepo.findAll();
+          const recipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
           if (!tbody) return;
 
           if (recipes.length === 0) {
@@ -222,6 +196,7 @@
           if (window.lucide) window.lucide.createIcons();
         }
 
+        // Mở modal Thêm/Sửa công thức
         function openModal(id = null) {
           const form = document.getElementById('recipeForm');
           form.reset();
@@ -230,7 +205,8 @@
           document.getElementById('recipeModalTitle').textContent = id ? 'Edit Recipe' : 'Create Recipe';
 
           if (id) {
-            const r = recipeRepo.findById(id);
+            const recipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
+            const r = recipes.find(recipe => recipe.id === id);
             if (r) {
               document.getElementById('recipeCode').value = r.code;
               document.getElementById('recipeName').value = r.name;
@@ -244,73 +220,120 @@
               document.getElementById('recipeDirections').value = r.directions;
             }
           } else {
-            const curr = authService.getCurrentUser();
-            if (curr) document.getElementById('recipeAuthorId').value = curr.id;
+            if (currentUser) document.getElementById('recipeAuthorId').value = currentUser.id;
           }
           new bootstrap.Modal(document.getElementById('recipeModal')).show();
         }
 
+        // Lưu thông tin công thức vào LocalStorage
         function saveRecipe() {
-          const form = document.getElementById('recipeForm');
-          if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-          }
-
           try {
             const idInput = document.getElementById('recipeId').value;
             const id = idInput || crypto.randomUUID();
-            const existing = idInput ? recipeRepo.findById(idInput) : null;
 
-            const recipeData = new Recipe({
+            const code = document.getElementById('recipeCode').value.trim();
+            const name = document.getElementById('recipeName').value.trim();
+            const description = document.getElementById('recipeDescription').value.trim();
+            const image = document.getElementById('recipeImage').value.trim();
+            const prepTime = document.getElementById('recipePrepTime').value;
+            const cookTime = document.getElementById('recipeCookTime').value;
+            const categoryId = document.getElementById('recipeCategoryId').value.trim();
+            const authorId = document.getElementById('recipeAuthorId').value;
+            const stars = document.getElementById('recipeStars').value;
+            const directions = document.getElementById('recipeDirections').value.trim();
+
+            // Kiểm tra các trường bắt buộc
+            if (!code) return notification.error('Missing Code', 'Please enter a recipe code.');
+            if (!name) return notification.error('Missing Name', 'Please enter a recipe name.');
+            if (!description) return notification.error('Missing Description', 'Please enter a description.');
+            if (!image) return notification.error('Missing Image', 'Please enter an image URL.');
+            if (prepTime === '') return notification.error('Missing Prep Time', 'Please enter prep time.');
+            if (cookTime === '') return notification.error('Missing Cook Time', 'Please enter cook time.');
+            if (!categoryId) return notification.error('Missing Category', 'Please enter a category ID.');
+            if (!authorId) return notification.error('Missing Author', 'Please select an author.');
+            if (stars === '') return notification.error('Missing Stars', 'Please enter rating stars.');
+            if (!directions) return notification.error('Missing Directions', 'Please enter directions.');
+            
+            const recipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
+            const existingIndex = idInput ? recipes.findIndex(r => r.id === idInput) : -1;
+            const existing = existingIndex > -1 ? recipes[existingIndex] : null;
+
+            if (code.length < 3) {
+              return notification.error('Invalid Code', 'Recipe code must be at least 3 characters long.');
+            }
+            if (name.length < 5) {
+              return notification.error('Invalid Name', 'Recipe name must be at least 5 characters long.');
+            }
+
+            const recipeData = {
               id,
-              code: document.getElementById('recipeCode').value,
-              name: document.getElementById('recipeName').value,
-              description: document.getElementById('recipeDescription').value,
-              image: document.getElementById('recipeImage').value,
-              prepTime: parseInt(document.getElementById('recipePrepTime').value) || 0,
-              cookTime: parseInt(document.getElementById('recipeCookTime').value) || 0,
-              categoryId: document.getElementById('recipeCategoryId').value,
-              authorId: document.getElementById('recipeAuthorId').value,
-              stars: parseInt(document.getElementById('recipeStars').value) || 0,
-              directions: document.getElementById('recipeDirections').value,
+              code: code,
+              name: name,
+              description: description,
+              image: image,
+              prepTime: parseInt(prepTime) || 0,
+              cookTime: parseInt(cookTime) || 0,
+              categoryId: categoryId,
+              authorId: authorId,
+              stars: parseInt(stars) || 0,
+              directions: directions,
               ingredients: existing ? existing.ingredients : [],
               nutrition: existing ? existing.nutrition : { calories: 0, protein: 0, carbs: 0, fat: 0, cholesterol: 0 },
-            });
+            };
 
-            if (recipeRepo.save(recipeData)) {
-              bootstrap.Modal.getInstance(document.getElementById('recipeModal')).hide();
-              renderTable();
-              notification.success('Success', idInput ? 'Updated successfully' : 'Created successfully');
+            // Cập nhật hoặc thêm mới công thức
+            if (existingIndex > -1) {
+              recipes[existingIndex] = recipeData;
+            } else {
+              recipes.push(recipeData);
             }
+
+            localStorage.setItem('RECIPES', JSON.stringify(recipes));
+            
+            bootstrap.Modal.getInstance(document.getElementById('recipeModal')).hide();
+            renderTable();
+            notification.success('Success', idInput ? 'Updated successfully' : 'Created successfully');
           } catch (error) {
             notification.error('Error', error.message);
           }
         }
 
+        // Khởi tạo giao diện ban đầu
         loadUsers();
         renderTable();
 
+        // Bắt sự kiện tạo mới công thức
         document.getElementById('btnCreateRecipe')?.addEventListener('click', () => openModal());
 
+        // Bắt sự kiện submit form lưu công thức
         document.getElementById('recipeForm')?.addEventListener('submit', (event) => {
           event.preventDefault();
           saveRecipe();
         });
 
+        // Bắt sự kiện click Sửa/Xóa trên bảng
         document.getElementById('recipesTableBody')?.addEventListener('click', (event) => {
           const editBtn = event.target.closest('.btn-edit');
           const delBtn = event.target.closest('.btn-delete');
 
+          // Mở modal nếu bấm Edit
           if (editBtn) openModal(editBtn.dataset.id);
-          if (delBtn && confirm('Are you sure?')) {
-            if (recipeRepo.delete(delBtn.dataset.id)) {
-              renderTable();
-              notification.success('Success', 'Deleted');
-            }
+          
+          // Xóa công thức nếu bấm Delete
+          if (delBtn && confirm('Are you sure you want to delete this recipe?')) {
+             const recipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
+             const id = delBtn.dataset.id;
+             const index = recipes.findIndex(r => r.id === id);
+             if (index > -1) {
+               recipes.splice(index, 1);
+               localStorage.setItem('RECIPES', JSON.stringify(recipes));
+               renderTable();
+               notification.success('Success', 'Deleted successfully');
+             }
           }
         });
 
+        // Khởi tạo các biểu tượng Lucide
         if (window.lucide) window.lucide.createIcons();
       });
     </script>

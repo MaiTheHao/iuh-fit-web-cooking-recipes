@@ -21,14 +21,14 @@
             <form id="login-form" class="d-flex flex-column gap-3">
               <div>
                 <label for="email" class="form-label fw-medium small text-uppercase text-muted">Email Address</label>
-                <input type="text" class="form-control form-control-auth" id="email" placeholder="name@example.com" required />
+                <input type="text" class="form-control form-control-auth" id="email" placeholder="name@example.com" />
               </div>
 
               <div>
                 <div class="mb-1">
                   <label for="password" class="form-label fw-medium small text-uppercase text-muted mb-0">Password</label>
                 </div>
-                <input type="password" class="form-control form-control-auth" id="password" placeholder="••••••••" required />
+                <input type="text" class="form-control form-control-auth" id="password" placeholder="••••••••" />
               </div>
 
               <button type="submit" class="btn btn-primary w-100 py-2 fs-6 mt-2">Sign In</button>
@@ -42,40 +42,15 @@
         </section>
       </main>
     </div>
-    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body py-4">
-            <p class="modal-message mb-0"></p>
-          </div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-    <script src="../assets/js/utils/validator.js"></script>
-    <script src="../assets/js/core/domains/base.domain.js"></script>
-    <script src="../assets/js/core/domains/user.domain.js"></script>
-    <script src="../assets/js/core/services/auth.service.js"></script>
-    <script src="../assets/js/ui/components/notification.js"></script>
-    <script src="../assets/js/ui/components/layout.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/lucide.min.js"></script>
+    <script src="../assets/js/init.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        // Khởi tạo các service cần thiết
-        const auth = AuthService.getInstance();
-        const notification = new Notification();
-
-        // Nếu đã đăng nhập thì chuyển hướng về trang chủ
-        if (auth.isAuthenticated()) {
+        // Chuyển hướng nếu người dùng đã đăng nhập
+        const currentUserId = localStorage.getItem('CURRENT_USER_ID');
+        if (currentUserId) {
           window.location.href = '/pages/index.html';
           return;
         }
@@ -83,44 +58,53 @@
         const form = document.getElementById('login-form');
 
         if (form) {
-          // Xử lý sự kiện khi gửi form đăng nhập
           form.addEventListener('submit', (e) => {
             e.preventDefault();
-            // Lấy thông tin từ các trường nhập liệu
+
+            // Lấy thông tin
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            // Lớp kiểm tra dữ liệu đầu vào (Validation)
-            // Kiểm tra độ dài và định dạng email
+            // Kiểm tra độ dài email hợp lệ
             if (email.length < 5 || email.length > 254) {
               return notification.error('Invalid Email', 'Email length must be between 5 and 254 characters.');
             }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            // Kiểm tra định dạng email
+            if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
               return notification.error('Invalid Email', 'Please enter a valid email address.');
             }
-
-            // Kiểm tra độ dài và các yêu cầu của mật khẩu
+            // Kiểm tra độ dài mật khẩu tối thiểu
             if (password.length < 8) {
               return notification.error('Invalid Password', 'Password must be at least 8 characters long.');
             }
-            if (!/[a-zA-Z]/.test(password)) {
-              return notification.error('Invalid Password', 'Password must contain at least one letter.');
-            }
-            if (!/\d/.test(password)) {
-              return notification.error('Invalid Password', 'Password must contain at least one number.');
+            // Kiểm tra mật khẩu phải có cả chữ và số
+            if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
+              return notification.error('Invalid Password', 'Password must contain both letters and numbers.');
             }
 
-            // Gọi service để thực hiện đăng nhập
-            const result = auth.signin(email, password);
+            // Lấy danh sách người dùng từ LocalStorage
+            const users = JSON.parse(localStorage.getItem('USERS') || '[]');
+            // Tìm kiếm người dùng theo email
+            const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
 
-            if (result.success) {
-              notification.success('Welcome back!', 'Login successful.');
-              setTimeout(() => (window.location.href = '/pages/index.html'), 1000);
-            } else {
-              // Hiển thị lỗi nếu đăng nhập thất bại
-              const error = result.errors ? Object.values(result.errors)[0] : result.message;
-              notification.error('Login Failed', error);
+            // Thông báo lỗi nếu không tìm thấy người dùng
+            if (!user) {
+              return notification.error('Login Failed', 'Invalid email or password.');
             }
+
+            // Kiểm tra mật khẩu khớp hay không
+            if (user.password !== password) {
+              return notification.error('Login Failed', 'Invalid email or password.');
+            }
+
+            // Lưu ID người dùng vào phiên đăng nhập hiện tại
+            localStorage.setItem('CURRENT_USER_ID', user.id);
+            notification.success('Welcome back!', 'Login successful.');
+
+            // Chuyển hướng về trang chủ sau 1 giây
+            setTimeout(() => {
+              window.location.href = '/pages/index.html';
+            }, 1000);
           });
         }
 

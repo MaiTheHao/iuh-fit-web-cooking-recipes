@@ -24,19 +24,19 @@
                   <div class="row g-4">
                     <div class="col-md-6">
                       <label for="name" class="form-label fw-medium text-secondary small text-uppercase">Full Name</label>
-                      <input type="text" class="form-control form-control-auth" id="name" placeholder="John Doe" required />
+                      <input type="text" class="form-control form-control-auth" id="name" placeholder="John Doe" />
                     </div>
                     <div class="col-md-6">
                       <label for="email" class="form-label fw-medium text-secondary small text-uppercase">Email Address</label>
-                      <input type="text" class="form-control form-control-auth" id="email" placeholder="john@example.com" required />
+                      <input type="text" class="form-control form-control-auth" id="email" placeholder="john@example.com" />
                     </div>
                     <div class="col-12">
                       <label for="subject" class="form-label fw-medium text-secondary small text-uppercase">Subject</label>
-                      <input type="text" class="form-control form-control-auth" id="subject" placeholder="How can we help?" required />
+                      <input type="text" class="form-control form-control-auth" id="subject" placeholder="How can we help?" />
                     </div>
                     <div class="col-12">
                       <label for="message" class="form-label fw-medium text-secondary small text-uppercase">Message</label>
-                      <textarea class="form-control form-control-auth" id="message" rows="4" placeholder="Write your message here..." required></textarea>
+                      <textarea class="form-control form-control-auth" id="message" rows="4" placeholder="Write your message here..."></textarea>
                     </div>
                     <div class="col-12 mt-4">
                       <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-semibold">
@@ -101,73 +101,46 @@
       </main>
     </div>
 
-    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body py-4">
-            <p class="modal-message mb-0"></p>
-          </div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-    <script src="../assets/js/utils/validator.js"></script>
-    <script src="../assets/js/core/domains/base.domain.js"></script>
-    <script src="../assets/js/core/domains/user.domain.js"></script>
-    <script src="../assets/js/core/services/auth.service.js"></script>
-    <script src="../assets/js/ui/components/notification.js"></script>
-    <script src="../assets/js/ui/components/layout.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/lucide.min.js"></script>
+    <script src="../assets/js/init.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const notification = new Notification();
         const form = document.getElementById('contact-form');
 
         if (form) {
-          // Xử lý sự kiện gửi thông tin liên hệ
+          // Xử lý sự kiện khi gửi form
           form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            // Thu thập dữ liệu từ các trường ID
-            const data = {
-              name: document.getElementById('name').value.trim(),
-              email: document.getElementById('email').value.trim(),
-              subject: document.getElementById('subject').value.trim(),
-              message: document.getElementById('message').value.trim(),
-            };
+            // Lấy dữ liệu từ các trường nhập liệu
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const message = document.getElementById('message').value.trim();
 
-            // Lớp kiểm tra dữ liệu thủ công (Manual Validation)
-            // Kiểm tra tên
-            if (data.name.length < 3 || data.name.length > 100) {
+            // Kiểm tra độ dài họ tên
+            if (name.length < 3 || name.length > 100) {
               return notification.error('Invalid Name', 'Full name must be between 3 and 100 characters.');
             }
 
-            // Kiểm tra email
-            if (data.email.length < 5 || data.email.length > 254) {
-              return notification.error('Invalid Email', 'Email length must be between 5 and 254 characters.');
-            }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+            // Kiểm tra định dạng email bằng Regex đồng bộ
+            if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
               return notification.error('Invalid Email', 'Please enter a valid email address.');
             }
 
-            // Kiểm tra tiêu đề và nội dung tin nhắn
-            if (data.subject.length < 3) {
+            // Kiểm tra độ dài tiêu đề
+            if (subject.length < 3) {
               return notification.error('Invalid Subject', 'Subject must be at least 3 characters.');
             }
 
-            if (data.message.length < 10) {
+            // Kiểm tra độ dài nội dung tin nhắn
+            if (message.length < 10) {
               return notification.error('Invalid Message', 'Message must be at least 10 characters.');
             }
 
+            // Thông báo gửi thành công và reset form
             notification.success('Message Sent', 'Thank you! We will get back to you soon.');
             form.reset();
           });

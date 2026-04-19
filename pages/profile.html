@@ -100,25 +100,8 @@
       </div>
     </div>
 
-    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body py-4">
-            <p class="modal-message mb-0"></p>
-          </div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/lucide.min.js"></script>
 
     <script src="../assets/js/utils/validator.js"></script>
 
@@ -129,16 +112,13 @@
 
     <script src="../assets/js/core/services/auth.service.js"></script>
 
-    <script src="../assets/js/ui/components/notification.js"></script>
-    <script src="../assets/js/ui/components/cards.js"></script>
-    <script src="../assets/js/ui/components/layout.js"></script>
+    <script src="../assets/js/init.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const authService = AuthService.getInstance();
         const userService = UserService.getInstance();
         const recipeService = RecipeService.getInstance();
-        const notification = new Notification();
         if (!authService.isAuthenticated()) {
           window.location.href = '/pages/login.html';
           return;
@@ -170,12 +150,7 @@
           if (favorites.length === 0) {
             container.innerHTML = `<div class="col-12 text-center py-5"><div class="text-muted"><i data-lucide="heart" class="mb-2" style="width: 48px; height: 48px; opacity: 0.2;"></i><p>You haven't saved any recipes yet.</p><a href="recipes.html" class="btn btn-outline-primary btn-sm mt-2">Explore Now</a></div></div>`;
           } else {
-            container.innerHTML = favorites
-              .map((recipe) => {
-                const card = new FavoriteCard(recipe);
-                return `<div class="col-md-6 col-lg-4">${card.toHTML()}</div>`;
-              })
-              .join('');
+            container.innerHTML = favorites.map((recipe) => `<div class="col-md-6 col-lg-4">${FavoriteCard.render(recipe)}</div>`).join('');
           }
           if (window.lucide) window.lucide.createIcons();
         }

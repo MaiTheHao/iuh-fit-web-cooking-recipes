@@ -40,7 +40,42 @@
 
           <div class="row">
             <aside class="col-lg-3 d-none d-lg-block">
-              <div class="filter-sidebar" id="desktopFilterContainer"></div>
+              <div class="filter-sidebar" id="desktopFilterContainer">
+                <div class="filter-group">
+                  <h5 class="filter-title">Categories</h5>
+                  <div class="d-flex flex-column gap-2" id="desktopCategoryFilter"></div>
+                </div>
+                <div class="filter-group">
+                  <h5 class="filter-title">Total Time</h5>
+                  <div class="d-flex flex-column gap-2">
+                    <div class="form-check">
+                      <input class="form-check-input filter-time" type="radio" name="totalTime" value="under_30" id="time-1">
+                      <label class="form-check-label" for="time-1">Under 30 min</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input filter-time" type="radio" name="totalTime" value="30_60" id="time-2">
+                      <label class="form-check-label" for="time-2">30 - 60 min</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input filter-time" type="radio" name="totalTime" value="over_60" id="time-3">
+                      <label class="form-check-label" for="time-3">Over 60 min</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input filter-time" type="radio" name="totalTime" value="all" id="time-all" checked>
+                      <label class="form-check-label" for="time-all">Any time</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="filter-group">
+                  <h5 class="filter-title mb-3">Minimum Rating</h5>
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="text-muted small">0</span>
+                    <input type="range" class="form-range filter-rating-range" min="0" max="5" step="1" value="0" id="ratingRange">
+                    <span class="text-muted small">5</span>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-center gap-1" id="ratingDisplay"></div>
+                </div>
+              </div>
             </aside>
 
             <div class="col-lg-9">
@@ -53,8 +88,6 @@
           </div>
         </div>
       </main>
-    </div>
-
     <div class="offcanvas offcanvas-start" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="filterOffcanvasLabel">Filters</h5>
@@ -66,31 +99,17 @@
       </div>
     </div>
 
-    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-
-    <script src="../assets/js/utils/validator.js"></script>
-
-    <script src="../assets/js/core/domains/base.domain.js"></script>
-
-    <script src="../assets/js/core/domains/category.domain.js"></script>
-    <script src="../assets/js/core/domains/user.domain.js"></script>
-    <script src="../assets/js/core/domains/recipe.domain.js"></script>
-
-    <script src="../assets/js/core/services/auth.service.js"></script>
-
-    <script src="../assets/js/ui/components/notification.js"></script>
-    <script src="../assets/js/ui/components/cards.js"></script>
-    <script src="../assets/js/ui/components/layout.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/lucide.min.js"></script>
+    <script src="../assets/js/init.js"></script>
 
     <script>
+      // Chạy khi DOM đã sẵn sàng
       document.addEventListener('DOMContentLoaded', () => {
-        const recipeService = RecipeService.getInstance();
-        const categoryService = CategoryService.getInstance();
-        const userService = UserService.getInstance();
-        const authService = AuthService.getInstance();
-        const recipeListRaw = new RecipeList('recipe-list');
+        const recipeListRaw = window.RecipeList;
+        const categories = JSON.parse(localStorage.getItem('CATEGORIES') || '[]');
 
+        // Trạng thái bộ lọc và phân trang
         let state = {
           criteria: {
             text: '',
@@ -106,6 +125,7 @@
 
         let searchTimeout;
 
+        // Vẽ biểu tượng sao
         function renderStars(count) {
           let stars = '';
           for (let i = 0; i < count; i++) {
@@ -114,97 +134,119 @@
           return `<div class="d-flex align-items-center">${stars}</div>`;
         }
 
-        function renderFilters() {
+        // Khởi tạo bộ lọc
+        function initFilters() {
+          const catContainer = document.getElementById('desktopCategoryFilter');
+          if (catContainer) {
+            catContainer.innerHTML = categories.map(category => `
+              <div class="form-check">
+                <input class="form-check-input filter-category" type="checkbox" value="${category.id}" id="cat-${category.id}">
+                <label class="form-check-label" for="cat-${category.id}">${category.name}</label>
+              </div>
+            `).join('');
+          }
+
+          // Clone sang mobile
           const desktopContainer = document.getElementById('desktopFilterContainer');
-          if (!desktopContainer) return;
-
-          const categories = categoryService.getAll();
-          const html = `
-            <div class="filter-group">
-              <h5 class="filter-title">Categories</h5>
-              <div class="d-flex flex-column gap-2">
-                ${categories
-                  .map(
-                    (category) => `
-                  <div class="form-check">
-                    <input class="form-check-input filter-category" type="checkbox" value="${category.id}" id="cat-${category.id}" 
-                      ${state.criteria.categories?.includes(category.id) ? 'checked' : ''}>
-                    <label class="form-check-label" for="cat-${category.id}">${category.name}</label>
-                  </div>
-                `,
-                  )
-                  .join('')}
-              </div>
-            </div>
-            <div class="filter-group">
-              <h5 class="filter-title">Total Time</h5>
-              <div class="d-flex flex-column gap-2">
-                <div class="form-check">
-                  <input class="form-check-input filter-time" type="radio" name="totalTime" value="under_30" id="time-1" 
-                    ${state.criteria.totalTime?.max === 30 ? 'checked' : ''}>
-                  <label class="form-check-label" for="time-1">Under 30 min</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input filter-time" type="radio" name="totalTime" value="30_60" id="time-2"
-                    ${state.criteria.totalTime?.min === 30 ? 'checked' : ''}>
-                  <label class="form-check-label" for="time-2">30 - 60 min</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input filter-time" type="radio" name="totalTime" value="over_60" id="time-3"
-                    ${state.criteria.totalTime?.min === 60 ? 'checked' : ''}>
-                  <label class="form-check-label" for="time-3">Over 60 min</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input filter-time" type="radio" name="totalTime" value="all" id="time-all"
-                    ${!state.criteria.totalTime ? 'checked' : ''}>
-                  <label class="form-check-label" for="time-all">Any time</label>
-                </div>
-              </div>
-            </div>
-            <div class="filter-group">
-              <h5 class="filter-title mb-3">Minimum Rating</h5>
-              <div class="d-flex align-items-center gap-2 mb-2">
-                <span class="text-muted small">0</span>
-                <input type="range" class="form-range filter-rating-range" min="0" max="5" step="1" value="${state.criteria.stars?.min || 0}" id="ratingRange">
-                <span class="text-muted small">5</span>
-              </div>
-              <div class="d-flex align-items-center justify-content-center gap-1" id="ratingDisplay">
-                ${renderStars(state.criteria.stars?.min || 0)}
-                <span class="small text-muted ms-1">${state.criteria.stars?.min || 0}+ stars</span>
-              </div>
-            </div>
-          `;
-
-          desktopContainer.innerHTML = html;
           const mobileContainer = document.getElementById('mobileFilterContainer');
-          if (mobileContainer) {
-            mobileContainer.innerHTML = html
+          if (desktopContainer && mobileContainer) {
+            mobileContainer.innerHTML = desktopContainer.innerHTML
               .replace(/id="([^"]+)"/g, 'id="mobile-$1"')
               .replace(/for="([^"]+)"/g, 'for="mobile-$1"')
               .replace(/name="([^"]+)"/g, 'name="mobile-$1"');
           }
+        }
 
+        // Đồng bộ UI với state (chạy lúc load trang từ URL)
+        function syncFilterUI() {
+          document.querySelectorAll('.filter-category').forEach(input => {
+            input.checked = state.criteria.categories.includes(input.value);
+          });
+          
+          let timeVal = 'all';
+          if (state.criteria.totalTime) {
+            if (state.criteria.totalTime.max === 30) timeVal = 'under_30';
+            else if (state.criteria.totalTime.min === 30) timeVal = '30_60';
+            else if (state.criteria.totalTime.min === 60) timeVal = 'over_60';
+          }
+          document.querySelectorAll('.filter-time').forEach(input => {
+            input.checked = input.value === timeVal;
+          });
+
+          const stars = state.criteria.stars?.min || 0;
+          document.querySelectorAll('.filter-rating-range').forEach(input => {
+            input.value = stars;
+          });
+          document.querySelectorAll('#ratingDisplay, #mobile-ratingDisplay').forEach(display => {
+             display.innerHTML = `${renderStars(stars)}<span class="small text-muted ms-1">${stars}+ stars</span>`;
+          });
           if (window.lucide) window.lucide.createIcons();
         }
 
+        // Lọc, sắp xếp và lấy dữ liệu
         function fetchRecipes() {
-          const result = recipeService.getWithCriteria(state.criteria);
-          let items = [...result.items];
-          const [field, order] = state.sortBy.split('_');
+          const allRecipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
+          let filtered = allRecipes;
 
-          items.sort((recipeA, recipeB) => {
+          // Lọc theo từ khóa
+          if (state.criteria.text) {
+            const term = state.criteria.text.toLowerCase();
+            filtered = filtered.filter((r) => (r.name && r.name.toLowerCase().includes(term)) || (r.description && r.description.toLowerCase().includes(term)));
+          }
+
+          // Lọc theo danh mục
+          if (state.criteria.categories && state.criteria.categories.length > 0) {
+            filtered = filtered.filter((r) => state.criteria.categories.includes(r.categoryId));
+          }
+
+          // Lọc theo số sao
+          if (state.criteria.stars) {
+            const min = state.criteria.stars.min || 0;
+            const max = state.criteria.stars.max || 5;
+            filtered = filtered.filter((r) => (r.stars || 0) >= min && (r.stars || 0) <= max);
+          }
+
+          // Lọc theo thời gian nấu
+          if (state.criteria.totalTime) {
+            const min = state.criteria.totalTime.min || 0;
+            const max = state.criteria.totalTime.max || 9999;
+            filtered = filtered.filter((r) => {
+              const total = (r.prepTime || 0) + (r.cookTime || 0);
+              return total >= min && total <= max;
+            });
+          }
+
+          // Sắp xếp
+          const [field, order] = state.sortBy.split('_');
+          filtered.sort((recipeA, recipeB) => {
             let aVal = recipeA[field];
             let bVal = recipeB[field];
             if (field === 'name') {
-              aVal = aVal.toLowerCase();
-              bVal = bVal.toLowerCase();
+              aVal = (aVal || '').toLowerCase();
+              bVal = (bVal || '').toLowerCase();
+            }
+            if (field === 'stars') {
+              aVal = aVal || 0;
+              bVal = bVal || 0;
+            }
+            if (field === 'cookTime') {
+              aVal = (recipeA.prepTime || 0) + (recipeA.cookTime || 0);
+              bVal = (recipeB.prepTime || 0) + (recipeB.cookTime || 0);
             }
             return order === 'asc' ? (aVal > bVal ? 1 : -1) : aVal < bVal ? 1 : -1;
           });
 
-          recipeListRaw.toHTML(items);
-          renderPagination(result.total);
+          // Phân trang
+          const total = filtered.length;
+          const skip = state.criteria.skip || 0;
+          const limit = state.criteria.limit || 9;
+          const items = filtered.slice(skip, skip + limit);
 
+          // Render danh sách và phân trang
+          recipeListRaw.render('recipe-list', items);
+          renderPagination(total);
+
+          // Cập nhật URL
           const url = new URL(window.location);
           if (state.criteria.text) url.searchParams.set('q', state.criteria.text);
           else url.searchParams.delete('q');
@@ -217,6 +259,7 @@
           if (window.lucide) window.lucide.createIcons();
         }
 
+        // Vẽ UI phân trang
         function renderPagination(total) {
           const container = document.getElementById('pagination');
           if (!container) return;
@@ -257,6 +300,7 @@
           });
         }
 
+        // Khởi tạo trạng thái từ URL
         const params = new URLSearchParams(window.location.search);
         if (params.has('q')) {
           state.criteria.text = params.get('q');
@@ -264,7 +308,8 @@
         }
 
         if (params.has('category')) {
-          const category = categoryService.getByCode(params.get('category'));
+          const categoryCode = params.get('category');
+          const category = categories.find((c) => c.code === categoryCode);
           if (category) state.criteria.categories = [category.id];
         }
 
@@ -278,9 +323,12 @@
           document.getElementById('sortSelect').value = state.sortBy;
         }
 
-        renderFilters();
+        // Chạy lần đầu
+        initFilters();
+        syncFilterUI();
         fetchRecipes();
 
+        // Xử lý sự kiện tìm kiếm
         document.getElementById('searchInput')?.addEventListener('input', (event) => {
           clearTimeout(searchTimeout);
           searchTimeout = setTimeout(() => {
@@ -291,6 +339,7 @@
           }, 500);
         });
 
+        // Xử lý sự kiện sắp xếp
         document.getElementById('sortSelect')?.addEventListener('change', (event) => {
           state.sortBy = event.target.value;
           state.currentPage = 1;
@@ -298,6 +347,7 @@
           fetchRecipes();
         });
 
+        // Xử lý sự kiện thay đổi bộ lọc
         document.querySelectorAll('.filter-sidebar, .offcanvas-body').forEach((element) => {
           element.addEventListener('change', (event) => {
             const target = event.target;
@@ -321,12 +371,11 @@
 
             state.currentPage = 1;
             state.criteria.skip = 0;
-
-            renderFilters();
             fetchRecipes();
           });
         });
 
+        // Xử lý sự kiện thay đổi sao
         document.addEventListener('input', (event) => {
           if (event.target.classList.contains('filter-rating-range')) {
             const value = parseInt(event.target.value);
@@ -342,6 +391,7 @@
           }
         });
 
+        // Vẽ biểu tượng Lucide
         if (window.lucide) window.lucide.createIcons();
       });
     </script>

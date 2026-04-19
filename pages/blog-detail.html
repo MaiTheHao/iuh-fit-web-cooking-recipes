@@ -26,11 +26,22 @@
                 <p id="blog-excerpt" class="text-secondary mb-4"></p>
 
                 <div class="blog-meta-bar d-flex flex-wrap align-items-center gap-4 py-3 border-top w-100" style="border-color: var(--color-border) !important">
-                  <div id="blog-author" class="d-flex align-items-center gap-2"></div>
+                  <div id="blog-author" class="d-flex align-items-center gap-2">
+                    <img id="author-avatar" src="" class="rounded-circle" width="40" height="40" alt="Author" style="object-fit: cover" />
+                    <div class="d-flex flex-column" style="line-height: 1.2">
+                      <span class="small text-muted text-uppercase" style="font-size: 0.7rem">Written by</span>
+                      <span id="author-name" class="fw-bold text-dark"></span>
+                    </div>
+                  </div>
 
                   <div class="vr mx-2 text-muted d-none d-md-block opacity-25"></div>
 
-                  <div id="blog-meta-data" class="d-flex gap-4 text-secondary"></div>
+                  <div id="blog-meta-data" class="d-flex gap-4 text-secondary">
+                    <div class="d-flex align-items-center gap-2" title="Published Date">
+                      <i data-lucide="calendar" width="18"></i>
+                      <span id="publish-date"></span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -72,98 +83,81 @@
       </main>
     </div>
 
-    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-    <script src="../assets/js/utils/validator.js"></script>
-
-    <script src="../assets/js/core/domains/base.domain.js"></script>
-
-    <script src="../assets/js/core/domains/blog.domain.js"></script>
-    <script src="../assets/js/core/domains/user.domain.js"></script>
-
-    <script src="../assets/js/core/services/auth.service.js"></script>
-
-    <script src="../assets/js/ui/components/notification.js"></script>
-    <script src="../assets/js/ui/components/cards.js"></script>
-    <script src="../assets/js/ui/components/layout.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/lucide.min.js"></script>
+    <script src="../assets/js/marked.min.js"></script>
+    <script src="../assets/js/init.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const blogService = BlogService.getInstance();
-        const userRepository = UserRepository.getInstance();
-
         const urlParams = new URLSearchParams(window.location.search);
         const blogId = urlParams.get('id');
 
-        if (!blogId) {
-          renderError('No blog ID found in URL');
-          return;
-        }
+        // Báo lỗi nếu thiếu ID bài viết
+        if (!blogId) return renderError('No blog ID found in URL');
 
-        const blog = blogService.getById(blogId);
+        // Đọc dữ liệu từ LocalStorage
+        const blogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
+        const users = JSON.parse(localStorage.getItem('USERS') || '[]');
 
-        if (!blog) {
-          renderError('Blog post not found');
-          return;
-        }
+        // Tìm bài viết theo ID
+        const blog = blogs.find((b) => b.id === blogId);
+        if (!blog) return renderError('Blog post not found');
 
+        // Cập nhật tiêu đề trang và thông tin text
         document.title = `${blog.title} - Recipe4f`;
         document.getElementById('blog-title').textContent = blog.title;
         document.getElementById('blog-excerpt').textContent = blog.excerpt;
 
+        // Cập nhật ảnh đại diện bài viết
         const imgEl = document.getElementById('blog-image');
         if (imgEl) {
           imgEl.src = blog.image;
           imgEl.alt = blog.title;
         }
 
-        const author = userRepository.findById(blog.authorId);
+        // Hiển thị thông tin tác giả
+        const author = users.find((u) => u.id === blog.authorId);
         const authorName = author ? author.fullName : 'Author';
         const authorAvatar = author ? author.avatar : '../assets/img/default-avatar.jpg';
+        document.getElementById('author-avatar').src = authorAvatar;
+        document.getElementById('author-name').textContent = authorName;
+
+        // Định dạng ngày đăng bài
         const publishDate = new Date(blog.publishedAt).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
         });
+        document.getElementById('publish-date').textContent = publishDate;
 
+        // Tính toán thời gian đọc dựa trên số từ
         const words = blog.content.split(/\s+/).length;
         const readTime = Math.ceil(words / 200);
-
         document.getElementById('blog-read-time').innerHTML = `<i data-lucide="clock" width="14"></i><span>${readTime} min read</span>`;
 
-        document.getElementById('blog-author').innerHTML = `
-          <img src="${authorAvatar}" class="rounded-circle" width="40" height="40" alt="${authorName}" style="object-fit: cover;">
-          <div class="d-flex flex-column" style="line-height:1.2;">
-            <span class="small text-muted text-uppercase" style="font-size:0.7rem;">Written by</span>
-            <span class="fw-bold text-dark">${authorName}</span>
-          </div>
-        `;
-
-        document.getElementById('blog-meta-data').innerHTML = `
-          <div class="d-flex align-items-center gap-2" title="Published Date"><i data-lucide="calendar" width="18"></i><span>${publishDate}</span></div>
-        `;
-
+        // Hiển thị nội dung bài viết (Markdown)
         document.getElementById('blog-content').innerHTML = marked.parse(blog.content);
 
+        // Hiển thị danh sách thẻ (Tags)
         document.getElementById('blog-tags').innerHTML = blog.tags.map((tag) => `<span class="badge bg-light text-dark border p-2 fw-normal">${tag}</span>`).join('');
 
-        const related = blogService
-          .getAll()
-          .filter((blogItem) => blogItem.id !== blog.id && blogItem.tags.some((tagItem) => blog.tags.includes(tagItem)))
-          .slice(0, 3);
+        // Hiển thị các bài viết liên quan theo Tag
+        const related = blogs.filter((b) => b.id !== blog.id && b.tags.some((t) => blog.tags.includes(t))).slice(0, 3);
+        if (related.length > 0 && window.BlogList) window.BlogList.render('related-blogs', related);
 
-        if (related.length > 0) {
-          document.getElementById('related-blogs').innerHTML = related.map((blogItem) => `<div class="col">${new BlogCard(blogItem).toHTML()}</div>`).join('');
-        } else {
-          document.getElementById('related-blogs').innerHTML = '<div class="col-12 text-center text-muted">No related posts found.</div>';
-        }
-
+        // Khởi tạo các icon Lucide
         if (window.lucide) window.lucide.createIcons();
 
+        // Hàm hiển thị giao diện lỗi
         function renderError(message) {
-          document.getElementById('app-body').innerHTML = `<div class="container py-5"><div class="text-center"><h1 class="display-4">Oops!</h1><p class="lead">${message}</p><a href="/pages/blogs.html" class="btn btn-primary mt-3">Back to Blogs</a></div></div>`;
+          document.getElementById('app-body').innerHTML = `
+            <div class="container py-5 text-center">
+              <h1 class="display-4">Oops!</h1>
+              <p class="lead">${message}</p>
+              <a href="/pages/blogs.html" class="btn btn-primary mt-3">Back to Blogs</a>
+            </div>
+          `;
         }
       });
     </script>

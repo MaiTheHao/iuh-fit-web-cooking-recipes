@@ -198,7 +198,7 @@ class RecipeCard {
           </div>
         <button class="btn btn-white favorite-btn"
           data-id="${this.recipe.id}" 
-          style="width: 32px; height: 32px; display: grid; place-content: center; border-radius: 50%; outline: none;  border: none">
+          style="width: 32px; height: 32px; display: grid; place-content: center; border-radius: 50%; outline: none; border: none">
           <i data-lucide="heart" 
             style="width: 1.2rem; height: 1.2rem; fill: ${isFavorite ? 'red' : 'white'}; color: ${isFavorite ? 'red' : 'white'};">
           </i>

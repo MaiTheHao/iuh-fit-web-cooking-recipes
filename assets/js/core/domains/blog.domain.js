@@ -31,16 +31,7 @@ class BlogPost extends Entity {
   /** @type {string[]} Tags array */
   #tags = [];
 
-  constructor({
-    id,
-    title,
-    excerpt,
-    content,
-    image,
-    authorId,
-    publishedAt = new Date().toISOString(),
-    tags = [],
-  }) {
+  constructor({ id, title, excerpt, content, image, authorId, publishedAt = new Date().toISOString(), tags = [] }) {
     super(id);
     this.title = title;
     this.excerpt = excerpt;
@@ -178,7 +169,7 @@ class BlogPostRepository extends BaseRepository {
     if (BlogPostRepository.#instance) {
       return BlogPostRepository.#instance;
     }
-    super('BLOG_POSTS');
+    super('BLOGS');
     BlogPostRepository.#instance = this;
   }
 
@@ -217,9 +208,7 @@ class BlogPostRepository extends BaseRepository {
 
   /** @returns {BlogPost[]} */
   findByAuthorAndTag(authorId, tag) {
-    return this.findByAuthor(authorId).filter((p) =>
-      p.tags.some((t) => t.toLowerCase() === tag.toLowerCase()),
-    );
+    return this.findByAuthor(authorId).filter((p) => p.tags.some((t) => t.toLowerCase() === tag.toLowerCase()));
   }
 
   /** @returns {BlogPost[]} */
@@ -355,18 +344,11 @@ class BlogService {
 
     if (finalCriteria.text) {
       const term = finalCriteria.text.toLowerCase();
-      results = results.filter(
-        (blog) =>
-          blog.title.toLowerCase().includes(term) || blog.excerpt.toLowerCase().includes(term),
-      );
+      results = results.filter((blog) => blog.title.toLowerCase().includes(term) || blog.excerpt.toLowerCase().includes(term));
     }
 
     if (finalCriteria.tags && finalCriteria.tags.length > 0) {
-      results = results.filter((blog) =>
-        finalCriteria.tags.some((tag) =>
-          blog.tags.some((t) => t.toLowerCase() === tag.toLowerCase()),
-        ),
-      );
+      results = results.filter((blog) => finalCriteria.tags.some((tag) => blog.tags.some((t) => t.toLowerCase() === tag.toLowerCase())));
     }
 
     if (finalCriteria.authorIds && finalCriteria.authorIds.length > 0) {

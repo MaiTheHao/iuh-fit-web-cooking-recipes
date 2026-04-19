@@ -60,22 +60,22 @@
               <form id="register-form" class="row g-4">
                 <div class="col-md-6">
                   <label for="fullName" class="form-label fw-medium small text-uppercase text-muted">Full Name</label>
-                  <input type="text" class="form-control form-control-auth" id="fullName" placeholder="e.g. Gordon Ramsay" required />
+                  <input type="text" class="form-control form-control-auth" id="fullName" placeholder="e.g. Gordon Ramsay" />
                 </div>
 
                 <div class="col-md-6">
                   <label for="email" class="form-label fw-medium small text-uppercase text-muted">Email Address</label>
-                  <input type="text" class="form-control form-control-auth" id="email" placeholder="name@example.com" required />
+                  <input type="text" class="form-control form-control-auth" id="email" placeholder="name@example.com" />
                 </div>
 
                 <div class="col-md-6">
                   <label for="password" class="form-label fw-medium small text-uppercase text-muted">Password</label>
-                  <input type="password" class="form-control form-control-auth" id="password" placeholder="••••••••" required />
+                  <input type="text" class="form-control form-control-auth" id="password" placeholder="••••••••" />
                 </div>
 
                 <div class="col-md-6">
                   <label for="confirmPassword" class="form-label fw-medium small text-uppercase text-muted">Confirm Password</label>
-                  <input type="password" class="form-control form-control-auth" id="confirmPassword" placeholder="••••••••" required />
+                  <input type="text" class="form-control form-control-auth" id="confirmPassword" placeholder="••••••••" />
                 </div>
 
                 <div class="col-12 mt-5 text-center">
@@ -92,158 +92,101 @@
       </main>
     </div>
 
-    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body py-4">
-            <p class="modal-message mb-0"></p>
-          </div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-    <script src="../assets/js/utils/validator.js"></script>
-    <script src="../assets/js/core/domains/base.domain.js"></script>
-    <script src="../assets/js/core/domains/category.domain.js"></script>
-    <script src="../assets/js/core/domains/blog.domain.js"></script>
-    <script src="../assets/js/core/domains/user.domain.js"></script>
-    <script src="../assets/js/core/domains/recipe.domain.js"></script>
-    <script src="../assets/js/core/services/auth.service.js"></script>
-    <script src="../assets/js/ui/components/notification.js"></script>
-    <script src="../assets/js/ui/components/cards.js"></script>
-    <script src="../assets/js/ui/components/layout.js"></script>
-    <script src="../assets/js/core/init.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/lucide.min.js"></script>
+    <script src="../assets/js/init.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const authService = AuthService.getInstance();
-        const recipeService = RecipeService.getInstance();
-        const notification = new Notification();
+        const currentUserId = localStorage.getItem('CURRENT_USER_ID');
+        const users = JSON.parse(localStorage.getItem('USERS') || '[]');
+        const currentUser = currentUserId ? users.find((u) => u.id === currentUserId) : null;
 
-        const carouselRecipes = recipeService.getWithCriteria({
-          categories: ['c1', 'c5'],
-          limit: 10,
-        });
+        const allRecipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
+        const featuredRecipes = allRecipes.filter((recipe) => recipe.stars === 5).slice(0, 6);
+        RecipeList.render('recipe-grid', featuredRecipes);
 
-        if (carouselRecipes.total > 0) {
-          const carousel = document.getElementById('carouselId');
-          const indicators = carousel.querySelector('.carousel-indicators');
-          const carouselInner = carousel.querySelector('.carousel-inner');
+        const carouselRecipes = allRecipes.filter((recipe) => ['c1', 'c5'].includes(recipe.categoryId)).slice(0, 10);
+        const carouselInner = document.querySelector('.carousel-inner'),
+          carouselIndicators = document.querySelector('.carousel-indicators');
 
-          carouselRecipes.items.forEach((recipe, i) => {
-            const indicator = document.createElement('button');
-            indicator.setAttribute('type', 'button');
-            indicator.setAttribute('data-bs-target', '#carouselId');
-            indicator.setAttribute('data-bs-slide-to', i);
-            if (i === 0) {
-              indicator.classList.add('active');
-            }
-            indicators.appendChild(indicator);
-
-            const item = document.createElement('div');
-            item.classList.add('carousel-item');
-            if (i === 0) item.classList.add('active');
-
-            item.innerHTML = `
-              <div class="carousel-item__content">
-                <div class="carousel-item__left">
-                  <h3 class="carousel-item__title">${recipe.name}</h3>
-                  <div class="recipe-meta">
-                    <span class="badge bg-light">${recipe.cookTime} min</span>
-                    <span class="badge bg-light">${recipe.nutrition.calories} kcal</span>
+        if (carouselInner && carouselIndicators) {
+          carouselRecipes.forEach((recipe, index) => {
+            const isActive = index === 0 ? 'active' : '';
+            carouselIndicators.insertAdjacentHTML('beforeend', `<button type="button" data-bs-target="#carouselId" data-bs-slide-to="${index}" class="${isActive}"></button>`);
+            carouselInner.insertAdjacentHTML(
+              'beforeend',
+              `
+              <div class="carousel-item ${isActive}">
+                <div class="carousel-item__content">
+                  <div class="carousel-item__left">
+                    <h3 class="carousel-item__title">${recipe.name}</h3>
+                    <div class="recipe-meta"><span class="badge bg-light">${recipe.cookTime} min</span></div>
+                    <p class="carousel-item__description">${recipe.description}</p>
+                    <a class="btn btn-primary" href="recipe-detail.html?code=${recipe.code}">View Detail</a>
                   </div>
-                  <p class="carousel-item__description">${recipe.description}</p>
-                  <a class="recipe-meta__link btn btn-primary" href="/pages/recipe-detail.html?code=${recipe.code}">View Detail</a>
-                </div>
-                <div class="carousel-item__right">
-                  <img src="${recipe.image}" class="carousel-item__image" alt="${recipe.name}" />
+                  <div class="carousel-item__right"><img src="${recipe.image}" class="carousel-item__image" alt="${recipe.name}" /></div>
                 </div>
               </div>
-            `;
-            carouselInner.appendChild(item);
+            `,
+            );
           });
         }
 
-        const featured = recipeService.getWithCriteria({
-          limit: 6,
-          stars: { min: 5, max: 5 },
-        });
-        const recipeList = new RecipeList('recipe-grid');
-        recipeList.toHTML(featured.items);
-
         const joinSection = document.getElementById('join-our-culinary');
-        // Nếu đã đăng nhập, ẩn phần đăng ký ở trang chủ
-        if (authService.isAuthenticated()) {
+        if (currentUser) {
           if (joinSection) joinSection.style.display = 'none';
         } else {
           const registerForm = document.getElementById('register-form');
-          if (registerForm) {
-            // Xử lý sự kiện đăng ký ngay tại trang chủ
-            registerForm.addEventListener('submit', (event) => {
-              event.preventDefault();
-              // Lấy thông tin từ form
-              const fullName = document.getElementById('fullName').value.trim();
-              const email = document.getElementById('email').value.trim();
+          if (registerForm)
+            registerForm.onsubmit = (e) => {
+              e.preventDefault();
+              const fullName = document.getElementById('fullName').value;
+              const email = document.getElementById('email').value;
               const password = document.getElementById('password').value;
               const confirmPassword = document.getElementById('confirmPassword').value;
 
-              // Kiểm tra dữ liệu đăng ký
               if (fullName.length < 3 || fullName.length > 100) {
                 return notification.error('Invalid Name', 'Full name must be between 3 and 100 characters.');
               }
-
               if (email.length < 5 || email.length > 254) {
                 return notification.error('Invalid Email', 'Email length must be between 5 and 254 characters.');
               }
-              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+              if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
                 return notification.error('Invalid Email', 'Please enter a valid email address.');
               }
-
               if (password.length < 8) {
                 return notification.error('Invalid Password', 'Password must be at least 8 characters long.');
               }
-              if (!/[a-zA-Z]/.test(password)) {
-                return notification.error('Invalid Password', 'Password must contain at least one letter.');
+              if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
+                return notification.error('Invalid Password', 'Password must contain both letters and numbers.');
               }
-              if (!/\d/.test(password)) {
-                return notification.error('Invalid Password', 'Password must contain at least one number.');
-              }
-
               if (password !== confirmPassword) {
-                return notification.error('Password Mismatch', 'Passwords do not match.');
+                return notification.error('Error', 'Passwords mismatch');
               }
 
-              // Gọi service đăng ký
-              const result = authService.register({
-                fullName,
-                email,
-                password,
-                confirmPassword,
-              });
-
-              if (result.success) {
-                notification.success('Registration Successful!', 'Account created successfully.');
-                registerForm.reset();
-              } else {
-                const error = result.errors ? Object.values(result.errors)[0] : result.message;
-                notification.error('Registration Failed', error);
+              const allUsers = JSON.parse(localStorage.getItem('USERS') || '[]');
+              if (allUsers.some((user) => user.email === email)) {
+                return notification.error('Error', 'Email exists');
               }
-            });
-          }
-        }
 
-        if (window.lucide) {
-          window.lucide.createIcons();
+              const newUser = {
+                id: crypto.randomUUID(),
+                fullName: fullName,
+                email: email,
+                password: password,
+                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`,
+                role: 'user',
+                favoriteRecipes: [],
+              };
+
+              allUsers.push(newUser);
+              localStorage.setItem('USERS', JSON.stringify(allUsers));
+              notification.success('Success', 'Account created!');
+              registerForm.reset();
+            };
         }
+        if (window.lucide) window.lucide.createIcons();
       });
     </script>
   </body>

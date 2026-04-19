@@ -33,6 +33,6 @@ temp/
 *.tmp
 *.bak
 
-.agent/
+.agents/
 
 local

@@ -74,19 +74,19 @@
                   <div class="row g-3">
                     <div class="col-md-12">
                       <label class="form-label">Post Title</label>
-                      <input type="text" class="form-control" id="blogTitle" required />
+                      <input type="text" class="form-control" id="blogTitle" />
                     </div>
                     <div class="col-md-12">
                       <label class="form-label">Excerpt</label>
-                      <textarea class="form-control" id="blogExcerpt" rows="2" required></textarea>
+                      <textarea class="form-control" id="blogExcerpt" rows="2"></textarea>
                     </div>
                     <div class="col-md-12">
                       <label class="form-label">Cover Image URL</label>
-                      <input type="url" class="form-control" id="blogImage" required />
+                      <input type="url" class="form-control" id="blogImage" />
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Author (User)</label>
-                      <select class="form-select" id="blogAuthorId" required></select>
+                      <select class="form-select" id="blogAuthorId"></select>
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Tags (comma separated)</label>
@@ -94,7 +94,7 @@
                     </div>
                     <div class="col-md-12">
                       <label class="form-label">Content (Markdown/HTML)</label>
-                      <textarea class="form-control" id="blogContent" rows="8" required></textarea>
+                      <textarea class="form-control" id="blogContent" rows="8"></textarea>
                     </div>
                   </div>
                 </form>
@@ -109,55 +109,29 @@
       </main>
     </div>
 
-    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body py-4">
-            <p class="modal-message mb-0"></p>
-          </div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="../../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../../assets/js/libs/lucide-icon/lucide.min.js"></script>
-
-    <script src="../../assets/js/utils/validator.js"></script>
-
-    <script src="../../assets/js/core/domains/base.domain.js"></script>
-
-    <script src="../../assets/js/core/domains/blog.domain.js"></script>
-    <script src="../../assets/js/core/domains/user.domain.js"></script>
-
-    <script src="../../assets/js/core/services/auth.service.js"></script>
-
-    <script src="../../assets/js/ui/components/notification.js"></script>
-    <script src="../../assets/js/ui/components/cards.js"></script>
-    <script src="../../assets/js/ui/components/layout.js"></script>
+    <script src="../../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/lucide.min.js"></script>
+    <script src="../../assets/js/init.js"></script>
 
     <script>
+      // Khởi chạy khi DOM sẵn sàng
       document.addEventListener('DOMContentLoaded', () => {
-        const authService = AuthService.getInstance();
+        // Kiểm tra quyền Admin
+        const currentUserId = localStorage.getItem('CURRENT_USER_ID');
+        const users = JSON.parse(localStorage.getItem('USERS') || '[]');
+        const currentUser = users.find((u) => u.id === currentUserId);
 
-        if (!authService.isAdmin()) {
+        if (!currentUser || currentUser.role !== 'admin') {
           window.location.href = '/pages/login.html';
           return;
         }
 
-        const blogRepo = BlogPostRepository.getInstance();
-        const userRepo = UserRepository.getInstance();
-        const notification = new Notification();
-        const usersMap = {};
+        // Lưu trữ danh sách users để map tên tác giả
+        let usersMap = {};
 
+        // Tải danh sách tác giả vào select box
         function loadUsers() {
-          const users = userRepo.findAll();
+          const users = JSON.parse(localStorage.getItem('USERS') || '[]');
           const selectEl = document.getElementById('blogAuthorId');
           if (!selectEl) return;
 
@@ -171,9 +145,10 @@
           });
         }
 
+        // Render bảng danh sách bài viết
         function renderTable() {
           const tbody = document.getElementById('blogsTableBody');
-          const blogs = blogRepo.findAll();
+          const blogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
           if (!tbody) return;
 
           if (blogs.length === 0) {
@@ -206,6 +181,7 @@
           if (window.lucide) window.lucide.createIcons();
         }
 
+        // Mở modal Thêm/Sửa bài viết
         function openModal(id = null) {
           const form = document.getElementById('blogForm');
           form.reset();
@@ -214,7 +190,8 @@
           document.getElementById('blogModalTitle').textContent = id ? 'Edit Blog' : 'Create Blog';
 
           if (id) {
-            const b = blogRepo.findById(id);
+            const blogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
+            const b = blogs.find(blog => blog.id === id);
             if (b) {
               document.getElementById('blogTitle').value = b.title;
               document.getElementById('blogExcerpt').value = b.excerpt;
@@ -224,76 +201,105 @@
               document.getElementById('blogContent').value = b.content;
             }
           } else {
-            const curr = authService.getCurrentUser();
-            if (curr) document.getElementById('blogAuthorId').value = curr.id;
+            if (currentUser) document.getElementById('blogAuthorId').value = currentUser.id;
           }
           new bootstrap.Modal(document.getElementById('blogModal')).show();
         }
 
+        // Lưu thông tin bài viết vào LocalStorage
         function saveBlog() {
-          const form = document.getElementById('blogForm');
-          if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-          }
-
           try {
             const idInput = document.getElementById('blogId').value;
             const id = idInput || crypto.randomUUID();
-            const existing = idInput ? blogRepo.findById(idInput) : null;
+
+            const title = document.getElementById('blogTitle').value.trim();
+            const excerpt = document.getElementById('blogExcerpt').value.trim();
+            const image = document.getElementById('blogImage').value.trim();
+            const authorId = document.getElementById('blogAuthorId').value;
+            const content = document.getElementById('blogContent').value.trim();
+
+            // Kiểm tra các trường bắt buộc
+            if (!title) return notification.error('Missing Title', 'Please enter a blog title.');
+            if (!excerpt) return notification.error('Missing Excerpt', 'Please enter an excerpt.');
+            if (!image) return notification.error('Missing Image', 'Please enter an image URL.');
+            if (!authorId) return notification.error('Missing Author', 'Please select an author.');
+            if (!content) return notification.error('Missing Content', 'Please enter blog content.');
+            
+            const blogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
+            const existingIndex = idInput ? blogs.findIndex(b => b.id === idInput) : -1;
+            const existing = existingIndex > -1 ? blogs[existingIndex] : null;
 
             const rawTags = document.getElementById('blogTags').value;
-            const tags = rawTags
-              ? rawTags
-                  .split(',')
-                  .map((tag) => tag.trim())
-                  .filter(Boolean)
-              : [];
+            const tags = rawTags ? rawTags.split(',').map((tag) => tag.trim()).filter(Boolean) : [];
 
-            const blogData = new BlogPost({
+            if (title.length < 5) {
+              return notification.error('Invalid Title', 'Title must be at least 5 characters long.');
+            }
+
+            const blogData = {
               id,
-              title: document.getElementById('blogTitle').value,
-              excerpt: document.getElementById('blogExcerpt').value,
-              content: document.getElementById('blogContent').value,
-              image: document.getElementById('blogImage').value,
-              authorId: document.getElementById('blogAuthorId').value,
+              title: title,
+              excerpt: excerpt,
+              content: content,
+              image: image,
+              authorId: authorId,
               publishedAt: existing ? existing.publishedAt : new Date().toISOString(),
               tags: tags,
-            });
+            };
 
-            if (blogRepo.save(blogData)) {
-              bootstrap.Modal.getInstance(document.getElementById('blogModal')).hide();
-              renderTable();
-              notification.success('Success', idInput ? 'Updated successfully' : 'Created successfully');
+            // Cập nhật hoặc thêm mới bài viết
+            if (existingIndex > -1) {
+              blogs[existingIndex] = blogData;
+            } else {
+              blogs.push(blogData);
             }
+            
+            localStorage.setItem('BLOGS', JSON.stringify(blogs));
+            
+            bootstrap.Modal.getInstance(document.getElementById('blogModal')).hide();
+            renderTable();
+            notification.success('Success', idInput ? 'Updated successfully' : 'Created successfully');
           } catch (error) {
             notification.error('Error', error.message);
           }
         }
 
+        // Khởi tạo giao diện ban đầu
         loadUsers();
         renderTable();
 
+        // Bắt sự kiện tạo mới bài viết
         document.getElementById('btnCreateBlog')?.addEventListener('click', () => openModal());
 
+        // Bắt sự kiện submit form lưu bài
         document.getElementById('blogForm')?.addEventListener('submit', (event) => {
           event.preventDefault();
           saveBlog();
         });
 
+        // Bắt sự kiện click Sửa/Xóa trên bảng
         document.getElementById('blogsTableBody')?.addEventListener('click', (event) => {
           const editBtn = event.target.closest('.btn-edit');
           const delBtn = event.target.closest('.btn-delete');
 
+          // Mở modal nếu bấm Edit
           if (editBtn) openModal(editBtn.dataset.id);
-          if (delBtn && confirm('Are you sure?')) {
-            if (blogRepo.delete(delBtn.dataset.id)) {
-              renderTable();
-              notification.success('Success', 'Deleted');
-            }
+          
+          // Xóa bài nếu bấm Delete
+          if (delBtn && confirm('Are you sure you want to delete this blog?')) {
+             const blogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
+             const id = delBtn.dataset.id;
+             const index = blogs.findIndex(b => b.id === id);
+             if (index > -1) {
+               blogs.splice(index, 1);
+               localStorage.setItem('BLOGS', JSON.stringify(blogs));
+               renderTable();
+               notification.success('Success', 'Deleted successfully');
+             }
           }
         });
 
+        // Khởi tạo các biểu tượng Lucide
         if (window.lucide) window.lucide.createIcons();
       });
     </script>

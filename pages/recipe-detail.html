@@ -24,11 +24,24 @@
                 <p id="recipe-description" class="text-secondary mb-4"></p>
 
                 <div class="recipe-meta-bar d-flex flex-wrap align-items-center gap-4 py-3 border-top w-100">
-                  <div id="recipe-author" class="d-flex align-items-center gap-2"></div>
+                  <div id="recipe-author" class="d-flex align-items-center gap-2">
+                    <img id="author-avatar" src="" class="rounded-circle" width="40" height="40" alt="Author" style="object-fit: cover" />
+                    <div class="d-flex flex-column" style="line-height: 1.2">
+                      <span class="small text-muted text-uppercase" style="font-size: 0.7rem">Created by</span>
+                      <span id="author-name" class="fw-bold text-dark"></span>
+                    </div>
+                  </div>
 
                   <div class="vr mx-2 text-muted d-none d-md-block opacity-25"></div>
 
-                  <div id="recipe-meta-data" class="d-flex gap-4 text-secondary"></div>
+                  <div id="recipe-meta-data" class="d-flex gap-4 text-secondary grow">
+                    <div class="d-flex align-items-center gap-2" title="Prep Time"><i data-lucide="clock" width="18"></i><span id="prep-time"></span></div>
+                    <div class="d-flex align-items-center gap-2" title="Cook Time"><i data-lucide="flame" width="18"></i><span id="cook-time"></span></div>
+                    <button class="btn btn-outline-danger btn-sm rounded-pill ms-auto favorite-btn" id="fav-detail" style="display: flex; align-items: center; gap: 0.5ch">
+                      <i data-lucide="heart" width="18" id="fav-icon"></i>
+                      <span id="fav-text">Favorite</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -56,7 +69,36 @@
                     <i data-lucide="activity" class="text-accent"></i>
                     Nutrition
                   </h3>
-                  <div id="recipe-nutrition" class="nutrition-list"></div>
+                  <div id="recipe-nutrition" class="nutrition-list">
+                    <div class="nutrition-item">
+                      <div class="d-flex align-items-center">
+                        <i data-lucide="flame" class="nutrition-icon" width="18"></i>
+                        <span class="nutrition-label">Calories</span>
+                      </div>
+                      <span class="nutrition-value"><span id="nut-calories"></span><small>kcal</small></span>
+                    </div>
+                    <div class="nutrition-item">
+                      <div class="d-flex align-items-center">
+                        <i data-lucide="drumstick" class="nutrition-icon" width="18"></i>
+                        <span class="nutrition-label">Protein</span>
+                      </div>
+                      <span class="nutrition-value"><span id="nut-protein"></span><small>g</small></span>
+                    </div>
+                    <div class="nutrition-item">
+                      <div class="d-flex align-items-center">
+                        <i data-lucide="droplet" class="nutrition-icon" width="18"></i>
+                        <span class="nutrition-label">Fat</span>
+                      </div>
+                      <span class="nutrition-value"><span id="nut-fat"></span><small>g</small></span>
+                    </div>
+                    <div class="nutrition-item">
+                      <div class="d-flex align-items-center">
+                        <i data-lucide="wheat" class="nutrition-icon" width="18"></i>
+                        <span class="nutrition-label">Carbs</span>
+                      </div>
+                      <span class="nutrition-value"><span id="nut-carbs"></span><small>g</small></span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -83,102 +125,72 @@
       </main>
     </div>
 
-    <div class="modal fade" id="noti-modal" tabindex="-1" aria-labelledby="noti-modal__label" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="noti-modal__label">Notification</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body py-4">
-            <p class="modal-message mb-0"></p>
-          </div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="../assets/js/libs/bootstrap5/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/libs/lucide-icon/lucide.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-    <script src="../assets/js/utils/validator.js"></script>
-
-    <script src="../assets/js/core/domains/base.domain.js"></script>
-
-    <script src="../assets/js/core/domains/category.domain.js"></script>
-    <script src="../assets/js/core/domains/user.domain.js"></script>
-    <script src="../assets/js/core/domains/recipe.domain.js"></script>
-
-    <script src="../assets/js/core/services/auth.service.js"></script>
-
-    <script src="../assets/js/ui/components/notification.js"></script>
-    <script src="../assets/js/ui/components/cards.js"></script>
-    <script src="../assets/js/ui/components/layout.js"></script>
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/lucide.min.js"></script>
+    <script src="../assets/js/marked.min.js"></script>
+    <script src="../assets/js/init.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const recipeService = RecipeService.getInstance();
-        const categoryService = CategoryService.getInstance();
-        const userService = UserService.getInstance();
-        const authService = AuthService.getInstance();
-        const userRepository = UserRepository.getInstance();
-        const notification = new Notification();
-
         const urlParams = new URLSearchParams(window.location.search);
         const recipeCode = urlParams.get('code');
 
-        if (!recipeCode) {
-          renderError('No recipe code found in URL');
-          return;
-        }
+        // Báo lỗi nếu thiếu mã công thức
+        if (!recipeCode) return renderError('No recipe code found in URL');
 
-        const recipe = recipeService.getByCode(recipeCode);
+        // Đọc dữ liệu từ LocalStorage
+        const recipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
+        const categories = JSON.parse(localStorage.getItem('CATEGORIES') || '[]');
+        const users = JSON.parse(localStorage.getItem('USERS') || '[]');
+        const currentUser = JSON.parse(localStorage.getItem('CURRENT_USER'));
 
-        if (!recipe) {
-          renderError('Recipe not found');
-          return;
-        }
+        // Tìm công thức theo mã code
+        const recipe = recipes.find((r) => r.code === recipeCode);
+        if (!recipe) return renderError('Recipe not found');
 
+        // Cập nhật tiêu đề trang và nội dung text
         document.title = recipe.name;
         document.getElementById('recipe-title').textContent = recipe.name;
         document.getElementById('recipe-description').textContent = recipe.description;
 
+        // Cập nhật ảnh đại diện món ăn
         const imgEl = document.getElementById('recipe-image');
         if (imgEl) {
           imgEl.src = recipe.image;
           imgEl.alt = recipe.name;
         }
 
-        const category = categoryService.getById(recipe.categoryId);
+        // Hiển thị tên danh mục
+        const category = categories.find((c) => c.id === recipe.categoryId);
         document.getElementById('recipe-category').textContent = category ? category.name : 'Web Recipe';
 
-        renderStars(recipe.stars);
+        // Hiển thị số sao đánh giá
+        renderStarsUI(recipe.stars);
 
-        const author = userRepository.findById(recipe.authorId);
+        // Hiển thị thông tin tác giả
+        const author = users.find((u) => u.id === recipe.authorId);
         const authorName = author ? author.fullName : 'Chef';
         const authorAvatar = author ? author.avatar : '../assets/img/default-avatar.jpg';
+        document.getElementById('author-avatar').src = authorAvatar;
+        document.getElementById('author-name').textContent = authorName;
 
-        document.getElementById('recipe-author').innerHTML = `
-          <img src="${authorAvatar}" class="rounded-circle" width="40" height="40" alt="${authorName}" style="object-fit: cover;">
-          <div class="d-flex flex-column" style="line-height:1.2;">
-            <span class="small text-muted text-uppercase" style="font-size:0.7rem;">Created by</span>
-            <span class="fw-bold text-dark">${authorName}</span>
-          </div>
-        `;
+        // Hiển thị thời gian và trạng thái yêu thích
+        const isFavorite = currentUser?.favoriteRecipes?.includes(recipe.id);
+        document.getElementById('prep-time').textContent = `${recipe.prepTime} min`;
+        document.getElementById('cook-time').textContent = `${recipe.cookTime} min`;
 
-        const isFavorite = authService.getCurrentUser()?.favoriteRecipes?.includes(recipe.id);
-        document.getElementById('recipe-meta-data').innerHTML = `
-          <div class="d-flex align-items-center gap-2" title="Prep Time"><i data-lucide="clock" width="18"></i><span>${recipe.prepTime} min</span></div>
-          <div class="d-flex align-items-center gap-2" title="Cook Time"><i data-lucide="flame" width="18"></i><span>${recipe.cookTime} min</span></div>
-          <button class="btn btn-outline-danger btn-sm rounded-pill ms-auto favorite-btn ${isFavorite ? 'favorited' : ''}" id="fav-detail" style="display:flex; align-items:center; gap:0.5ch;">
-            <i data-lucide="heart" width="18" style="fill: ${isFavorite ? 'red' : 'none'}; color: ${isFavorite ? 'red' : 'currentColor'};"></i>
-            <span>${isFavorite ? 'Favorited' : 'Favorite'}</span>
-          </button>
-        `;
+        const favBtn = document.getElementById('fav-detail');
+        const favIcon = document.getElementById('fav-icon');
+        const favText = document.getElementById('fav-text');
 
+        if (isFavorite) {
+          favBtn.classList.add('favorited');
+          favIcon.style.fill = 'red';
+          favIcon.style.color = 'red';
+          favText.textContent = 'Favorited';
+        }
+
+        // Hiển thị danh sách nguyên liệu
         let ingHtml = '';
         recipe.ingredients.forEach((group, groupIndex) => {
           if (group.section) ingHtml += `<h5 class="ingredient-group-title">${group.section}</h5>`;
@@ -194,6 +206,7 @@
         });
         document.getElementById('recipe-ingredients').innerHTML = ingHtml;
 
+        // Hiển thị hướng dẫn thực hiện (Markdown)
         if (recipe.directions) {
           const rawDirections = recipe.directions;
           if (!rawDirections.includes('###')) {
@@ -201,8 +214,8 @@
           } else {
             const chunks = rawDirections
               .split('###')
-              .map((chunk) => chunk.trim())
-              .filter((chunk) => chunk.length > 0);
+              .map((c) => c.trim())
+              .filter((c) => c.length > 0);
             document.getElementById('recipe-directions').innerHTML = chunks
               .map((chunk, i) => {
                 const lines = chunk.split('\n');
@@ -213,51 +226,56 @@
           }
         }
 
-        const { calories, protein, fat, carbs } = recipe.nutrition;
-        const nutItems = [
-          { label: 'Calories', val: calories, unit: 'kcal', icon: 'flame' },
-          { label: 'Protein', val: protein, unit: 'g', icon: 'drumstick' },
-          { label: 'Fat', val: fat, unit: 'g', icon: 'droplet' },
-          { label: 'Carbs', val: carbs, unit: 'g', icon: 'wheat' },
-        ];
-        document.getElementById('recipe-nutrition').innerHTML = nutItems.map((item) => `<div class="nutrition-item"><div class="d-flex align-items-center"><i data-lucide="${item.icon}" class="nutrition-icon" width="18"></i><span class="nutrition-label">${item.label}</span></div><span class="nutrition-value">${item.val}<small>${item.unit}</small></span></div>`).join('');
+        // Hiển thị thông tin dinh dưỡng
+        const nut = recipe.nutrition;
+        document.getElementById('nut-calories').textContent = nut.calories || '-';
+        document.getElementById('nut-protein').textContent = nut.protein || '-';
+        document.getElementById('nut-fat').textContent = nut.fat || '-';
+        document.getElementById('nut-carbs').textContent = nut.carbs || '-';
 
-        const related = recipeService
-          .getAll()
-          .filter((recipeItem) => recipeItem.categoryId === recipe.categoryId && recipeItem.id !== recipe.id)
-          .slice(0, 3);
+        // Hiển thị các món ăn liên quan
+        const related = recipes.filter((r) => r.categoryId === recipe.categoryId && r.id !== recipe.id).slice(0, 3);
+        if (related.length > 0 && window.RecipeList) window.RecipeList.render('related-recipes', related);
 
-        if (related.length > 0) {
-          new RecipeList('related-recipes').toHTML(related);
-        }
-
-        document.getElementById('recipe-ingredients').addEventListener('change', (event) => {
-          if (event.target.classList.contains('ingredient-checkbox')) {
-            event.target.closest('.ingredient-label').classList.toggle('checked', event.target.checked);
+        // Xử lý sự kiện checkbox nguyên liệu
+        document.getElementById('recipe-ingredients').addEventListener('change', (e) => {
+          if (e.target.classList.contains('ingredient-checkbox')) {
+            e.target.closest('.ingredient-label').classList.toggle('checked', e.target.checked);
           }
         });
 
-        document.getElementById('fav-detail')?.addEventListener('click', () => {
-          const user = authService.getCurrentUser();
-          if (!user) {
-            notification.warn('Authentication Required', 'Please login to favorite this recipe');
-            return;
-          }
-          const result = userService.toggleFavorite(user.id, recipe.id);
-          if (result.success) {
-            const btn = document.getElementById('fav-detail');
-            const icon = btn.querySelector('svg');
-            const span = btn.querySelector('span');
-            btn.classList.toggle('favorited', result.isFavorite);
-            icon.style.fill = result.isFavorite ? 'red' : 'none';
-            icon.style.color = result.isFavorite ? 'red' : 'currentColor';
-            span.textContent = result.isFavorite ? 'Favorited' : 'Favorite';
-          }
+        // Xử lý sự kiện nhấn nút yêu thích
+        favBtn?.addEventListener('click', () => {
+          if (!currentUser) return notification.warn('Authentication Required', 'Please login to favorite this recipe');
+
+          const allUsers = JSON.parse(localStorage.getItem('USERS') || '[]');
+          const userIndex = allUsers.findIndex((u) => u.id === currentUser.id);
+          if (userIndex === -1) return;
+
+          const user = allUsers[userIndex];
+          if (!user.favoriteRecipes) user.favoriteRecipes = [];
+          const idx = user.favoriteRecipes.indexOf(recipe.id);
+          const isFavoriting = idx === -1;
+
+          if (isFavoriting) user.favoriteRecipes.push(recipe.id);
+          else user.favoriteRecipes.splice(idx, 1);
+
+          // Cập nhật lại LocalStorage
+          allUsers[userIndex] = user;
+          localStorage.setItem('USERS', JSON.stringify(allUsers));
+          localStorage.setItem('CURRENT_USER', JSON.stringify(user));
+
+          // Cập nhật giao diện nút yêu thích
+          favBtn.classList.toggle('favorited', isFavoriting);
+          favIcon.style.fill = isFavoriting ? 'red' : 'none';
+          favIcon.style.color = isFavoriting ? 'red' : 'currentColor';
+          favText.textContent = isFavoriting ? 'Favorited' : 'Favorite';
         });
 
+        // Khởi tạo các icon Lucide
         if (window.lucide) window.lucide.createIcons();
 
-        function renderStars(count) {
+        function renderStarsUI(count) {
           const element = document.getElementById('recipe-stars');
           let html = '';
           for (let i = 0; i < 5; i++) {
@@ -268,6 +286,7 @@
           element.innerHTML = html;
         }
 
+        // Hàm hiển thị giao diện lỗi
         function renderError(message) {
           document.getElementById('app-body').innerHTML = `<div class="container text-center py-5"><h2 class="text-muted">${message}</h2><a href="/pages/recipes.html" class="btn btn-primary mt-3">Back to Recipes</a></div>`;
         }
