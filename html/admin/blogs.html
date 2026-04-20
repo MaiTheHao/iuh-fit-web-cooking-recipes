@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Manage Blogs</title>
-    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
     <style>
       .admin-page-header {
         padding: 40px 0;
@@ -109,9 +109,9 @@
       </main>
     </div>
 
-    <script src="../../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="../../assets/js/lucide.min.js"></script>
-    <script src="../../assets/js/init.js"></script>
+    <script src="../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/lucide.min.js"></script>
+    <script src="../../js/init.js"></script>
 
     <script>
       // Khởi chạy khi DOM sẵn sàng
@@ -191,7 +191,7 @@
 
           if (id) {
             const blogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
-            const b = blogs.find(blog => blog.id === id);
+            const b = blogs.find((blog) => blog.id === id);
             if (b) {
               document.getElementById('blogTitle').value = b.title;
               document.getElementById('blogExcerpt').value = b.excerpt;
@@ -224,13 +224,18 @@
             if (!image) return notification.error('Missing Image', 'Please enter an image URL.');
             if (!authorId) return notification.error('Missing Author', 'Please select an author.');
             if (!content) return notification.error('Missing Content', 'Please enter blog content.');
-            
+
             const blogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
-            const existingIndex = idInput ? blogs.findIndex(b => b.id === idInput) : -1;
+            const existingIndex = idInput ? blogs.findIndex((b) => b.id === idInput) : -1;
             const existing = existingIndex > -1 ? blogs[existingIndex] : null;
 
             const rawTags = document.getElementById('blogTags').value;
-            const tags = rawTags ? rawTags.split(',').map((tag) => tag.trim()).filter(Boolean) : [];
+            const tags = rawTags
+              ? rawTags
+                  .split(',')
+                  .map((tag) => tag.trim())
+                  .filter(Boolean)
+              : [];
 
             if (title.length < 5) {
               return notification.error('Invalid Title', 'Title must be at least 5 characters long.');
@@ -253,9 +258,9 @@
             } else {
               blogs.push(blogData);
             }
-            
+
             localStorage.setItem('BLOGS', JSON.stringify(blogs));
-            
+
             bootstrap.Modal.getInstance(document.getElementById('blogModal')).hide();
             renderTable();
             notification.success('Success', idInput ? 'Updated successfully' : 'Created successfully');
@@ -284,18 +289,18 @@
 
           // Mở modal nếu bấm Edit
           if (editBtn) openModal(editBtn.dataset.id);
-          
+
           // Xóa bài nếu bấm Delete
           if (delBtn && confirm('Are you sure you want to delete this blog?')) {
-             const blogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
-             const id = delBtn.dataset.id;
-             const index = blogs.findIndex(b => b.id === id);
-             if (index > -1) {
-               blogs.splice(index, 1);
-               localStorage.setItem('BLOGS', JSON.stringify(blogs));
-               renderTable();
-               notification.success('Success', 'Deleted successfully');
-             }
+            const blogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
+            const id = delBtn.dataset.id;
+            const index = blogs.findIndex((b) => b.id === id);
+            if (index > -1) {
+              blogs.splice(index, 1);
+              localStorage.setItem('BLOGS', JSON.stringify(blogs));
+              renderTable();
+              notification.success('Success', 'Deleted successfully');
+            }
           }
         });
 

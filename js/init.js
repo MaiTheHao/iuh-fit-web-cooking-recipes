@@ -624,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="header__overlay header__overlay--default"></div>
       <header class="header">
         <div class="header__container">
-          <a href="${rootPath}index.html" class="header__logo"><img src="${rootPath}../assets/img/logo.svg" alt="Logo" /></a>
+          <a href="${rootPath}index.html" class="header__logo"><img src="${rootPath}..//img/logo.svg" alt="Logo" /></a>
           <nav class="header__nav">
             <ul class="header__menu">
               <li><a href="${rootPath}index.html" class="header__link fw-light">Home</a></li>
@@ -690,7 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <footer id="app-footer">
         <div class="footer__top">
           <div class="footer__top__part footer__info">
-            <a href="${rootPath}index.html" class="footer__logo"><img src="${rootPath}../assets/img/logo.svg" alt="Logo" /></a>
+            <a href="${rootPath}index.html" class="footer__logo"><img src="${rootPath}..//img/logo.svg" alt="Logo" /></a>
             <p class="footer__description ff-main fw-light">
               <strong class="highlight-text">Recipe4f</strong> is your ultimate destination for recipes and cooking tips.
             </p>
@@ -931,11 +931,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', (e) => {
     const favBtn = e.target.closest('.favorite-btn');
     const unfavBtn = e.target.closest('.unfavorite-btn');
-    const detailFavBtn = e.target.closest('#fav-detail');
-    if (!favBtn && !unfavBtn && !detailFavBtn) return;
+    if (!favBtn && !unfavBtn) return;
 
     e.preventDefault();
-    const btn = favBtn || unfavBtn || detailFavBtn;
+    const btn = favBtn || unfavBtn;
     const recipeId = btn.dataset.id;
     const currentUserId = localStorage.getItem('CURRENT_USER_ID');
 
@@ -956,11 +955,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (recipeIndex === -1) {
       user.favoriteRecipes.push(recipeId);
       isNowFavorite = true;
-      window.notification.success('Added to Favorites', 'Recipe saved to your profile.');
     } else {
       user.favoriteRecipes.splice(recipeIndex, 1);
       isNowFavorite = false;
-      window.notification.info('Removed from Favorites', 'Recipe removed from your profile.');
     }
 
     localStorage.setItem('USERS', JSON.stringify(users));
@@ -972,14 +969,6 @@ document.addEventListener('DOMContentLoaded', () => {
           icon.style.fill = isNowFavorite ? 'red' : 'white';
           icon.style.color = isNowFavorite ? 'red' : 'white';
         }
-      } else if (b.id === 'fav-detail') {
-        b.classList.toggle('favorited', isNowFavorite);
-        if (icon) {
-          icon.style.fill = isNowFavorite ? 'red' : 'none';
-          icon.style.color = isNowFavorite ? 'red' : 'currentColor';
-        }
-        const span = b.querySelector('span');
-        if (span) span.textContent = isNowFavorite ? 'Favorited' : 'Favorite';
       }
     });
 

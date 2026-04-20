@@ -1,13 +1,13 @@
-<!-- Created By: Mai Thế Hào -->
+<!-- Created By: Nguyễn Minh Hùng -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../assets/css/style.css" />
-    <link rel="stylesheet" href="../assets/css/pages/blogs.css" />
-    <link rel="stylesheet" href="../assets/css/layout/header.css" />
-    <link rel="stylesheet" href="../assets/css/layout/footer.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/pages/blogs.css" />
+    <link rel="stylesheet" href="../css/layout/header.css" />
+    <link rel="stylesheet" href="../css/layout/footer.css" />
     <title>Recipe4f - Blog Detail</title>
   </head>
   <body>
@@ -83,10 +83,10 @@
       </main>
     </div>
 
-    <script src="../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/lucide.min.js"></script>
-    <script src="../assets/js/marked.min.js"></script>
-    <script src="../assets/js/init.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/lucide.min.js"></script>
+    <script src="../js/marked.min.js"></script>
+    <script src="../js/init.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -94,7 +94,7 @@
         const blogId = urlParams.get('id');
 
         // Báo lỗi nếu thiếu ID bài viết
-        if (!blogId) return renderError('No blog ID found in URL');
+        if (!blogId) return (window.location.href = '/pages/notfound.html');
 
         // Đọc dữ liệu từ LocalStorage
         const blogs = JSON.parse(localStorage.getItem('BLOGS') || '[]');
@@ -102,7 +102,7 @@
 
         // Tìm bài viết theo ID
         const blog = blogs.find((b) => b.id === blogId);
-        if (!blog) return renderError('Blog post not found');
+        if (!blog) return (window.location.href = '/pages/notfound.html');
 
         // Cập nhật tiêu đề trang và thông tin text
         document.title = `${blog.title} - Recipe4f`;
@@ -110,16 +110,12 @@
         document.getElementById('blog-excerpt').textContent = blog.excerpt;
 
         // Cập nhật ảnh đại diện bài viết
-        const imgEl = document.getElementById('blog-image');
-        if (imgEl) {
-          imgEl.src = blog.image;
-          imgEl.alt = blog.title;
-        }
+        document.getElementById('blog-image').src = blog.image;
 
         // Hiển thị thông tin tác giả
         const author = users.find((u) => u.id === blog.authorId);
-        const authorName = author ? author.fullName : 'Author';
-        const authorAvatar = author ? author.avatar : '../assets/img/default-avatar.jpg';
+        const authorName = author.fullName;
+        const authorAvatar = author.avatar;
         document.getElementById('author-avatar').src = authorAvatar;
         document.getElementById('author-name').textContent = authorName;
 
@@ -136,29 +132,18 @@
         const readTime = Math.ceil(words / 200);
         document.getElementById('blog-read-time').innerHTML = `<i data-lucide="clock" width="14"></i><span>${readTime} min read</span>`;
 
-        // Hiển thị nội dung bài viết (Markdown)
+        // Hiển thị nội dung bài viết
         document.getElementById('blog-content').innerHTML = marked.parse(blog.content);
 
-        // Hiển thị danh sách thẻ (Tags)
+        // Hiển thị danh sách thẻ
         document.getElementById('blog-tags').innerHTML = blog.tags.map((tag) => `<span class="badge bg-light text-dark border p-2 fw-normal">${tag}</span>`).join('');
 
-        // Hiển thị các bài viết liên quan theo Tag
+        // Hiển thị các bài viết liên quan theo Tag, giới hạn 3 bài
         const related = blogs.filter((b) => b.id !== blog.id && b.tags.some((t) => blog.tags.includes(t))).slice(0, 3);
         if (related.length > 0 && window.BlogList) window.BlogList.render('related-blogs', related);
 
         // Khởi tạo các icon Lucide
         if (window.lucide) window.lucide.createIcons();
-
-        // Hàm hiển thị giao diện lỗi
-        function renderError(message) {
-          document.getElementById('app-body').innerHTML = `
-            <div class="container py-5 text-center">
-              <h1 class="display-4">Oops!</h1>
-              <p class="lead">${message}</p>
-              <a href="/pages/blogs.html" class="btn btn-primary mt-3">Back to Blogs</a>
-            </div>
-          `;
-        }
       });
     </script>
   </body>

@@ -4,8 +4,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../assets/css/style.css" />
-    <link rel="stylesheet" href="../assets/css/pages/home.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/pages/home.css" />
     <title>Recipe4f</title>
   </head>
   <body>
@@ -42,10 +42,10 @@
             </div>
 
             <div class="col-lg-6 showcase-visual position-relative d-flex justify-content-center align-items-end">
-              <img src="../assets/img/meal-category.svg" alt="Meat" class="floating-icon icon-meat" />
-              <img src="../assets/img/vegan-category.svg" alt="Vegetable" class="floating-icon icon-veg" />
-              <img src="../assets/img/tomato.svg" alt="Tomato" class="floating-icon icon-tomato" />
-              <img src="../assets/img/happy-male-chef.webp" alt="Happy Chef" class="chef-img position-relative z-1" />
+              <img src="../img/meal-category.svg" alt="Meat" class="floating-icon icon-meat" />
+              <img src="../img/vegan-category.svg" alt="Vegetable" class="floating-icon icon-veg" />
+              <img src="../img/tomato.svg" alt="Tomato" class="floating-icon icon-tomato" />
+              <img src="../img/happy-male-chef.webp" alt="Happy Chef" class="chef-img position-relative z-1" />
             </div>
           </div>
         </section>
@@ -92,9 +92,9 @@
       </main>
     </div>
 
-    <script src="../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/lucide.min.js"></script>
-    <script src="../assets/js/init.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/lucide.min.js"></script>
+    <script src="../js/init.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -106,7 +106,7 @@
         const featuredRecipes = allRecipes.filter((recipe) => recipe.stars === 5).slice(0, 6);
         RecipeList.render('recipe-grid', featuredRecipes);
 
-        const carouselRecipes = allRecipes.filter((recipe) => ['c1', 'c5'].includes(recipe.categoryId)).slice(0, 10);
+        const carouselRecipes = allRecipes.slice(0, 10);
         const carouselInner = document.querySelector('.carousel-inner'),
           carouselIndicators = document.querySelector('.carousel-indicators');
 
@@ -133,6 +133,7 @@
           });
         }
 
+        // Nếu đã đăng nhập thì ẩn form đăng ký
         const joinSection = document.getElementById('join-our-culinary');
         if (currentUser) {
           if (joinSection) joinSection.style.display = 'none';
@@ -165,13 +166,14 @@
                 return notification.error('Error', 'Passwords mismatch');
               }
 
+              // Kiểm tra trùng email
               const allUsers = JSON.parse(localStorage.getItem('USERS') || '[]');
               if (allUsers.some((user) => user.email === email)) {
                 return notification.error('Error', 'Email exists');
               }
 
               const newUser = {
-                id: crypto.randomUUID(),
+                id: crypto.randomUUID(), // random id
                 fullName: fullName,
                 email: email,
                 password: password,
@@ -183,7 +185,6 @@
               allUsers.push(newUser);
               localStorage.setItem('USERS', JSON.stringify(allUsers));
               notification.success('Success', 'Account created!');
-              registerForm.reset();
             };
         }
         if (window.lucide) window.lucide.createIcons();

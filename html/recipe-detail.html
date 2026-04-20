@@ -1,11 +1,11 @@
-<!-- Created By: Mai Thế Hào -->
+<!-- Created By: Hồ Đức Huy -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../assets/css/style.css" />
-    <link rel="stylesheet" href="../assets/css/pages/recipe-detail.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/pages/recipe-detail.css" />
     <title>Recipe4f - Recipe Detail</title>
   </head>
   <body>
@@ -37,9 +37,9 @@
                   <div id="recipe-meta-data" class="d-flex gap-4 text-secondary grow">
                     <div class="d-flex align-items-center gap-2" title="Prep Time"><i data-lucide="clock" width="18"></i><span id="prep-time"></span></div>
                     <div class="d-flex align-items-center gap-2" title="Cook Time"><i data-lucide="flame" width="18"></i><span id="cook-time"></span></div>
-                    <button class="btn btn-outline-danger btn-sm rounded-pill ms-auto favorite-btn" id="fav-detail" style="display: flex; align-items: center; gap: 0.5ch">
+                    <button class="btn btn-outline-danger btn-sm rounded-pill ms-auto btn-fav" id="btn-favorite-recipe" style="display: flex; align-items: center; gap: 0.5ch">
                       <i data-lucide="heart" width="18" id="fav-icon"></i>
-                      <span id="fav-text">Favorite</span>
+                      <span id="fav-text">Let's Favorite</span>
                     </button>
                   </div>
                 </div>
@@ -125,10 +125,10 @@
       </main>
     </div>
 
-    <script src="../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/lucide.min.js"></script>
-    <script src="../assets/js/marked.min.js"></script>
-    <script src="../assets/js/init.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/lucide.min.js"></script>
+    <script src="../js/marked.min.js"></script>
+    <script src="../js/init.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -136,17 +136,18 @@
         const recipeCode = urlParams.get('code');
 
         // Báo lỗi nếu thiếu mã công thức
-        if (!recipeCode) return renderError('No recipe code found in URL');
+        if (!recipeCode) return (window.location.href = '/pages/notfound.html');
 
         // Đọc dữ liệu từ LocalStorage
         const recipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
         const categories = JSON.parse(localStorage.getItem('CATEGORIES') || '[]');
         const users = JSON.parse(localStorage.getItem('USERS') || '[]');
-        const currentUser = JSON.parse(localStorage.getItem('CURRENT_USER'));
+        const currentUserId = localStorage.getItem('CURRENT_USER_ID');
+        const currentUser = users.find((u) => u.id === currentUserId);
 
         // Tìm công thức theo mã code
         const recipe = recipes.find((r) => r.code === recipeCode);
-        if (!recipe) return renderError('Recipe not found');
+        if (!recipe) return (window.location.href = '/pages/notfound.html');
 
         // Cập nhật tiêu đề trang và nội dung text
         document.title = recipe.name;
@@ -154,46 +155,38 @@
         document.getElementById('recipe-description').textContent = recipe.description;
 
         // Cập nhật ảnh đại diện món ăn
-        const imgEl = document.getElementById('recipe-image');
-        if (imgEl) {
-          imgEl.src = recipe.image;
-          imgEl.alt = recipe.name;
-        }
+        document.getElementById('recipe-image').src = recipe.image;
 
         // Hiển thị tên danh mục
         const category = categories.find((c) => c.id === recipe.categoryId);
-        document.getElementById('recipe-category').textContent = category ? category.name : 'Web Recipe';
+        document.getElementById('recipe-category').textContent = category.name;
 
         // Hiển thị số sao đánh giá
         renderStarsUI(recipe.stars);
 
         // Hiển thị thông tin tác giả
         const author = users.find((u) => u.id === recipe.authorId);
-        const authorName = author ? author.fullName : 'Chef';
-        const authorAvatar = author ? author.avatar : '../assets/img/default-avatar.jpg';
-        document.getElementById('author-avatar').src = authorAvatar;
-        document.getElementById('author-name').textContent = authorName;
+        document.getElementById('author-name').textContent = author.fullName;
+        document.getElementById('author-avatar').src = author.avatar;
 
         // Hiển thị thời gian và trạng thái yêu thích
         const isFavorite = currentUser?.favoriteRecipes?.includes(recipe.id);
         document.getElementById('prep-time').textContent = `${recipe.prepTime} min`;
         document.getElementById('cook-time').textContent = `${recipe.cookTime} min`;
 
-        const favBtn = document.getElementById('fav-detail');
+        const favBtn = document.getElementById('btn-favorite-recipe');
         const favIcon = document.getElementById('fav-icon');
         const favText = document.getElementById('fav-text');
 
         if (isFavorite) {
           favBtn.classList.add('favorited');
-          favIcon.style.fill = 'red';
-          favIcon.style.color = 'red';
           favText.textContent = 'Favorited';
         }
 
         // Hiển thị danh sách nguyên liệu
         let ingHtml = '';
         recipe.ingredients.forEach((group, groupIndex) => {
-          if (group.section) ingHtml += `<h5 class="ingredient-group-title">${group.section}</h5>`;
+          ingHtml += `<h5 class="ingredient-group-title">${group.section}</h5>`;
           group.items.forEach((item, itemIndex) => {
             const id = `ing-${groupIndex}-${itemIndex}`;
             ingHtml += `
@@ -206,24 +199,27 @@
         });
         document.getElementById('recipe-ingredients').innerHTML = ingHtml;
 
-        // Hiển thị hướng dẫn thực hiện (Markdown)
+        // Hiển thị hướng dẫn thực hiện
         if (recipe.directions) {
-          const rawDirections = recipe.directions;
-          if (!rawDirections.includes('###')) {
-            document.getElementById('recipe-directions').innerHTML = marked.parse(rawDirections);
-          } else {
-            const chunks = rawDirections
-              .split('###')
-              .map((c) => c.trim())
-              .filter((c) => c.length > 0);
-            document.getElementById('recipe-directions').innerHTML = chunks
-              .map((chunk, i) => {
-                const lines = chunk.split('\n');
-                const title = lines.shift().trim();
-                return `<div class="step-card"><div class="step-header"><div class="step-number">${i + 1}</div><h3 class="step-title">${title}</h3></div><div class="step-content">${marked.parse(lines.join('\n').trim())}</div></div>`;
-              })
-              .join('');
-          }
+          // Hiển thị đơn giản
+          // document.getElementById('recipe-directions').innerHTML = marked.parse(recipe.directions);
+
+          // Hiển thị custom
+          document.getElementById('recipe-directions').innerHTML = recipe.directions
+            .split('###')
+            .filter(Boolean)
+            .map((chunk, i) => {
+              const [title, ...content] = chunk.trim().split('\n');
+              return `
+                  <div class="step-card">
+                    <div class="step-header">
+                      <div class="step-number">${i + 1}</div>
+                      <h3 class="step-title">${title.trim()}</h3>
+                    </div>
+                    <div class="step-content">${marked.parse(content.join('\n').trim())}</div>
+                  </div>`;
+            })
+            .join('');
         }
 
         // Hiển thị thông tin dinh dưỡng
@@ -233,9 +229,9 @@
         document.getElementById('nut-fat').textContent = nut.fat || '-';
         document.getElementById('nut-carbs').textContent = nut.carbs || '-';
 
-        // Hiển thị các món ăn liên quan
+        // Hiển thị các món ăn liên quan, giới hạn 3 món
         const related = recipes.filter((r) => r.categoryId === recipe.categoryId && r.id !== recipe.id).slice(0, 3);
-        if (related.length > 0 && window.RecipeList) window.RecipeList.render('related-recipes', related);
+        RecipeList.render('related-recipes', related);
 
         // Xử lý sự kiện checkbox nguyên liệu
         document.getElementById('recipe-ingredients').addEventListener('change', (e) => {
@@ -246,30 +242,26 @@
 
         // Xử lý sự kiện nhấn nút yêu thích
         favBtn?.addEventListener('click', () => {
-          if (!currentUser) return notification.warn('Authentication Required', 'Please login to favorite this recipe');
+          if (!currentUser) return notification.warn('Require Login', 'Please login to save favorite recipes');
 
-          const allUsers = JSON.parse(localStorage.getItem('USERS') || '[]');
-          const userIndex = allUsers.findIndex((u) => u.id === currentUser.id);
-          if (userIndex === -1) return;
+          if (!currentUser.favoriteRecipes) currentUser.favoriteRecipes = [];
+          const index = currentUser.favoriteRecipes.indexOf(recipe.id);
 
-          const user = allUsers[userIndex];
-          if (!user.favoriteRecipes) user.favoriteRecipes = [];
-          const idx = user.favoriteRecipes.indexOf(recipe.id);
-          const isFavoriting = idx === -1;
+          // Trạng thái sau khi bấm (Nếu chưa có thì là Đang Thêm, nếu có rồi thì là Đang Hủy)
+          const willBeFavorited = index === -1;
 
-          if (isFavoriting) user.favoriteRecipes.push(recipe.id);
-          else user.favoriteRecipes.splice(idx, 1);
+          if (willBeFavorited) {
+            currentUser.favoriteRecipes.push(recipe.id);
+          } else {
+            currentUser.favoriteRecipes.splice(index, 1);
+          }
 
-          // Cập nhật lại LocalStorage
-          allUsers[userIndex] = user;
-          localStorage.setItem('USERS', JSON.stringify(allUsers));
-          localStorage.setItem('CURRENT_USER', JSON.stringify(user));
+          // Lưu lại
+          localStorage.setItem('USERS', JSON.stringify(users));
 
-          // Cập nhật giao diện nút yêu thích
-          favBtn.classList.toggle('favorited', isFavoriting);
-          favIcon.style.fill = isFavoriting ? 'red' : 'none';
-          favIcon.style.color = isFavoriting ? 'red' : 'currentColor';
-          favText.textContent = isFavoriting ? 'Favorited' : 'Favorite';
+          // Cập nhật giao diện đồng bộ
+          favBtn.classList.toggle('favorited', willBeFavorited);
+          favText.textContent = willBeFavorited ? 'Favorited' : "Let's Favorite";
         });
 
         // Khởi tạo các icon Lucide
@@ -284,11 +276,6 @@
           }
           html += `<span class="text-muted ms-1">(${count}/5)</span>`;
           element.innerHTML = html;
-        }
-
-        // Hàm hiển thị giao diện lỗi
-        function renderError(message) {
-          document.getElementById('app-body').innerHTML = `<div class="container text-center py-5"><h2 class="text-muted">${message}</h2><a href="/pages/recipes.html" class="btn btn-primary mt-3">Back to Recipes</a></div>`;
         }
       });
     </script>

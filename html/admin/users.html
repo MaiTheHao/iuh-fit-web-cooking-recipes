@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Manage Users</title>
-    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
     <style>
       .admin-page-header {
         padding: 40px 0;
@@ -121,9 +121,9 @@
       </main>
     </div>
 
-    <script src="../../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="../../assets/js/lucide.min.js"></script>
-    <script src="../../assets/js/init.js"></script>
+    <script src="../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/lucide.min.js"></script>
+    <script src="../../js/init.js"></script>
 
     <script>
       // Khởi chạy khi DOM sẵn sàng
@@ -224,11 +224,6 @@
                 users[existingIndex].role = role;
                 users[existingIndex].avatar = avatar;
                 localStorage.setItem('USERS', JSON.stringify(users));
-
-                // Nếu sửa chính mình thì không cần cập nhật CURRENT_USER (chỉ lưu ID)
-                if (currentUserId === idInput) {
-                  // Thông tin trong USERS đã được cập nhật ở trên
-                }
 
                 bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
                 renderTable();

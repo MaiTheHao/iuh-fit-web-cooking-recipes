@@ -255,26 +255,26 @@
   }
 }
 
-.favorite-btn {
+.btn-fav {
   transition: all 0.3s ease;
   min-width: 100px;
 }
 
-.favorite-btn i {
+.btn-fav i {
   transition: transform 0.3s ease, fill 0.3s ease;
 }
 
-.favorite-btn:hover i {
+.btn-fav:hover i {
   transform: scale(1.2);
 }
 
-.favorite-btn.favorited {
+.btn-fav.favorited {
   background-color: var(--color-error-bg);
   color: var(--color-error);
   border-color: var(--color-error);
 }
 
-.favorite-btn.favorited [data-lucide='heart'] {
+.btn-fav.favorited [data-lucide='heart'] {
   fill: var(--color-error);
   color: var(--color-error);
 }

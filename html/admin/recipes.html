@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Manage Recipes</title>
-    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
     <style>
       .admin-page-header {
         padding: 40px 0;
@@ -125,9 +125,9 @@
       </main>
     </div>
 
-    <script src="../../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="../../assets/js/lucide.min.js"></script>
-    <script src="../../assets/js/init.js"></script>
+    <script src="../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/lucide.min.js"></script>
+    <script src="../../js/init.js"></script>
 
     <script>
       // Khởi chạy khi DOM sẵn sàng
@@ -206,7 +206,7 @@
 
           if (id) {
             const recipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
-            const r = recipes.find(recipe => recipe.id === id);
+            const r = recipes.find((recipe) => recipe.id === id);
             if (r) {
               document.getElementById('recipeCode').value = r.code;
               document.getElementById('recipeName').value = r.name;
@@ -253,9 +253,9 @@
             if (!authorId) return notification.error('Missing Author', 'Please select an author.');
             if (stars === '') return notification.error('Missing Stars', 'Please enter rating stars.');
             if (!directions) return notification.error('Missing Directions', 'Please enter directions.');
-            
+
             const recipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
-            const existingIndex = idInput ? recipes.findIndex(r => r.id === idInput) : -1;
+            const existingIndex = idInput ? recipes.findIndex((r) => r.id === idInput) : -1;
             const existing = existingIndex > -1 ? recipes[existingIndex] : null;
 
             if (code.length < 3) {
@@ -289,7 +289,7 @@
             }
 
             localStorage.setItem('RECIPES', JSON.stringify(recipes));
-            
+
             bootstrap.Modal.getInstance(document.getElementById('recipeModal')).hide();
             renderTable();
             notification.success('Success', idInput ? 'Updated successfully' : 'Created successfully');
@@ -318,18 +318,18 @@
 
           // Mở modal nếu bấm Edit
           if (editBtn) openModal(editBtn.dataset.id);
-          
+
           // Xóa công thức nếu bấm Delete
           if (delBtn && confirm('Are you sure you want to delete this recipe?')) {
-             const recipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
-             const id = delBtn.dataset.id;
-             const index = recipes.findIndex(r => r.id === id);
-             if (index > -1) {
-               recipes.splice(index, 1);
-               localStorage.setItem('RECIPES', JSON.stringify(recipes));
-               renderTable();
-               notification.success('Success', 'Deleted successfully');
-             }
+            const recipes = JSON.parse(localStorage.getItem('RECIPES') || '[]');
+            const id = delBtn.dataset.id;
+            const index = recipes.findIndex((r) => r.id === id);
+            if (index > -1) {
+              recipes.splice(index, 1);
+              localStorage.setItem('RECIPES', JSON.stringify(recipes));
+              renderTable();
+              notification.success('Success', 'Deleted successfully');
+            }
           }
         });
 
