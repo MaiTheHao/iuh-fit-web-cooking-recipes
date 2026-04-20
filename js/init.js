@@ -614,9 +614,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const fallback = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0RJ6oSUR7W8DB9W3TOaitZSbY8EIMLDe6Jw&s';
   const isAdmin = user?.role === 'admin';
 
-  const isInsideAdmin = window.location.pathname.includes('/admin/');
-  const rootPath = isInsideAdmin ? '../' : '';
-  const adminPath = isInsideAdmin ? '' : 'admin/';
+  const isManagePage = window.location.pathname.includes('manage-');
+  const rootPath = '';
+  const adminPath = '';
 
   root.insertAdjacentHTML(
     'afterbegin',
@@ -648,9 +648,9 @@ document.addEventListener('DOMContentLoaded', () => {
                   ${
                     isAdmin
                       ? `
-                    <li><a href="${adminPath}users.html" class="header__user-menu-item"><i data-lucide="shield"></i><span>Manage Users</span></a></li>
-                    <li><a href="${adminPath}recipes.html" class="header__user-menu-item"><i data-lucide="shield"></i><span>Manage Recipes</span></a></li>
-                    <li><a href="${adminPath}blogs.html" class="header__user-menu-item"><i data-lucide="shield"></i><span>Manage Blogs</span></a></li>
+                    <li><a href="manage-users.html" class="header__user-menu-item"><i data-lucide="shield"></i><span>Manage Users</span></a></li>
+                    <li><a href="manage-recipes.html" class="header__user-menu-item"><i data-lucide="shield"></i><span>Manage Recipes</span></a></li>
+                    <li><a href="manage-blogs.html" class="header__user-menu-item"><i data-lucide="shield"></i><span>Manage Blogs</span></a></li>
                   `
                       : ''
                   }

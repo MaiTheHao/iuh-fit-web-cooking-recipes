@@ -51,7 +51,7 @@
         // Chuyển hướng nếu người dùng đã đăng nhập
         const currentUserId = localStorage.getItem('CURRENT_USER_ID');
         if (currentUserId) {
-          window.location.href = '/pages/index.html';
+          window.location.href = '/html/index.html';
           return;
         }
 
@@ -103,7 +103,7 @@
 
             // Chuyển hướng về trang chủ sau 1 giây
             setTimeout(() => {
-              window.location.href = '/pages/index.html';
+              window.location.href = '/html/index.html';
             }, 1000);
           });
         }

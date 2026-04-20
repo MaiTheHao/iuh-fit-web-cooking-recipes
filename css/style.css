@@ -2,8 +2,8 @@
 @import './root.css';
 @import './animations.css';
 @import './typography.css';
-@import './layout/header.css';
-@import './layout/footer.css';
+@import './header.css';
+@import './footer.css';
 @import './component.css';
 @import './pages/notfound.css';
 
